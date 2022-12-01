@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Pohudei</title>
+    </head>
+    <body>
+
+        {# <div class="home menu-button {% if "home" in request.path %}primary-url{% else %}secondary-url{% endif %}"> #}
+        {#     <a class="a-btn" href="{% url 'home' %}">Home</a> #}
+        {# </div> #}
+
+        <div> <a href="{% url 'home' %}">Home</a> </div>
+        <div> <a href="{% url 'weight' %}">Weight</a> </div>
+
+        {% if user.is_authenticated %} <div class="logout menu-button"><a class="a-btn" href="{% url 'logout' %}">Log out</a></div> {% endif %}
+        {% if not user.is_authenticated %} <div class="login menu-button"><a class="a-btn" href="{% url 'login' %}">Log in</a></div> {% endif %}
+        {% if not user.is_authenticated %} <div class="register menu-button"><a class="a-btn" href="{% url 'register' %}">Register</a></div> {% endif %}
+
+        {% block content %}{% endblock content %}
+
+        {% block js %}{% endblock js %}
+
+    </body>
+</html>
+
+
