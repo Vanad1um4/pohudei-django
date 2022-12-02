@@ -1,5 +1,16 @@
 {% extends 'main/base.html' %}
+{% load static %}
+
 {% block content %}
     <h2>Дневник</h2>
+    <table cellspacing="0" id='main_table'>
+
+    </table>
+    {% csrf_token %}
+    {{ data|json_script:'data' }}
 {% endblock content %}
+
+{% block js %}
+    <script src="{% static 'main/diary.js' %}" defer></script>
+{% endblock js %}
 

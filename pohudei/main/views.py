@@ -7,10 +7,10 @@ def home(request):
 
 
 def weight(request):
-    tg_id = request.user.profile.tg_user_id
-    # print('tg_id:', tg_id)
-    if tg_id:
-        results = db_get_last_weights(tg_id)
+    user_id = request.user.profile.user_id
+    # print('user_id:', user_id)
+    if user_id:
+        results = db_get_last_weights(user_id)
         for i in results:
             print(i)
         return render(request, 'main/weight.html', {'data': results})
@@ -18,10 +18,10 @@ def weight(request):
 
 
 def diary(request):
-    tg_id = request.user.profile.tg_user_id
-    print('tg_id:', tg_id)
-    if tg_id:
-        sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(tg_id)
+    user_id = request.user.profile.user_id
+    print('user_id:', user_id)
+    if user_id:
+        sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)
         # for i in sum_kcals_and_weight:
         #     print(i)
         init_avg = 7
@@ -53,7 +53,7 @@ def diary(request):
         target_kcals = round((all_eaten - (weight_delta * 7700)) / table_length)
         # print('target_kcals:', target_kcals)
         # print()
-        today_food = db_get_today_food_from_diary(tg_id)
+        today_food = db_get_today_food_from_diary(user_id)
         # for i in today_food:
         #     print(i)
         return render(request, 'main/diary.html', {'data': [today_food, target_kcals]})
