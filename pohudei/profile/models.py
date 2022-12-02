@@ -4,7 +4,7 @@ from django.db import models
 
 class Profile(models.Model):
     profile = models.OneToOneField(User, on_delete=models.CASCADE)
-    tg_user_id = models.CharField(max_length=255)
+    tg_user_id = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return str(self.profile)

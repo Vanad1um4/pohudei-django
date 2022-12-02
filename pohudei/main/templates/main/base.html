@@ -12,12 +12,12 @@
         {#     <a class="a-btn" href="{% url 'home' %}">Home</a> #}
         {# </div> #}
 
-        <div> <a href="{% url 'home' %}">Home</a> </div>
-        <div> <a href="{% url 'weight' %}">Weight</a> </div>
+        <div> <a href="{% url 'home' %}">Главная</a> </div>
+        <div> <a href="{% url 'weight' %}">Вес</a> </div>
 
-        {% if user.is_authenticated %} <div class="logout menu-button"><a class="a-btn" href="{% url 'logout' %}">Log out</a></div> {% endif %}
-        {% if not user.is_authenticated %} <div class="login menu-button"><a class="a-btn" href="{% url 'login' %}">Log in</a></div> {% endif %}
-        {% if not user.is_authenticated %} <div class="register menu-button"><a class="a-btn" href="{% url 'register' %}">Register</a></div> {% endif %}
+        {% if user.is_authenticated %} <div class="logout menu-button"><a class="a-btn" href="{% url 'logout' %}">Выйти</a></div> {% endif %}
+        {% if not user.is_authenticated %} <div class="login menu-button"><a class="a-btn" href="{% url 'login' %}">Войти</a></div> {% endif %}
+        {% if not user.is_authenticated %} <div class="register menu-button"><a class="a-btn" href="{% url 'register' %}">Зарегистрироваться</a></div> {% endif %}
 
         {% block content %}{% endblock content %}
 

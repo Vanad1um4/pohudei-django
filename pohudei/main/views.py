@@ -8,9 +8,12 @@ def home(request):
 
 def weight(request):
     tg_id = request.user.profile.tg_user_id
-    print(tg_id)
-    result = db_get_last_weights(tg_id)
-    print(result)
+    # print('tg_id:', tg_id)
+    if tg_id:
+        results = db_get_last_weights(tg_id)
+        for i in results:
+            print(i)
+        return render(request, 'main/weight.html')
     return render(request, 'main/weight.html')
 
 
