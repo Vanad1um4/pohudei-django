@@ -7,6 +7,31 @@ def dictfetchall(cursor):
     return [dict(zip(columns, row)) for row in cursor.fetchall()]
 
 
+def db_get_everyday_sum_kcals_from_diary(tg_id):
+    with connection.cursor() as c:
+        c.execute(f'''
+            select d.date, sum(round(d.food_weight / 100.0 * c.kcals)) as eaten, w.weight
+            from diary d join catalogue c on d.catalogue_id=c.id join weights w on d.users_id=w.users_id join users u on d.users_id=u.id
+            where u.tg_user_id={tg_id} and d.date=w.date
+            group by d.date, w.weight
+            order by d.date;
+        ''')
+        # res = dictfetchall(c)
+        res = c.fetchall()
+    return res
+
+
+def db_get_today_food_from_diary(tg_id):
+    with connection.cursor() as c:
+        c.execute(f'''
+            select c.name, d.food_weight, c.kcals, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten
+            from diary d join users u on d.users_id=u.id join catalogue c on d.catalogue_id=c.id
+            where d.date=current_date and u.tg_user_id={tg_id}
+            order by d.id;''')
+        res = c.fetchall()
+    return res
+
+
 def db_get_last_weights(tg_id):
     with connection.cursor() as c:
         c.execute(f'''

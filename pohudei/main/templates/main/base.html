@@ -14,6 +14,7 @@
 
         <div> <a href="{% url 'home' %}">Главная</a> </div>
         <div> <a href="{% url 'weight' %}">Вес</a> </div>
+        <div> <a href="{% url 'diary' %}">Дневник</a> </div>
 
         {% if user.is_authenticated %} <div class="logout menu-button"><a class="a-btn" href="{% url 'logout' %}">Выйти</a></div> {% endif %}
         {% if not user.is_authenticated %} <div class="login menu-button"><a class="a-btn" href="{% url 'login' %}">Войти</a></div> {% endif %}
