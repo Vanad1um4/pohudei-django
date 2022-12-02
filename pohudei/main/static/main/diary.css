@@ -1,0 +1,15 @@
+.left {
+    text-align: left;
+}
+
+.right {
+    text-align: right;
+}
+
+.center {
+    text-align: center;
+}
+
+td {
+    padding: 1px 5px;
+}

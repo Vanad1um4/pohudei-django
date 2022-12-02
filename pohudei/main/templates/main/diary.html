@@ -1,9 +1,14 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/diary.css' %}">
+{% endblock css %}
+
 {% block content %}
     <h2>Дневник</h2>
-    <table cellspacing="0" id='main_table'>
+    <div id="daily_norm"></div>
+    <table cellspacing="0" id="main_table">
 
     </table>
     {% csrf_token %}

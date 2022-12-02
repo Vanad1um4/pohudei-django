@@ -1,8 +1,14 @@
 const data = JSON.parse(document.getElementById('data').textContent)
 console.log(data[0])
-initTableConstruct(data)
+initConstr(data)
 
-function initTableConstruct(data) {
+function initConstr(data) {
+    const todaysFood = data[0]
+    const todaysKcals = data[1]
+
+    const daily_norm_div = document.getElementById('daily_norm')
+    daily_norm_div.textContent = `Дневная норма калорий на сегодня: ${todaysKcals} ккал.`
+
     const table = document.getElementById('main_table')
     const tr = document.createElement('TR')
     const thNum = document.createElement('TH')
@@ -22,8 +28,6 @@ function initTableConstruct(data) {
     tr.appendChild(thPerc)
     table.appendChild(tr)
 
-    const todaysFood = data[0]
-    const todaysKcals = data[1]
     let sumKcals = 0
     for (let i = 0; i < todaysFood.length; i++) {
         sumKcals += todaysFood[i][2]
@@ -33,10 +37,15 @@ function initTableConstruct(data) {
         const tdWeight = document.createElement('TD')
         const tdKcals = document.createElement('TD')
         const tdPerc = document.createElement('TD')
+        tdNum.classList.add('center')
+        tdName.classList.add('left')
+        tdWeight.classList.add('right')
+        tdKcals.classList.add('right')
+        tdPerc.classList.add('right')
         tdNum.textContent = `${i+1}`
         tdName.textContent = `${todaysFood[i][0]}`
-        tdWeight.textContent = `${todaysFood[i][1]}`
-        tdKcals.textContent = `${todaysFood[i][2]}`
+        tdWeight.textContent = `${todaysFood[i][1]} г.`
+        tdKcals.textContent = `${todaysFood[i][2]} ккал`
         tdPerc.textContent = `${Math.round(todaysFood[i][2] / todaysKcals * 100)} %`
         tr.appendChild(tdNum)
         tr.appendChild(tdName)
@@ -52,7 +61,8 @@ function initTableConstruct(data) {
     const tdSumKcals = document.createElement('TD')
     const tdSumPerc = document.createElement('TD')
     tdSummary.textContent = `Итого:`
-    tdSumKcals.textContent = `${sumKcals}`
+    tdSumKcals.textContent = `${sumKcals} ккал`
+    tdSumKcals.classList.add('right')
     tdSumPerc.textContent = `${Math.round(sumKcals / todaysKcals * 100)} %`
     trBottom.appendChild(tdEmpty1)
     trBottom.appendChild(tdSummary)
