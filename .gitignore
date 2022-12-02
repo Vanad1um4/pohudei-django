@@ -1,3 +1,4 @@
 __pycache__/
+*.pyc
 pohudei/pohudei-project/settings.py
 env
