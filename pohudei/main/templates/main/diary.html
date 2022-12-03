@@ -8,9 +8,8 @@
 {% block content %}
     <h2>Дневник</h2>
     <div id="daily_norm"></div>
-    <table cellspacing="0" id="main_table">
-
-    </table>
+    <div class="table"></div>
+    {# <table cellspacing="0" id="main_table"></table> #}
     {% csrf_token %}
     {{ data|json_script:'data' }}
 {% endblock content %}

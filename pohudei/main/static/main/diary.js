@@ -9,67 +9,80 @@ function initConstr(data) {
     const daily_norm_div = document.getElementById('daily_norm')
     daily_norm_div.textContent = `Дневная норма калорий на сегодня: ${todaysKcals} ккал.`
 
-    const table = document.getElementById('main_table')
-    const tr = document.createElement('TR')
-    const thNum = document.createElement('TH')
-    const thName = document.createElement('TH')
-    const thWeight = document.createElement('TH')
-    const thKcals = document.createElement('TH')
-    const thPerc = document.createElement('TH')
-    thNum.textContent = '№'
-    thName.textContent = 'Блюдо'
-    thWeight.textContent = 'Вес'
-    thKcals.textContent = 'Ккал'
-    thPerc.textContent = '%'
-    tr.appendChild(thNum)
-    tr.appendChild(thName)
-    tr.appendChild(thWeight)
-    tr.appendChild(thKcals)
-    tr.appendChild(thPerc)
-    table.appendChild(tr)
+    const divMainTable = document.querySelector('.table')
+    const divTableHead = document.createElement('DIV')
+    const divNum = document.createElement('DIV')
+    const divName = document.createElement('DIV')
+    const divWeight = document.createElement('DIV')
+    const divKcals = document.createElement('DIV')
+    const divPerc = document.createElement('DIV')
+    divTableHead.classList.add('row')
+    divNum.classList.add('cell')
+    divName.classList.add('cell')
+    divWeight.classList.add('cell')
+    divKcals.classList.add('cell')
+    divPerc.classList.add('cell')
+    divNum.textContent = '№'
+    divName.textContent = 'Блюдо'
+    divWeight.textContent = 'Вес'
+    divKcals.textContent = 'Ккал'
+    divPerc.textContent = '%'
+    divTableHead.appendChild(divNum)
+    divTableHead.appendChild(divName)
+    divTableHead.appendChild(divWeight)
+    divTableHead.appendChild(divKcals)
+    divTableHead.appendChild(divPerc)
+    divMainTable.appendChild(divTableHead)
 
     let sumKcals = 0
     for (let i = 0; i < todaysFood.length; i++) {
         sumKcals += todaysFood[i][2]
-        const tr = document.createElement('TR')
-        const tdNum = document.createElement('TD')
-        const tdName = document.createElement('TD')
-        const tdWeight = document.createElement('TD')
-        const tdKcals = document.createElement('TD')
-        const tdPerc = document.createElement('TD')
-        tdNum.classList.add('center')
-        tdName.classList.add('left')
-        tdWeight.classList.add('right')
-        tdKcals.classList.add('right')
-        tdPerc.classList.add('right')
-        tdNum.textContent = `${i+1}`
-        tdName.textContent = `${todaysFood[i][0]}`
-        tdWeight.textContent = `${todaysFood[i][1]} г.`
-        tdKcals.textContent = `${todaysFood[i][2]} ккал`
-        tdPerc.textContent = `${Math.round(todaysFood[i][2] / todaysKcals * 100)} %`
-        tr.appendChild(tdNum)
-        tr.appendChild(tdName)
-        tr.appendChild(tdWeight)
-        tr.appendChild(tdKcals)
-        tr.appendChild(tdPerc)
-        table.appendChild(tr)
+        const divTableRow = document.createElement('DIV')
+        const divNum = document.createElement('DIV')
+        const divName = document.createElement('DIV')
+        const divWeight = document.createElement('DIV')
+        const divKcals = document.createElement('DIV')
+        const divPerc = document.createElement('DIV')
+        divTableRow.classList.add('row')
+        divNum.classList.add('cell', 'cell-num')
+        divName.classList.add('cell', 'cell-name')
+        divWeight.classList.add('cell', 'cell-w')
+        divKcals.classList.add('cell', 'cell-k')
+        divPerc.classList.add('cell', 'cell-p')
+        divNum.textContent = `${i+1}`
+        divName.textContent = `${todaysFood[i][0]}`
+        divWeight.textContent = `${todaysFood[i][1]} г.`
+        divKcals.textContent = `${todaysFood[i][2]} ккал`
+        divPerc.textContent = `${Math.round(todaysFood[i][2] / todaysKcals * 100)} %`
+        divTableRow.appendChild(divNum)
+        divTableRow.appendChild(divName)
+        divTableRow.appendChild(divWeight)
+        divTableRow.appendChild(divKcals)
+        divTableRow.appendChild(divPerc)
+        divMainTable.appendChild(divTableRow)
     }
-    const trBottom = document.createElement('TR')
-    const tdEmpty1 = document.createElement('TD')
-    const tdEmpty2 = document.createElement('TD')
-    const tdSummary = document.createElement('TD')
-    const tdSumKcals = document.createElement('TD')
-    const tdSumPerc = document.createElement('TD')
-    tdSummary.textContent = `Итого:`
-    tdSumKcals.textContent = `${sumKcals} ккал`
-    tdSumKcals.classList.add('right')
-    tdSumPerc.textContent = `${Math.round(sumKcals / todaysKcals * 100)} %`
-    trBottom.appendChild(tdEmpty1)
-    trBottom.appendChild(tdSummary)
-    trBottom.appendChild(tdEmpty2)
-    trBottom.appendChild(tdSumKcals)
-    trBottom.appendChild(tdSumPerc)
-    table.appendChild(trBottom)
+    const divTableFoot = document.createElement('DIV')
+    const divEmpty1 = document.createElement('DIV')
+    const divEmpty2 = document.createElement('DIV')
+    const divSummary = document.createElement('DIV')
+    const divSumKcals = document.createElement('DIV')
+    const divSumPerc = document.createElement('DIV')
+    divTableFoot.classList.add('row')
+    divEmpty1.classList.add('cell')
+    divEmpty2.classList.add('cell')
+    divSummary.classList.add('cell')
+    divSumKcals.classList.add('cell')
+    divSumPerc.classList.add('cell')
+    divSummary.textContent = `Итого:`
+    divSumKcals.textContent = `${sumKcals} ккал`
+    divSumKcals.classList.add('right')
+    divSumPerc.textContent = `${Math.round(sumKcals / todaysKcals * 100)} %`
+    divTableFoot.appendChild(divEmpty1)
+    divTableFoot.appendChild(divSummary)
+    divTableFoot.appendChild(divEmpty2)
+    divTableFoot.appendChild(divSumKcals)
+    divTableFoot.appendChild(divSumPerc)
+    divMainTable.appendChild(divTableFoot)
 
 }
 

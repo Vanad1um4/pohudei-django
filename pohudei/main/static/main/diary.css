@@ -1,15 +1,34 @@
-.left {
-    text-align: left;
+.table {
+    display: table;
 }
-
-.right {
-    text-align: right;
+.row {
+    display: table-row;
 }
-
-.center {
-    text-align: center;
+.cell {
+    display: table-cell;
 }
-
-td {
-    padding: 1px 5px;
-}
+/* .cell-num { */
+/*     display: grid; */
+/*     grid-template-columns: subgrid; */
+/*     grid-column: 1 */
+/* } */
+/* .cell-name { */
+/*     display: grid; */
+/*     grid-template-columns: subgrid; */
+/*     grid-column: 2 */
+/* } */
+/* .cell-w { */
+/*     display: grid; */
+/*     grid-template-columns: subgrid; */
+/*     grid-column: 3 */
+/* } */
+/* .cell-k { */
+/*     display: grid; */
+/*     grid-template-columns: subgrid; */
+/*     grid-column: 4 */
+/* } */
+/* .cell-p { */
+/*     display: grid; */
+/*     grid-template-columns: subgrid; */
+/*     grid-column: 5 */
+/* } */
