@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import *
 
 
@@ -58,7 +58,9 @@ def diary(request):
             # for i in today_food:
             #     print(i)
             return render(request, 'main/diary.html', {'data': [today_food, target_kcals]})
-    return render(request, 'main/index.html')
+    # return render(request, 'main/index.html')
+    return redirect('home')
+
 
 # def test_view(request):
 #     results = test()
