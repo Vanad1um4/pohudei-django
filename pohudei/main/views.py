@@ -19,8 +19,8 @@ def weight(request):
 
 def diary(request):
     user_id = request.user.profile.user_id
-    print('user_id:', user_id)
-    if user_id:
+    # print('user_id:', user_id)
+    if user_id and request.user.is_authenticated:
         sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)
         # for i in sum_kcals_and_weight:
         #     print(i)
@@ -57,7 +57,7 @@ def diary(request):
         # for i in today_food:
         #     print(i)
         return render(request, 'main/diary.html', {'data': [today_food, target_kcals]})
-    return render(request, 'main/diary.html')
+    return render(request, 'main/index.html')
 
 # def test_view(request):
 #     results = test()
