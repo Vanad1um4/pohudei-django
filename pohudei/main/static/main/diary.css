@@ -1,9 +1,16 @@
 .table {
     display: table;
     border-collapse: collapse;
+    font-size: 105%;
+}
+#daily-norm, #daily-curr {
+    font-size: 125%;
+    height: 27px;
 }
 .row {
     display: table-row;
+    height: 35px;
+    /* height: 70px; */
 }
 .cell {
     display: table-cell;
@@ -24,3 +31,6 @@
 .cell-foot {
     font-weight: bold;
 }
+/* .norm_val { */
+/*     font-weight: bold; */
+/* } */

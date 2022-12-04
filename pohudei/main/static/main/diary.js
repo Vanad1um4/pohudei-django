@@ -6,8 +6,8 @@ function initConstr(data) {
     const todaysFood = data[0]
     const todaysKcals = data[1]
 
-    const daily_norm_div = document.getElementById('daily_norm')
-    daily_norm_div.textContent = `Дневная норма калорий на сегодня: ${todaysKcals} ккал.`
+    const norn_val = document.querySelector('.norm-val')
+    norn_val.textContent = todaysKcals
 
     const divMainTable = document.querySelector('.table')
     const divTableHead = document.createElement('DIV')
@@ -61,28 +61,32 @@ function initConstr(data) {
         divTableRow.appendChild(divPerc)
         divMainTable.appendChild(divTableRow)
     }
-    const divTableFoot = document.createElement('DIV')
-    const divEmpty1 = document.createElement('DIV')
-    const divEmpty2 = document.createElement('DIV')
-    const divSummary = document.createElement('DIV')
-    const divSumKcals = document.createElement('DIV')
-    const divSumPerc = document.createElement('DIV')
-    divTableFoot.classList.add('row')
-    divEmpty1.classList.add('cell', 'cell-foot')
-    divEmpty2.classList.add('cell', 'cell-foot')
-    divSummary.classList.add('cell', 'cell-foot')
-    divSumKcals.classList.add('cell', 'cell-foot', 'cell-k')
-    divSumPerc.classList.add('cell', 'cell-foot', 'cell-p')
-    divSummary.textContent = `Итого:`
-    divSumKcals.textContent = `${sumKcals}`
-    divSumKcals.classList.add('right')
-    divSumPerc.textContent = `${Math.round(sumKcals / todaysKcals * 100)}`
-    divTableFoot.appendChild(divEmpty1)
-    divTableFoot.appendChild(divSummary)
-    divTableFoot.appendChild(divEmpty2)
-    divTableFoot.appendChild(divSumKcals)
-    divTableFoot.appendChild(divSumPerc)
-    divMainTable.appendChild(divTableFoot)
+    const curr_val_kcals = document.querySelector('.curr-kcals')
+    const curr_val_perc = document.querySelector('.curr-perc')
+    curr_val_kcals.textContent = sumKcals
+    curr_val_perc.textContent = Math.round(sumKcals / todaysKcals * 100)
+    // const divTableFoot = document.createElement('DIV')
+    // const divEmpty1 = document.createElement('DIV')
+    // const divEmpty2 = document.createElement('DIV')
+    // const divSummary = document.createElement('DIV')
+    // const divSumKcals = document.createElement('DIV')
+    // const divSumPerc = document.createElement('DIV')
+    // divTableFoot.classList.add('row')
+    // divEmpty1.classList.add('cell', 'cell-foot')
+    // divEmpty2.classList.add('cell', 'cell-foot')
+    // divSummary.classList.add('cell', 'cell-foot')
+    // divSumKcals.classList.add('cell', 'cell-foot', 'cell-k')
+    // divSumPerc.classList.add('cell', 'cell-foot', 'cell-p')
+    // divSummary.textContent = `Итого:`
+    // divSumKcals.textContent = `${sumKcals}`
+    // divSumKcals.classList.add('right')
+    // divSumPerc.textContent = `${Math.round(sumKcals / todaysKcals * 100)}`
+    // divTableFoot.appendChild(divEmpty1)
+    // divTableFoot.appendChild(divSummary)
+    // divTableFoot.appendChild(divEmpty2)
+    // divTableFoot.appendChild(divSumKcals)
+    // divTableFoot.appendChild(divSumPerc)
+    // divMainTable.appendChild(divTableFoot)
 
 }
 

@@ -7,14 +7,16 @@ def home(request):
 
 
 def weight(request):
-    user_id = request.user.profile.user_id
-    # print('user_id:', user_id)
-    if user_id:
-        results = db_get_last_weights(user_id)
-        for i in results:
-            print(i)
-        return render(request, 'main/weight.html', {'data': results})
-    return render(request, 'main/weight.html')
+    if request.user.is_authenticated:
+        user_id = request.user.profile.user_id
+        # print('user_id:', user_id)
+        if user_id:
+            results = db_get_last_weights(user_id)
+            for i in results:
+                print(i)
+            return render(request, 'main/weight.html', {'data': results})
+        return redirect('home')
+    return redirect('login')
 
 
 def diary(request):
@@ -58,8 +60,8 @@ def diary(request):
             # for i in today_food:
             #     print(i)
             return render(request, 'main/diary.html', {'data': [today_food, target_kcals]})
-    # return render(request, 'main/index.html')
-    return redirect('home')
+        return redirect('home')
+    return redirect('login')
 
 
 # def test_view(request):

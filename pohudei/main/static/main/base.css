@@ -1,0 +1,38 @@
+body {
+    font-family: Helvetica, sans-serif;
+}
+
+.menu {
+    display: flex;
+    width: 100vw;
+    height: 40px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    gap: 5px;
+    background-color: white;
+}
+.menu-btn {
+    flex-grow: 1;
+    border: 1px solid grey;
+}
+.menu-btn > a {
+    display: flex;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 150%;
+    padding: 5px 0px;
+    justify-content: center;
+}
+.active-btn {
+    background-color: green;
+}
+.active-btn > a {
+    color: white;
+}
+.inactive-btn {
+    background-color: white;
+}
+.inactive-btn > a {
+    color: green;
+}

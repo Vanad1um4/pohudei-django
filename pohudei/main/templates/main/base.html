@@ -1,10 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Pohudei</title>
+        <title>Pohudei web app</title>
+        <link rel="stylesheet" type="text/css" href="{% static 'main/base.css' %}">
         {% block css %}{% endblock css %}
     </head>
     <body>
@@ -13,13 +15,15 @@
         {#     <a class="a-btn" href="{% url 'home' %}">Home</a> #}
         {# </div> #}
 
-        <div> <a href="{% url 'home' %}">Главная</a> </div>
-        <div> <a href="{% url 'weight' %}">Вес</a> </div>
-        <div> <a href="{% url 'diary' %}">Дневник</a> </div>
+        <div class="menu">
+            {# <div class="menu-btn"> <a href="{% url 'home' %}">Главная</a> </div> #}
+            <div class="menu-btn {% if "weight" in request.path %}active-btn{% else %}inactive-btn{% endif %}"> <a href="{% url 'weight' %}">Вес</a> </div>
+            <div class="menu-btn {% if "diary" in request.path %}active-btn{% else %}inactive-btn{% endif %}"> <a href="{% url 'diary' %}">Дневник</a> </div>
+            {% if user.is_authenticated %} <div class="menu-btn logout inactive-btn"><a class="a-btn" href="{% url 'logout' %}">Выйти</a></div> {% endif %}
+            {% if not user.is_authenticated %} <div class="menu-btn login inactive-btn"><a class="a-btn" href="{% url 'login' %}">Вх</a></div> {% endif %}
+            {% if not user.is_authenticated %} <div class="menu-btn register inactive-btn"><a class="a-btn" href="{% url 'register' %}">Рег</a></div> {% endif %}
+        </div>
 
-        {% if user.is_authenticated %} <div class="logout menu-button"><a class="a-btn" href="{% url 'logout' %}">Выйти</a></div> {% endif %}
-        {% if not user.is_authenticated %} <div class="login menu-button"><a class="a-btn" href="{% url 'login' %}">Войти</a></div> {% endif %}
-        {% if not user.is_authenticated %} <div class="register menu-button"><a class="a-btn" href="{% url 'register' %}">Зарегистрироваться</a></div> {% endif %}
 
         {% block content %}{% endblock content %}
 

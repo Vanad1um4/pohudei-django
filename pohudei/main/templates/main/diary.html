@@ -6,8 +6,19 @@
 {% endblock css %}
 
 {% block content %}
-    <h2>Дневник</h2>
-    <div id="daily_norm"></div>
+    {# <h2>Дневник</h2> #}
+    <div id="daily-norm">
+        <span class="norm-txt">Норма на сегодня: </span>
+        <b><span class="norm-val"></span></b>
+        <span class="norm-txt"> ккал.</span>
+    </div>
+    <div id="daily-curr">
+        <span class="curr-txt">Уже съедено: </span>
+        <b><span class="curr-kcals"></span></b>
+        <span class="curr-txt"> ккал.</span>
+        <b><span class="curr-perc"></span></b>
+        <span class="curr-txt">%</span>
+    </div>
     <div class="table"></div>
     {# <table cellspacing="0" id="main_table"></table> #}
     {% csrf_token %}
