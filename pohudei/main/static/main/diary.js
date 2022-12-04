@@ -17,11 +17,11 @@ function initConstr(data) {
     const divKcals = document.createElement('DIV')
     const divPerc = document.createElement('DIV')
     divTableHead.classList.add('row')
-    divNum.classList.add('cell')
-    divName.classList.add('cell')
-    divWeight.classList.add('cell')
-    divKcals.classList.add('cell')
-    divPerc.classList.add('cell')
+    divNum.classList.add('cell', 'cell-head')
+    divName.classList.add('cell', 'cell-head')
+    divWeight.classList.add('cell', 'cell-head')
+    divKcals.classList.add('cell', 'cell-head')
+    divPerc.classList.add('cell', 'cell-head')
     divNum.textContent = '№'
     divName.textContent = 'Блюдо'
     divWeight.textContent = 'Вес'
@@ -51,9 +51,9 @@ function initConstr(data) {
         divPerc.classList.add('cell', 'cell-p')
         divNum.textContent = `${i+1}`
         divName.textContent = `${todaysFood[i][0]}`
-        divWeight.textContent = `${todaysFood[i][1]} г.`
-        divKcals.textContent = `${todaysFood[i][2]} ккал`
-        divPerc.textContent = `${Math.round(todaysFood[i][2] / todaysKcals * 100)} %`
+        divWeight.textContent = `${todaysFood[i][1]}`
+        divKcals.textContent = `${todaysFood[i][2]}`
+        divPerc.textContent = `${Math.round(todaysFood[i][2] / todaysKcals * 100)}`
         divTableRow.appendChild(divNum)
         divTableRow.appendChild(divName)
         divTableRow.appendChild(divWeight)
@@ -68,15 +68,15 @@ function initConstr(data) {
     const divSumKcals = document.createElement('DIV')
     const divSumPerc = document.createElement('DIV')
     divTableFoot.classList.add('row')
-    divEmpty1.classList.add('cell')
-    divEmpty2.classList.add('cell')
-    divSummary.classList.add('cell')
-    divSumKcals.classList.add('cell')
-    divSumPerc.classList.add('cell')
+    divEmpty1.classList.add('cell', 'cell-foot')
+    divEmpty2.classList.add('cell', 'cell-foot')
+    divSummary.classList.add('cell', 'cell-foot')
+    divSumKcals.classList.add('cell', 'cell-foot', 'cell-k')
+    divSumPerc.classList.add('cell', 'cell-foot', 'cell-p')
     divSummary.textContent = `Итого:`
-    divSumKcals.textContent = `${sumKcals} ккал`
+    divSumKcals.textContent = `${sumKcals}`
     divSumKcals.classList.add('right')
-    divSumPerc.textContent = `${Math.round(sumKcals / todaysKcals * 100)} %`
+    divSumPerc.textContent = `${Math.round(sumKcals / todaysKcals * 100)}`
     divTableFoot.appendChild(divEmpty1)
     divTableFoot.appendChild(divSummary)
     divTableFoot.appendChild(divEmpty2)

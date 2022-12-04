@@ -1,5 +1,6 @@
 .table {
     display: table;
+    border-collapse: collapse;
 }
 .row {
     display: table-row;
@@ -7,10 +8,19 @@
 .cell {
     display: table-cell;
     padding: 1px 3px;
+    border: 1px solid gray;
+    vertical-align: middle;
+}
+.cell-head {
+    text-align: center;
+    font-weight: bold;
 }
 .cell-num {
     text-align: right;
 }
 .cell-num, .cell-w, .cell-k, .cell-p {
     text-align: right;
+}
+.cell-foot {
+    font-weight: bold;
 }
