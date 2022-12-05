@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from .models import *
+import json
 
 
 def home(request):
@@ -67,6 +69,28 @@ def diary(request):
             return render(request, 'main/diary.html', {'data': [today_food, target_kcals, all_foods]})
         return redirect('home')
     return redirect('login')
+
+
+def add_food_to_diary(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user_id = request.user.profile.user_id
+        # print('user_id:', user_id)
+        if user_id:
+            print('user_id:', user_id)
+            print('data:', data)
+
+            result = db_add_new_diary_entry(user_id, '2022-12-05', data['food_id'], data['food_weight'])
+            # print(result)
+            # return redirect('diary')
+            return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
+                                content_type='application/json; charset=utf-8')
+        else:
+            return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                                content_type='application/json; charset=utf-8')
+    else:
+        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
 
 
 # def test_view(request):

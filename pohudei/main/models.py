@@ -50,6 +50,20 @@ def db_get_food_names():
         res = c.fetchall()
     return res
 
+
+def db_add_new_diary_entry(user_id, date, food_id, weight):
+    try:
+        with connection.cursor() as c:
+            c.execute(f'''
+                insert into diary (users_id, date, catalogue_id, food_weight)
+                values ({user_id}, '{date}', {food_id}, {weight});''')
+            # c.commit()
+            return 'success'
+    except Exception as exc:
+        print(exc)
+        return 'failure'
+
+
 # def test():
 #     with connection.cursor() as c:
 #         c.execute('SELECT * FROM users;')
