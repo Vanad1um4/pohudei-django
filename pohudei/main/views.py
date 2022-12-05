@@ -61,7 +61,7 @@ def diary(request):
             # print()
             today_food = db_get_today_food_from_diary(user_id)
             all_foods = db_get_food_names()
-            print(all_foods)
+            # print(all_foods)
             # for i in today_food:
             #     print(i)
             return render(request, 'main/diary.html', {'data': [today_food, target_kcals, all_foods]})

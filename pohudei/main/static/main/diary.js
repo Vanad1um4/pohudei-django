@@ -44,13 +44,13 @@ function foodArrayConsrtuct(rawFood) {
 
 function changeInput(target) {
     // const queryArray = target.value.toLowerCase().split(' ').filter(val => val.length > 0)
-    const queryArray = target.value.split(' ').filter(val => val.length > 0)
+    const queryArray = target.value.toLowerCase().split(' ').filter(val => val.length > 0)
     // console.log(target.value)
     // console.log(target.value.toLowerCase())
 
     let tempFoodDict = {}
     for (let i in foodDict) {
-        if (queryArray.every(q => foodDict[i].toLowerCase().includes(q))){
+        if (queryArray.every(word => foodDict[i].toLowerCase().includes(word))){
             tempFoodDict[i] = foodDict[i]
         }
     }
