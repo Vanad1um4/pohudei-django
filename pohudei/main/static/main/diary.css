@@ -34,3 +34,124 @@
 /* .norm_val { */
 /*     font-weight: bold; */
 /* } */
+#add-food {
+    margin-top: 8px;
+    padding: 12px 0px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 150%;
+    background-color: green;
+    color: white;
+}
+#slug {
+    height: 55px; /* Full height */
+}
+
+
+#float-dimming {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 0px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
+}
+#float-results-wrap {
+    /* display: flex; */
+    /* align-items: center; */
+    /* font-weight: bold; */
+
+    /* margin: auto; */
+    margin-top: 0px; /* Location of the box */
+    /* margin-bottom: 400px; */
+    /* bottom: 100; */
+    padding: 0;
+    width: calc(100% - 50px);
+    height: calc(100% - 75px);
+
+    /* white-space: nowrap; */
+    margin-top: 25px;
+    /* margin-bottom: 50px; */
+    margin-left: 25px;
+    margin-right: 25px;
+    /* background-color: green; */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+#float-results-cont {
+    overflow: auto;
+}
+.float-results-line {
+    width: 80vw;
+    /* height: 50px; */
+    font-size: 125%;
+    padding: 7px 7px;
+    margin: 7px 0px;
+    color: white;
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
+}
+#float-controls{
+    position: fixed; /* Stay in place */
+    z-index: 2; /* Sit on top */
+    /* left: 0; */
+    bottom: 0;
+    width: calc(100% - 50px);
+    height: 50px; /* Full height */
+    /* margin: auto; */
+    margin-bottom: 0px; /* Location of the box */
+    margin-left: 25px;
+    margin-right: 25px;
+    /* padding: 0; */
+    /* width: 80%; */
+    /* height: 100%; */
+
+    /* white-space: nowrap; */
+    /* margin-top: 50px; */
+    /* margin-bottom: 50px; */
+    /* margin-left: 50px; */
+    /* margin-right: 50px; */
+    /* background-color: blue; */
+    display: flex;
+    /* justify-content: center; */
+}
+#float-input{
+    font-size: 150%;
+    /* flex-grow: 1; */
+    /* width: */
+    width: calc(100% - 58px);
+}
+#float-cancel {
+    background-color: red;
+    color: white;
+    /* text-align: center; */
+    font-weight: 900;
+    font-size: 250%;
+    padding: 0px 0px;
+    width: 50px;
+}
+#float-input, #float-cancel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/* #float-results{ */
+/*     overflow: auto; /* Enable scroll if needed */ */
+/*     height: 80vh; */
+/* } */
+/* #float-controls{ */
+/*     height: 50px; */
+/*     /* position: fixed; */ */
+/*     display: flex; */
+/*     /* justify-content: center; */ */
+/* } */
+/* #float-controls > #float-input, #float-cancel { */
+/*     display: inline; */
+/*     flex-grow: 1; */
+/* } */

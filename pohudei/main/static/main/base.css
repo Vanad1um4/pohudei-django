@@ -1,28 +1,39 @@
 body {
     font-family: Helvetica, sans-serif;
+    user-select: none;
 }
 
 .menu {
     display: flex;
+    align: center;
     width: 100vw;
-    height: 40px;
+    /* height: 55px; */
     position: fixed;
     bottom: 0;
     right: 0;
     gap: 5px;
     background-color: white;
+    /* justify-content: space-evenly; */
 }
 .menu-btn {
+    /* display: flex; */
     flex-grow: 1;
     border: 1px solid grey;
+    /* align-items: center; */
+    /* justify-content: center; */
 }
 .menu-btn > a {
     display: flex;
     text-decoration: none;
     font-weight: bold;
-    font-size: 150%;
-    padding: 5px 0px;
+    font-size: 175%;
+    padding: 10px 0px;
+    width: 100%;
+    /* align: center; */
+    /* align-items: center; */
     justify-content: center;
+    /* display: block; */
+    /* overflow: auto; */
 }
 .active-btn {
     background-color: green;

@@ -1,6 +1,79 @@
+const float_div = document.querySelector('#float-dimming')
+const addBtn = document.querySelector('#add-food')
+const closeBtn = document.querySelector('#float-cancel')
+const inputField = document.querySelector('#float-input')
+const resCont = document.querySelector('#float-results-cont')
+
 const data = JSON.parse(document.getElementById('data').textContent)
-console.log(data[0])
-initConstr(data)
+console.log(data)
+// console.log(data[0])
+// console.log(data[1])
+// console.log(data[2])
+
+let foodDict = {}
+
+onLoad()
+
+function onLoad() {
+    initConstr(data)
+    // addBtn.addEventListener("click", function clicked(event) { clickAddBtn(event) });
+    addBtn.addEventListener("click", function clicked(event) { float_div.style.display = 'block' });
+    // closeBtn.addEventListener("click", function clicked(event) { clickCloseBtn(event) });
+    closeBtn.addEventListener("click", function clicked(event) { float_div.style.display = 'none' });
+    inputField.addEventListener("input", function clicked(event) { changeInput(event.target) });
+    foodArrayConsrtuct(data[2])
+    console.log(foodDict)
+}
+
+function foodArrayConsrtuct(rawFood) {
+    for (let i = 0; i < rawFood.length; i++) {
+        // console.log(rawFood[i])
+        foodDict[rawFood[i][0]] = rawFood[i][1]
+    }
+}
+
+// function clickAddBtn(event) {
+//     // console.log(event)
+//     float_div.style.display = 'block'
+// }
+//
+// function clickCloseBtn(event) {
+//     // console.log(event)
+//     float_div.style.display = 'none'
+// }
+
+function changeInput(target) {
+    // const queryArray = target.value.toLowerCase().split(' ').filter(val => val.length > 0)
+    const queryArray = target.value.split(' ').filter(val => val.length > 0)
+    // console.log(target.value)
+    // console.log(target.value.toLowerCase())
+
+    let tempFoodDict = {}
+    for (let i in foodDict) {
+        if (queryArray.every(q => foodDict[i].toLowerCase().includes(q))){
+            tempFoodDict[i] = foodDict[i]
+        }
+    }
+    console.log(tempFoodDict)
+
+    resultsConstruct(resCont, tempFoodDict)
+
+    function resultsConstruct(container, selectedFood) {
+        while (container.firstChild) {
+            container.firstChild.remove()
+        }
+
+        for (let i in tempFoodDict) {
+            // console.log(i)
+            // console.log(tempFoodDict[i])
+            const resDiv = document.createElement('DIV')
+            resDiv.classList.add('float-results-line')
+            resDiv.setAttribute('id', 'food' + i)
+            resDiv.textContent = `${tempFoodDict[i]}`
+            container.appendChild(resDiv)
+        }
+    }
+}
 
 function initConstr(data) {
     const todaysFood = data[0]
@@ -65,28 +138,4 @@ function initConstr(data) {
     const curr_val_perc = document.querySelector('.curr-perc')
     curr_val_kcals.textContent = sumKcals
     curr_val_perc.textContent = Math.round(sumKcals / todaysKcals * 100)
-    // const divTableFoot = document.createElement('DIV')
-    // const divEmpty1 = document.createElement('DIV')
-    // const divEmpty2 = document.createElement('DIV')
-    // const divSummary = document.createElement('DIV')
-    // const divSumKcals = document.createElement('DIV')
-    // const divSumPerc = document.createElement('DIV')
-    // divTableFoot.classList.add('row')
-    // divEmpty1.classList.add('cell', 'cell-foot')
-    // divEmpty2.classList.add('cell', 'cell-foot')
-    // divSummary.classList.add('cell', 'cell-foot')
-    // divSumKcals.classList.add('cell', 'cell-foot', 'cell-k')
-    // divSumPerc.classList.add('cell', 'cell-foot', 'cell-p')
-    // divSummary.textContent = `Итого:`
-    // divSumKcals.textContent = `${sumKcals}`
-    // divSumKcals.classList.add('right')
-    // divSumPerc.textContent = `${Math.round(sumKcals / todaysKcals * 100)}`
-    // divTableFoot.appendChild(divEmpty1)
-    // divTableFoot.appendChild(divSummary)
-    // divTableFoot.appendChild(divEmpty2)
-    // divTableFoot.appendChild(divSumKcals)
-    // divTableFoot.appendChild(divSumPerc)
-    // divMainTable.appendChild(divTableFoot)
-
 }
-

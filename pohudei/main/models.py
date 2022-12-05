@@ -43,6 +43,13 @@ def db_get_last_weights(user_id):
         # res = c.fetchall()
     return res
 
+
+def db_get_food_names():
+    with connection.cursor() as c:
+        c.execute('select id, name from catalogue order by name')
+        res = c.fetchall()
+    return res
+
 # def test():
 #     with connection.cursor() as c:
 #         c.execute('SELECT * FROM users;')

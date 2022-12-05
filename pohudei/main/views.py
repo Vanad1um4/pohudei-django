@@ -3,7 +3,10 @@ from .models import *
 
 
 def home(request):
-    return render(request, 'main/index.html')
+    if request.user.is_authenticated:
+        # return render(request, 'main/index.html')
+        return redirect('diary')
+    return redirect('login')
 
 
 def weight(request):
@@ -57,9 +60,11 @@ def diary(request):
             # print('target_kcals:', target_kcals)
             # print()
             today_food = db_get_today_food_from_diary(user_id)
+            all_foods = db_get_food_names()
+            print(all_foods)
             # for i in today_food:
             #     print(i)
-            return render(request, 'main/diary.html', {'data': [today_food, target_kcals]})
+            return render(request, 'main/diary.html', {'data': [today_food, target_kcals, all_foods]})
         return redirect('home')
     return redirect('login')
 

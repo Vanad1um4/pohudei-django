@@ -6,12 +6,12 @@
 {% endblock css %}
 
 {% block content %}
-    {# <h2>Дневник</h2> #}
     <div id="daily-norm">
         <span class="norm-txt">Норма на сегодня: </span>
         <b><span class="norm-val"></span></b>
         <span class="norm-txt"> ккал.</span>
     </div>
+
     <div id="daily-curr">
         <span class="curr-txt">Уже съедено: </span>
         <b><span class="curr-kcals"></span></b>
@@ -19,7 +19,33 @@
         <b><span class="curr-perc"></span></b>
         <span class="curr-txt">%</span>
     </div>
+
     <div class="table"></div>
+
+    <div id="add-food">Добавить продукт...</div>
+
+    <div id="slug"></div>
+
+    <div id="float-dimming">
+        {# <div id="float-div"> #}
+            <div id="float-results-wrap">
+                <div id="float-results-cont"> </div>
+            </div>
+            <div id="float-controls">
+                <input id="float-input" type='text'/>
+                <div id="float-cancel">X</div>
+            </div>
+            {# <div id="float-footer"> #}
+
+            {# <div class="float-line" id="float-controls"> #}
+            {#     <input id="float-input" type='text' value='lol'/> #}
+            {#     <div id="float-cancel">NO</div> #}
+            {# </div> #}
+
+            {# </div> #}
+        {# </div> #}
+    </div>
+
     {# <table cellspacing="0" id="main_table"></table> #}
     {% csrf_token %}
     {{ data|json_script:'data' }}
