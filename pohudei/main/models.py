@@ -25,7 +25,7 @@ def db_get_today_food_from_diary(user_id):
     with connection.cursor() as c:
         # select c.name, d.food_weight, c.kcals, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten
         c.execute(f'''
-            select c.name, d.food_weight, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten
+            select d.id, c.name, d.food_weight, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten_kcals
             from diary d join catalogue c on d.catalogue_id=c.id
             where d.date=current_date and d.users_id={user_id}
             order by d.id;''')
@@ -57,7 +57,18 @@ def db_add_new_diary_entry(user_id, date, food_id, weight):
             c.execute(f'''
                 insert into diary (users_id, date, catalogue_id, food_weight)
                 values ({user_id}, '{date}', {food_id}, {weight});''')
-            # c.commit()
+            return 'success'
+    except Exception as exc:
+        print(exc)
+        return 'failure'
+
+
+def db_del_diary_entry(user_id, diary_id):
+    try:
+        with connection.cursor() as c:
+            c.execute(f'''
+                delete from diary
+                where id='{diary_id}' and users_id={user_id};''')
             return 'success'
     except Exception as exc:
         print(exc)

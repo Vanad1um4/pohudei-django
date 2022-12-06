@@ -1,5 +1,6 @@
-from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect
+from datetime import datetime, timedelta
 from .models import *
 import json
 
@@ -64,8 +65,8 @@ def diary(request):
             today_food = db_get_today_food_from_diary(user_id)
             all_foods = db_get_food_names()
             # print(all_foods)
-            # for i in today_food:
-            #     print(i)
+            for i in today_food:
+                print(i)
             return render(request, 'main/diary.html', {'data': [today_food, target_kcals, all_foods]})
         return redirect('home')
     return redirect('login')
@@ -77,14 +78,22 @@ def add_food_to_diary(request):
         user_id = request.user.profile.user_id
         # print('user_id:', user_id)
         if user_id:
-            print('user_id:', user_id)
-            print('data:', data)
+            # print('user_id:', user_id)
+            # print('data:', data)
 
-            result = db_add_new_diary_entry(user_id, '2022-12-05', data['food_id'], data['food_weight'])
+            today = datetime.today()
+            today_str = today.strftime("%Y-%m-%d")  # 07-07-2021
+            # yesterday = datetime.today() - timedelta(days=1)  # TODO: make food addition for different dates
+
+            result = db_add_new_diary_entry(user_id, today_str, data['food_id'], data['food_weight'])
             # print(result)
             # return redirect('diary')
-            return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
-                                content_type='application/json; charset=utf-8')
+            if result == 'success':
+                return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
+                                    content_type='application/json; charset=utf-8')
+            else:
+                return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                                    content_type='application/json; charset=utf-8')
         else:
             return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
                                 content_type='application/json; charset=utf-8')
@@ -92,6 +101,34 @@ def add_food_to_diary(request):
         return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
                             content_type='application/json; charset=utf-8')
 
+
+def delete_diary_entry(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user_id = request.user.profile.user_id
+        diary_id = data['diary_id']
+        # print('user_id:', user_id)
+        if user_id:
+            # print('user_id:', user_id)
+            # print('diary_id:', diary_id)
+
+            # today = datetime.today()
+            # today_str = today.strftime("%Y-%m-%d")  # 07-07-2021
+            # yesterday = datetime.today() - timedelta(days=1)  # TODO: make food addition for different dates
+
+            result = db_del_diary_entry(user_id, diary_id)
+            if result == 'success':
+                return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
+                                    content_type='application/json; charset=utf-8')
+            else:
+                return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                                    content_type='application/json; charset=utf-8')
+        else:
+            return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                                content_type='application/json; charset=utf-8')
+    else:
+        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
 
 # def test_view(request):
 #     results = test()
