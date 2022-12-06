@@ -63,6 +63,19 @@ def db_add_new_diary_entry(user_id, date, food_id, weight):
         return 'failure'
 
 
+def db_update_diary_entry(user_id, diary_id, new_food_weight):
+    try:
+        with connection.cursor() as c:
+            c.execute(f'''
+                update diary
+                set food_weight='{new_food_weight}'
+                where id='{diary_id}' and users_id='{user_id}';''')
+            return 'success'
+    except Exception as exc:
+        print(exc)
+        return 'failure'
+
+
 def db_del_diary_entry(user_id, diary_id):
     try:
         with connection.cursor() as c:

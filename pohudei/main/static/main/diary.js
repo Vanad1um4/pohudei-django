@@ -19,8 +19,10 @@ const floatyInfoText = document.querySelector('#floaty-info-text')
 
 const floatyEditMainDiv = document.querySelector('#floaty-edit')
 const floatyEditFoodName = document.querySelector('#name-food')
-const floatyEditWeight1 = document.querySelector('#edit-weight-input-curr')
-const floatyEditupdateBtn = document.querySelector('#update-btn')
+const floatyEditWeightOrig = document.querySelector('#edit-weight-input-curr')
+const floatyEditWeightMinus = document.querySelector('#edit-weight-input-subtract')
+const floatyEditUpdateInfo = document.querySelector('#update-info')
+const floatyEditUpdateBtn = document.querySelector('#update-btn')
 const floatyEditdeleteBtn = document.querySelector('#delete-btn')
 const floatyEdityesDeleteBtn = document.querySelector('#yes-delete-btn')
 const floatyEditcancelBtn = document.querySelector('#edit-cancel-btn')
@@ -248,16 +250,60 @@ function clickedDiary(target) {
             diaryFoodWeight = data[0][i][2]
         }
     }
-    floatyEditWeight1.value = diaryFoodWeight
+    floatyEditWeightOrig.value = diaryFoodWeight
     floatyEditFoodName.textContent = diaryFoodName
 
-    floatyEditupdateBtn.addEventListener("click", (event) => { editDiaryUpdate(event.target) });
+    floatyEditUpdateBtn.addEventListener("click", () => { editDiaryUpdate(diaryId) });
     floatyEditdeleteBtn.addEventListener("click", () => { editDiaryDelete() });
     floatyEdityesDeleteBtn.addEventListener("click", () => { editDiaryYesDelete(diaryId) });
     floatyEditcancelBtn.addEventListener("click", () => { editDiaryCancel() });
 }
 
 function editDiaryUpdate(diaryId) {
+    const weightOrig = parseInt(floatyEditWeightOrig.value)
+    let weightMinus = parseInt(floatyEditWeightMinus.value)
+    if (!(isNumeric(weightMinus))){weightMinus = 0}
+    const resultWeight = weightOrig - weightMinus
+    // console.log(diaryId, weightOrig, weightMinus)
+    console.log(diaryId, resultWeight)
+    floatyEditUpdateInfo.style.display = 'none'
+    if (resultWeight == 0) {
+        floatyEditUpdateInfo.style.display = 'block'
+        floatyEditUpdateInfo.innerText = 'Ноль? Если Вы хотите удалить запись, то ниже есть кнопка "Удалить" :)'
+    } else if (resultWeight < 0) {
+        floatyEditUpdateInfo.style.display = 'block'
+        floatyEditUpdateInfo.innerText = 'Ожидается, что вес будет положительным значением :)'
+    } else if (!(isNumeric(resultWeight))) {
+        floatyEditUpdateInfo.style.display = 'block'
+        floatyEditUpdateInfo.innerText = 'Вводите только цифры :)'
+    } else {
+
+        fetch(`/update_diary_entry/`,
+        {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({'diary_id': diaryId, 'new_weight': resultWeight})
+        })
+            .then(response => response.json())
+            .then(result => {
+                console.log(result)
+                if (result['result'] == 'success') {
+                    // console.log('lol, pacan k uspehu prishel xD')
+                    floatyInfoText.innerText = 'Успешно'
+                    window.location.reload();
+                } else if (result['result'] == 'failure') {
+                    // console.log('lol, servak zafeililsya xD')
+                    floatyInfoText.innerText = 'Произошло что-то непонятное, походу все сломалось...'
+                    window.location.reload();
+                }
+            })
+
+    }
+
 }
 
 function editDiaryDelete() {
@@ -294,15 +340,6 @@ function editDiaryYesDelete(diaryId) {
             }
         })
 }
-
-
-
-
-
-
-
-
-
 
 
 

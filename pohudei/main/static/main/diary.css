@@ -174,10 +174,14 @@
     text-align: center;
 }
 #floaty-add-controls {
+    display: flex;
+    /* justify-content: center; */
+    justify-content: space-evenly;
 }
 #floaty-add-yes, #floaty-add-no {
-    display: inline;
+    /* display: inline; */
     font-size: 250%;
+    margin: 10px 0px;
 }
 
 
@@ -278,6 +282,13 @@
     margin-top: 5px;
 }
 
+#floaty-edit > #cont > #edit-weight-div > #update-info {
+    display: none;
+    font-size: 0.6em;
+    margin-top: 10px;
+    color: orange;
+    border: 3px solid orange;
+}
 #floaty-edit > #cont > #edit-weight-div > #update-btn {
     font-size: 1.1em;
     margin-top: 10px;

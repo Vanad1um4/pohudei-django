@@ -18,8 +18,8 @@ def weight(request):
         # print('user_id:', user_id)
         if user_id:
             results = db_get_last_weights(user_id)
-            for i in results:
-                print(i)
+            # for i in results:
+            #     print(i)
             return render(request, 'main/weight.html', {'data': results})
         return redirect('home')
     return redirect('login')
@@ -65,8 +65,8 @@ def diary(request):
             today_food = db_get_today_food_from_diary(user_id)
             all_foods = db_get_food_names()
             # print(all_foods)
-            for i in today_food:
-                print(i)
+            # for i in today_food:
+            #     print(i)
             return render(request, 'main/diary.html', {'data': [today_food, target_kcals, all_foods]})
         return redirect('home')
     return redirect('login')
@@ -86,8 +86,28 @@ def add_food_to_diary(request):
             # yesterday = datetime.today() - timedelta(days=1)  # TODO: make food addition for different dates
 
             result = db_add_new_diary_entry(user_id, today_str, data['food_id'], data['food_weight'])
-            # print(result)
-            # return redirect('diary')
+            if result == 'success':
+                return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
+                                    content_type='application/json; charset=utf-8')
+            else:
+                return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                                    content_type='application/json; charset=utf-8')
+        else:
+            return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                                content_type='application/json; charset=utf-8')
+    else:
+        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+
+
+def update_diary_entry(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user_id = request.user.profile.user_id
+        diary_id = data['diary_id']
+        new_food_weight = data['new_weight']
+        if user_id:
+            result = db_update_diary_entry(user_id, diary_id, new_food_weight)
             if result == 'success':
                 return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
                                     content_type='application/json; charset=utf-8')
@@ -107,15 +127,7 @@ def delete_diary_entry(request):
         data = json.loads(request.body)
         user_id = request.user.profile.user_id
         diary_id = data['diary_id']
-        # print('user_id:', user_id)
         if user_id:
-            # print('user_id:', user_id)
-            # print('diary_id:', diary_id)
-
-            # today = datetime.today()
-            # today_str = today.strftime("%Y-%m-%d")  # 07-07-2021
-            # yesterday = datetime.today() - timedelta(days=1)  # TODO: make food addition for different dates
-
             result = db_del_diary_entry(user_id, diary_id)
             if result == 'success':
                 return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
