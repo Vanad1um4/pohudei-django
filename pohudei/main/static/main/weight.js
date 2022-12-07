@@ -2,7 +2,7 @@ const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').va
 const divMainTable = document.querySelector('.main-table')
 const weightData = JSON.parse(document.getElementById('data').textContent)
 let selectedWeightId = 0
-const waitMs = 1500
+const waitMs = 1000
 
 onLoad()
 async function onLoad() {

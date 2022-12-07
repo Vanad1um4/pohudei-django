@@ -31,7 +31,7 @@ const todaysFood = data[0]
 const todaysNormKcals = data[1]
 let todaysEatenKcals = 0
 let foodDict = {}
-const waitMs = 1500
+const waitMs = 1000
 
 onLoad()
 
