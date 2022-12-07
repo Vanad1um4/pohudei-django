@@ -8,7 +8,7 @@ import json
 def home(request):
     if request.user.is_authenticated:
         # return render(request, 'main/index.html')
-        return redirect('diary')
+        return redirect('home')
     return redirect('login')
 
 

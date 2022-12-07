@@ -30,8 +30,8 @@ const data = JSON.parse(document.getElementById('data').textContent)
 const todaysFood = data[0]
 const todaysNormKcals = data[1]
 let todaysEatenKcals = 0
-// console.log(data)
 let foodDict = {}
+const waitMs = 1500
 
 onLoad()
 
@@ -46,12 +46,10 @@ function onLoad() {
     closeBtn.addEventListener("click", function clicked(event) { floatSearch.style.display = 'none' });
     inputSearchField.addEventListener("input", function clicked(event) { changeInput(event.target) });
     foodArrayConsrtuct(data[2])
-    // console.log(foodDict)
 }
 
 function foodArrayConsrtuct(rawFood) {
     for (let i = 0; i < rawFood.length; i++) {
-        // console.log(rawFood[i])
         foodDict[rawFood[i][0]] = rawFood[i][1]
     }
 }
@@ -59,8 +57,6 @@ function foodArrayConsrtuct(rawFood) {
 function changeInput(target) {
     // const queryArray = target.value.toLowerCase().split(' ').filter(val => val.length > 0)
     const queryArray = target.value.toLowerCase().split(' ').filter(val => val.length > 0)
-    // console.log(target.value)
-    // console.log(target.value.toLowerCase())
 
     let tempFoodDict = {}
     for (let i in foodDict) {
@@ -68,7 +64,6 @@ function changeInput(target) {
             tempFoodDict[i] = foodDict[i]
         }
     }
-    // console.log(tempFoodDict)
 
     resultsConstruct(resCont, tempFoodDict)
 
@@ -78,8 +73,6 @@ function changeInput(target) {
         }
 
         for (let i in tempFoodDict) {
-            // console.log(i)
-            // console.log(tempFoodDict[i])
             const resDiv = document.createElement('DIV')
             resDiv.classList.add('float-results-line')
             resDiv.setAttribute('id', 'food' + i)
@@ -92,7 +85,6 @@ function changeInput(target) {
 }
 
 function foodResultClicked(target, tempFoodDict) {
-    console.log(target.textContent)
     let foodId = parseInt(target.getAttribute('id').replace('food', ''))
     floatSearch.style.display = 'none'
 
@@ -116,28 +108,20 @@ function foodResultClicked(target, tempFoodDict) {
     floatyAddNew.style.display = 'block'
 
     floatyAddInput.focus()
-    // console.log(foodId)
-    console.log(data, foodId)
 }
 
 async function floatyAddYesPressed(foodId) {
     const newWeight = parseInt(floatyAddInput.value)
-    // console.log(/^\d+$/.test(newWeight))
-    // console.log(newWeight)
     if (newWeight === '') {
         floatyAddInfo.textContent = 'Вы не ввели вес!'
     } else if (!(/^\d+$/.test(newWeight))) {
         floatyAddInfo.textContent = 'Введите только цифры, граммы, целое цисло!'
     }
     else {
-        // console.log('lol, ok')
         floatyAddNew.style.display = 'none'
         floatyInfoDiv.style.display = 'block'
         floatyInfoText.textContent = 'Ждите...'
 
-        // await sleep(1000)
-        // floatyInfoDiv.style.display = 'none'
-        //////////////////////
         fetch(`/add_food_to_diary/`,
         {
             method: 'POST',
@@ -150,16 +134,15 @@ async function floatyAddYesPressed(foodId) {
         })
             .then(response => response.json())
             .then(result => {
-                console.log(result)
                 if (result['result'] == 'success') {
-                    // console.log('lol, pacan k uspehu prishel xD')
                     window.location.reload();
                 } else if (result['result'] == 'failure') {
-                    // console.log('lol, servak zafeililsya xD')
                     floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
                     window.location.reload();
                 }
             })
+            .then(await sleep(waitMs))
+            .then(() => { window.location.reload() })
     }
 }
 
@@ -236,15 +219,12 @@ function addRow(id, name, weight, kcals, todaysNormKcals) {
 }
 
 function clickedDiary(target) {
-    // console.log(target.textContent)
     let diaryId = parseInt(target.parentElement.getAttribute('id').replace('diary', ''))
     let diaryFoodName = ''
     let diaryFoodWeight = 0
-    // console.log(diaryId)
     floatyEditMainDiv.style.display = 'block'
     for (let i in data[0]) {
         if (data[0][i][0] === diaryId) {
-            // console.log(data[0][i])
             diaryFoodName = data[0][i][1]
             diaryFoodWeight = data[0][i][2]
         }
@@ -258,13 +238,11 @@ function clickedDiary(target) {
     floatyEditcancelBtn.addEventListener("click", () => { editDiaryCancel() });
 }
 
-function editDiaryUpdate(diaryId) {
+async function editDiaryUpdate(diaryId) {
     const weightOrig = parseInt(floatyEditWeightOrig.value)
     let weightMinus = parseInt(floatyEditWeightMinus.value)
     if (!(isNumeric(weightMinus))){weightMinus = 0}
     const resultWeight = weightOrig - weightMinus
-    // console.log(diaryId, weightOrig, weightMinus)
-    console.log(diaryId, resultWeight)
     floatyEditUpdateInfo.style.display = 'none'
     if (resultWeight == 0) {
         floatyEditUpdateInfo.style.display = 'block'
@@ -289,17 +267,16 @@ function editDiaryUpdate(diaryId) {
         })
             .then(response => response.json())
             .then(result => {
-                console.log(result)
                 if (result['result'] == 'success') {
-                    // console.log('lol, pacan k uspehu prishel xD')
                     floatyInfoText.textContent = 'Успешно'
                     window.location.reload();
                 } else if (result['result'] == 'failure') {
-                    // console.log('lol, servak zafeililsya xD')
                     floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
                     window.location.reload();
                 }
             })
+            .then(await sleep(waitMs))
+            .then(() => { window.location.reload() })
 
     }
 
@@ -309,7 +286,7 @@ function editDiaryDelete() {
     floatyEdityesDeleteBtn.style.display = 'block'
 }
 
-function editDiaryYesDelete(diaryId) {
+async function editDiaryYesDelete(diaryId) {
 
     floatyEditMainDiv.style.display = 'none'
     floatyInfoDiv.style.display = 'block'
@@ -327,17 +304,16 @@ function editDiaryYesDelete(diaryId) {
     })
         .then(response => response.json())
         .then(result => {
-            console.log(result)
             if (result['result'] == 'success') {
-                // console.log('lol, pacan k uspehu prishel xD')
                 floatyInfoText.textContent = 'Успешно'
                 window.location.reload();
             } else if (result['result'] == 'failure') {
-                // console.log('lol, servak zafeililsya xD')
                 floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
                 window.location.reload();
             }
         })
+        .then(await sleep(waitMs))
+        .then(() => { window.location.reload() })
 }
 
 

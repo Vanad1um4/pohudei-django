@@ -3,10 +3,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('home/', views.home, name='home'),
+    path('home/', views.diary, name='home'),
     path('weight/', views.weight, name='weight'),
     path('diary/', views.diary, name='diary'),
-    path('stats/', views.home, name='stats'),
+    path('stats/', views.diary, name='stats'),
 
     path('add_new_weight/', views.add_new_weight, name='add_new_weight'),
     path('update_weight/', views.update_weight, name='update_weight'),
@@ -17,5 +17,4 @@ urlpatterns = [
     path('delete_diary_entry/', views.delete_diary_entry, name='delete_diary_entry'),
 
     path('', RedirectView.as_view(url='home/')),
-    # path('test/', views.test_view, name='test'),
 ]

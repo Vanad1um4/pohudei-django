@@ -23,7 +23,7 @@
             {% if user.is_authenticated %}
                 <div class="menu-btn {% if "weight" in request.path %}active-btn{% else %}inactive-btn{% endif %}"> <a href="{% url 'weight' %}">Вес</a> </div>
                 <div class="menu-btn {% if "diary" in request.path %}active-btn{% else %}inactive-btn{% endif %}"> <a href="{% url 'diary' %}">Еда</a> </div>
-                <div class="menu-btn {% if "stats" in request.path %}active-btn{% else %}inactive-btn{% endif %}"> <a href="{% url 'stats' %}">Стат.</a> </div>
+                {# <div class="menu-btn {% if "stats" in request.path %}active-btn{% else %}inactive-btn{% endif %}"> <a href="{% url 'stats' %}">Стат.</a> </div> #}
             {% endif %}
             {# {% if user.is_authenticated %} <div class="menu-btn logout inactive-btn"><a class="a-btn" href="{% url 'logout' %}">Выйти</a></div> {% endif %} #}
             {% if not user.is_authenticated %}

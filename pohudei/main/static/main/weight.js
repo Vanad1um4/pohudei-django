@@ -2,11 +2,10 @@ const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').va
 const divMainTable = document.querySelector('.main-table')
 const weightData = JSON.parse(document.getElementById('data').textContent)
 let selectedWeightId = 0
-// console.log(weightData)
-// console.log(weightData.length)
+const waitMs = 1500
 
 onLoad()
-function onLoad() {
+async function onLoad() {
     initPrep(weightData)
 
     document.querySelector('.add-weight-btn').addEventListener("click", (event) => { clickedAddBtn(event) });
@@ -23,10 +22,8 @@ function onLoad() {
 function clickedWeight(target) {
     selectedWeightId = parseInt(target.parentElement.getAttribute('id').replace('weight', ''))
     document.querySelector('.floaty-edit').style.display = 'block'
-    // console.log(target.parentElement.childNodes)
     const dateStr = target.parentElement.childNodes[0].textContent
     const dateDate = new Date(dateStr)
-    // console.log(date.toLocaleString('ru', {month: 'long', day: 'numeric'}))
     const weight = target.parentElement.childNodes[1].textContent
     document.querySelector('.edit-header').textContent = `Редактируем вес от ${dateDate.toLocaleString('ru', {month: 'long', day: 'numeric'})}.`
     document.querySelector('.edit-input').value = weight
@@ -34,10 +31,9 @@ function clickedWeight(target) {
 }
 
 
-function clickedFloatyEditUpdateBtn() {
+async function clickedFloatyEditUpdateBtn() {
     const messageDiv = document.querySelector('.floaty-info-message')
     const weightValue = document.querySelector('.floaty-edit-input').value
-    // console.log(numTest(weightValue))
     if (!(numTest(weightValue))) {
         document.querySelector('.floaty-edit-warn').style.display = 'block'
     } else {
@@ -58,15 +54,14 @@ function clickedFloatyEditUpdateBtn() {
         })
             .then(response => response.json())
             .then(result => {
-                // console.log(result)
                 if (result['result'] === 'success') {
                     messageDiv.textContent = 'Успешно...'
-                    window.location.reload();
                 } else if (result['result'] === 'failure') {
                     messageDiv.textContent = 'Произошло что-то непонятное, походу все сломалось...'
-                    window.location.reload();
                 }
             })
+            .then(await sleep(waitMs))
+            .then(() => { window.location.reload() })
 
     }
 }
@@ -75,7 +70,7 @@ function clickedFloatyEditDeleteBtn() {
     document.querySelector('.floaty-edit-delete-yes').style.display = 'block'
 }
 
-function clickedFloatyEditDeleteYesBtn() {
+async function clickedFloatyEditDeleteYesBtn() {
     const messageDiv = document.querySelector('.floaty-info-message')
     document.querySelector('.floaty-edit-warn').style.display = 'none'
     document.querySelector('.floaty-edit').style.display = 'none'
@@ -94,31 +89,20 @@ function clickedFloatyEditDeleteYesBtn() {
     })
         .then(response => response.json())
         .then(result => {
-            // console.log(result)
             if (result['result'] === 'success') {
                 messageDiv.textContent = 'Успешно...'
-                window.location.reload();
             } else if (result['result'] === 'failure') {
                 messageDiv.textContent = 'Произошло что-то непонятное, походу все сломалось...'
-                window.location.reload();
             }
         })
+        .then(await sleep(waitMs))
+        .then(() => { window.location.reload() })
 }
-
 
 
 function clickedFloatyEditCancelBtn() {
     document.querySelector('.floaty-edit').style.display = 'none'
 }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -132,11 +116,10 @@ function clickedAddBtn(event) {
     document.querySelector('.floaty-add-input').focus()
 }
 
-function clickedFloatyAddSendBtn(event) {
+async function clickedFloatyAddSendBtn(event) {
     const messageDiv = document.querySelector('.floaty-info-message')
     const dateValue = document.querySelector('.input-date').value
     const weightValue = document.querySelector('.floaty-add-input').value
-    // console.log(numTest(weightValue))
     if (!(numTest(weightValue))) {
         document.querySelector('.div-weight-warn').style.display = 'block'
     } else {
@@ -157,18 +140,16 @@ function clickedFloatyAddSendBtn(event) {
         })
             .then(response => response.json())
             .then(result => {
-                // console.log(result)
                 if (result['result'] === 'success') {
                     messageDiv.textContent = 'Успешно...'
-                    window.location.reload();
                 } else if (result['result'] === 'duplication') {
                     messageDiv.textContent = 'Запись за этот день уже есть...'
-                    window.location.reload();
                 } else if (result['result'] === 'failure') {
                     messageDiv.textContent = 'Произошло что-то непонятное, походу все сломалось...'
-                    window.location.reload();
                 }
             })
+            .then(await sleep(waitMs))
+            .then(() => { window.location.reload() })
     }
 }
 
@@ -191,7 +172,6 @@ function initPrep(weightsData) {
 
     for (let i = 0; i < weightsData.length; i++) {
         addRow(weightsData[i][0], weightsData[i][1], weightsData[i][2])
-        // console.log(weightsData[i])
     }
 }
 function addRow(id, date, weight) {
@@ -216,4 +196,8 @@ function addRow(id, date, weight) {
 function numTest(num) {
     const regex = new RegExp(/\b[\d]{2}[.][\d]{1}\b/)
     return regex.test(num)
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
