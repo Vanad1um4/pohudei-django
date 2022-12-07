@@ -12,17 +12,83 @@ def home(request):
     return redirect('login')
 
 
+### WEIGHT FNs ################################################################
+
+
 def weight(request):
     if request.user.is_authenticated:
         user_id = request.user.profile.user_id
         # print('user_id:', user_id)
         if user_id:
             results = db_get_last_weights(user_id)
-            # for i in results:
+            # for i in results[1]:
             #     print(i)
-            return render(request, 'main/weight.html', {'data': results})
+            # if results[0] == 'success':
+            return render(request, 'main/weight.html', {'data': results[1]})
         return redirect('home')
     return redirect('login')
+
+
+def add_new_weight(request):
+    if request.user.is_authenticated:
+        user_id = request.user.profile.user_id
+        if user_id:
+            data = json.loads(request.body)
+            result = db_add_new_weight(user_id, data['date'], data['weight'])
+            # print(result)
+            if result[0] == 'success':
+                return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
+                                    content_type='application/json; charset=utf-8')
+            elif result[0] == 'duplication':
+                return HttpResponse(json.dumps({'result': 'duplication'}),  # pyright: ignore
+                                    content_type='application/json; charset=utf-8')
+        else:
+            return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                                content_type='application/json; charset=utf-8')
+    else:
+        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+
+
+def update_weight(request):
+    if request.user.is_authenticated:
+        user_id = request.user.profile.user_id
+        if user_id:
+            data = json.loads(request.body)
+            # print(data)
+            result = db_update_weight(user_id, data['weight_id'], data['weight'])
+            # print(result)
+            if result[0] == 'success':
+                return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
+                                    content_type='application/json; charset=utf-8')
+        else:
+            return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                                content_type='application/json; charset=utf-8')
+    else:
+        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+
+
+def delete_weight(request):
+    if request.user.is_authenticated:
+        user_id = request.user.profile.user_id
+        if user_id:
+            data = json.loads(request.body)
+            # print(data)
+            result = db_delete_weight(user_id, data['weight_id'])
+            # print(result)
+            if result[0] == 'success':
+                return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
+                                    content_type='application/json; charset=utf-8')
+        else:
+            return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                                content_type='application/json; charset=utf-8')
+    else:
+        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+
+
+### DIARY FNs #################################################################
 
 
 def diary(request):

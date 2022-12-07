@@ -16,6 +16,8 @@
         {#     <a class="a-btn" href="{% url 'home' %}">Home</a> #}
         {# </div> #}
 
+        {% block content %}{% endblock content %}
+
         <div class="menu">
             {# <div class="menu-btn"> <a href="{% url 'home' %}">Главная</a> </div> #}
             {% if user.is_authenticated %}
@@ -29,9 +31,6 @@
                 <div class="menu-btn register inactive-btn"><a class="a-btn" href="{% url 'register' %}">Рег</a></div>
             {% endif %}
         </div>
-
-
-        {% block content %}{% endblock content %}
 
         {% block js %}{% endblock js %}
 

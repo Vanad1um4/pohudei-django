@@ -4,7 +4,6 @@ const divMainTable = document.querySelector('#main-table')
 const currValKcalsDiv = document.querySelector('.curr-kcals')
 let currValKcals = 0
 const currValPercDiv = document.querySelector('.curr-perc')
-// let foodNum = 1
 
 const floatSearch = document.querySelector('#float-dimming-search')
 const addBtn = document.querySelector('#add-food')
@@ -31,7 +30,7 @@ const data = JSON.parse(document.getElementById('data').textContent)
 const todaysFood = data[0]
 const todaysNormKcals = data[1]
 let todaysEatenKcals = 0
-console.log(data)
+// console.log(data)
 let foodDict = {}
 
 onLoad()
@@ -93,7 +92,7 @@ function changeInput(target) {
 }
 
 function foodResultClicked(target, tempFoodDict) {
-    console.log(target.innerText)
+    console.log(target.textContent)
     let foodId = parseInt(target.getAttribute('id').replace('food', ''))
     floatSearch.style.display = 'none'
 
@@ -101,8 +100,8 @@ function foodResultClicked(target, tempFoodDict) {
     const floatyAddYes = document.querySelector('#floaty-add-yes')
     const floatyAddNo = document.querySelector('#floaty-add-no')
 
-    floatyAddName.innerText = target.innerText
-    floatyAddInfo.innerText = 'Введите вес блюда:'
+    floatyAddName.textContent = target.textContent
+    floatyAddInfo.textContent = 'Введите вес блюда:'
 
     floatyAddYes.addEventListener("click", function clicked() {
         floatyAddYesPressed(foodId)
@@ -126,15 +125,15 @@ async function floatyAddYesPressed(foodId) {
     // console.log(/^\d+$/.test(newWeight))
     // console.log(newWeight)
     if (newWeight === '') {
-        floatyAddInfo.innerText = 'Вы не ввели вес!'
+        floatyAddInfo.textContent = 'Вы не ввели вес!'
     } else if (!(/^\d+$/.test(newWeight))) {
-        floatyAddInfo.innerText = 'Введите только цифры, граммы, целое цисло!'
+        floatyAddInfo.textContent = 'Введите только цифры, граммы, целое цисло!'
     }
     else {
         // console.log('lol, ok')
         floatyAddNew.style.display = 'none'
         floatyInfoDiv.style.display = 'block'
-        floatyInfoText.innerText = 'Ждите...'
+        floatyInfoText.textContent = 'Ждите...'
 
         // await sleep(1000)
         // floatyInfoDiv.style.display = 'none'
@@ -157,7 +156,7 @@ async function floatyAddYesPressed(foodId) {
                     window.location.reload();
                 } else if (result['result'] == 'failure') {
                     // console.log('lol, servak zafeililsya xD')
-                    floatyInfoText.innerText = 'Произошло что-то непонятное, походу все сломалось...'
+                    floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
                     window.location.reload();
                 }
             })
@@ -237,7 +236,7 @@ function addRow(id, name, weight, kcals, todaysNormKcals) {
 }
 
 function clickedDiary(target) {
-    // console.log(target.innerText)
+    // console.log(target.textContent)
     let diaryId = parseInt(target.parentElement.getAttribute('id').replace('diary', ''))
     let diaryFoodName = ''
     let diaryFoodWeight = 0
@@ -269,13 +268,13 @@ function editDiaryUpdate(diaryId) {
     floatyEditUpdateInfo.style.display = 'none'
     if (resultWeight == 0) {
         floatyEditUpdateInfo.style.display = 'block'
-        floatyEditUpdateInfo.innerText = 'Ноль? Если Вы хотите удалить запись, то ниже есть кнопка "Удалить" :)'
+        floatyEditUpdateInfo.textContent = 'Ноль? Если Вы хотите удалить запись, то ниже есть кнопка "Удалить" :)'
     } else if (resultWeight < 0) {
         floatyEditUpdateInfo.style.display = 'block'
-        floatyEditUpdateInfo.innerText = 'Ожидается, что вес будет положительным значением :)'
+        floatyEditUpdateInfo.textContent = 'Ожидается, что вес будет положительным значением :)'
     } else if (!(isNumeric(resultWeight))) {
         floatyEditUpdateInfo.style.display = 'block'
-        floatyEditUpdateInfo.innerText = 'Вводите только цифры :)'
+        floatyEditUpdateInfo.textContent = 'Вводите только цифры :)'
     } else {
 
         fetch(`/update_diary_entry/`,
@@ -293,11 +292,11 @@ function editDiaryUpdate(diaryId) {
                 console.log(result)
                 if (result['result'] == 'success') {
                     // console.log('lol, pacan k uspehu prishel xD')
-                    floatyInfoText.innerText = 'Успешно'
+                    floatyInfoText.textContent = 'Успешно'
                     window.location.reload();
                 } else if (result['result'] == 'failure') {
                     // console.log('lol, servak zafeililsya xD')
-                    floatyInfoText.innerText = 'Произошло что-то непонятное, походу все сломалось...'
+                    floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
                     window.location.reload();
                 }
             })
@@ -314,7 +313,7 @@ function editDiaryYesDelete(diaryId) {
 
     floatyEditMainDiv.style.display = 'none'
     floatyInfoDiv.style.display = 'block'
-    floatyInfoText.innerText = 'Ждите...'
+    floatyInfoText.textContent = 'Ждите...'
 
     fetch(`/delete_diary_entry/`,
     {
@@ -331,11 +330,11 @@ function editDiaryYesDelete(diaryId) {
             console.log(result)
             if (result['result'] == 'success') {
                 // console.log('lol, pacan k uspehu prishel xD')
-                floatyInfoText.innerText = 'Успешно'
+                floatyInfoText.textContent = 'Успешно'
                 window.location.reload();
             } else if (result['result'] == 'failure') {
                 // console.log('lol, servak zafeililsya xD')
-                floatyInfoText.innerText = 'Произошло что-то непонятное, походу все сломалось...'
+                floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
                 window.location.reload();
             }
         })
