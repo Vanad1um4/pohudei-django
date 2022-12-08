@@ -43,7 +43,11 @@ function onLoad() {
         inputSearchField.focus()
     });
     // closeBtn.addEventListener("click", function clicked(event) { clickCloseBtn(event) });
-    closeBtn.addEventListener("click", function clicked(event) { floatSearch.style.display = 'none' });
+    closeBtn.addEventListener("click", function clicked(event) {
+        floatSearch.style.display = 'none'
+        inputSearchField.value = ''
+
+    });
     inputSearchField.addEventListener("input", function clicked(event) { changeInput(event.target) });
     foodArrayConsrtuct(data[2])
 }
