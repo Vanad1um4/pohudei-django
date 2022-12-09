@@ -10,6 +10,7 @@ const addBtn = document.querySelector('#add-food')
 const closeBtn = document.querySelector('#float-cancel')
 const inputSearchField = document.querySelector('#float-input')
 const resCont = document.querySelector('#float-results-cont')
+
 const floatyAddNew = document.querySelector('#floaty-add-new')
 const floatyAddInput = document.querySelector('#floaty-add-input')
 const floatyAddInfo = document.querySelector('#floaty-add-info')
@@ -36,30 +37,26 @@ const waitMs = 1000
 onLoad()
 
 function onLoad() {
-    initPrep(data)
-    // addBtn.addEventListener("click", function clicked(event) { clickAddBtn(event) });
+    mainTableOfDiaryEntriesConstruct(data)
     addBtn.addEventListener("click", function clicked(event) {
         floatSearch.style.display = 'block'
         inputSearchField.focus()
     });
-    // closeBtn.addEventListener("click", function clicked(event) { clickCloseBtn(event) });
     closeBtn.addEventListener("click", function clicked(event) {
         floatSearch.style.display = 'none'
         inputSearchField.value = ''
 
+        while (resCont.firstChild) {
+            resCont.firstChild.remove()
+        }
+
+
     });
-    inputSearchField.addEventListener("input", function clicked(event) { changeInput(event.target) });
-    foodArrayConsrtuct(data[2])
+    inputSearchField.addEventListener("input", function clicked(event) { foodSearchInputUpdate(event.target) });
+    foodDict = foodDictConsrtuct(data[2])
 }
 
-function foodArrayConsrtuct(rawFood) {
-    for (let i = 0; i < rawFood.length; i++) {
-        foodDict[rawFood[i][0]] = rawFood[i][1]
-    }
-}
-
-function changeInput(target) {
-    // const queryArray = target.value.toLowerCase().split(' ').filter(val => val.length > 0)
+function foodSearchInputUpdate(target) {
     const queryArray = target.value.toLowerCase().split(' ').filter(val => val.length > 0)
 
     let tempFoodDict = {}
@@ -69,22 +66,18 @@ function changeInput(target) {
         }
     }
 
-    resultsConstruct(resCont, tempFoodDict)
+    while (resCont.firstChild) {
+        resCont.firstChild.remove()
+    }
 
-    function resultsConstruct(container, selectedFood) {
-        while (container.firstChild) {
-            container.firstChild.remove()
-        }
+    for (let i in tempFoodDict) {
+        const resDiv = document.createElement('DIV')
+        resDiv.classList.add('float-results-line')
+        resDiv.setAttribute('id', 'food' + i)
+        resDiv.textContent = `${tempFoodDict[i]}`
+        resCont.appendChild(resDiv)
 
-        for (let i in tempFoodDict) {
-            const resDiv = document.createElement('DIV')
-            resDiv.classList.add('float-results-line')
-            resDiv.setAttribute('id', 'food' + i)
-            resDiv.textContent = `${tempFoodDict[i]}`
-            container.appendChild(resDiv)
-
-            resDiv.addEventListener("click", function clicked(event) { foodResultClicked(event.target, tempFoodDict) });
-        }
+        resDiv.addEventListener("click", function clicked(event) { foodResultClicked(event.target, tempFoodDict) });
     }
 }
 
@@ -139,10 +132,9 @@ async function floatyAddYesPressed(foodId) {
             .then(response => response.json())
             .then(result => {
                 if (result['result'] == 'success') {
-                    window.location.reload();
+                    floatyInfoText.textContent = 'Успешно'
                 } else if (result['result'] == 'failure') {
                     floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
-                    window.location.reload();
                 }
             })
             .then(await sleep(waitMs))
@@ -150,7 +142,11 @@ async function floatyAddYesPressed(foodId) {
     }
 }
 
-function initPrep() {
+
+///// MAIN TABLE FUNCTIONS ////////////////////////////////////////////////////
+
+
+function mainTableOfDiaryEntriesConstruct() {
     const normVal = document.querySelector('.norm-val')
     normVal.textContent = todaysNormKcals
 
@@ -188,7 +184,6 @@ function initPrep() {
 }
 
 
-// function addRow(i, name, weight, kcals, todaysNormKcals) {
 function addRow(id, name, weight, kcals, todaysNormKcals) {
     const divTableRow = document.createElement('DIV')
     // const divNum = document.createElement('DIV')
@@ -221,6 +216,10 @@ function addRow(id, name, weight, kcals, todaysNormKcals) {
     currValKcalsDiv.textContent = currValKcals
     currValPercDiv.textContent = Math.round(currValKcals / todaysNormKcals * 100)
 }
+
+
+///// CHANGE DIARY ENTRY FUNCTIONS ////////////////////////////////////////////
+
 
 function clickedDiary(target) {
     let diaryId = parseInt(target.parentElement.getAttribute('id').replace('diary', ''))
@@ -258,6 +257,9 @@ async function editDiaryUpdate(diaryId) {
         floatyEditUpdateInfo.style.display = 'block'
         floatyEditUpdateInfo.textContent = 'Вводите только цифры :)'
     } else {
+        floatyEditMainDiv.style.display = 'none'
+        floatyInfoDiv.style.display = 'block'
+        floatyInfoText.textContent = 'Ждите...'
 
         fetch(`/update_diary_entry/`,
         {
@@ -273,10 +275,8 @@ async function editDiaryUpdate(diaryId) {
             .then(result => {
                 if (result['result'] == 'success') {
                     floatyInfoText.textContent = 'Успешно'
-                    window.location.reload();
                 } else if (result['result'] == 'failure') {
                     floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
-                    window.location.reload();
                 }
             })
             .then(await sleep(waitMs))
@@ -310,10 +310,8 @@ async function editDiaryYesDelete(diaryId) {
         .then(result => {
             if (result['result'] == 'success') {
                 floatyInfoText.textContent = 'Успешно'
-                window.location.reload();
             } else if (result['result'] == 'failure') {
                 floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
-                window.location.reload();
             }
         })
         .then(await sleep(waitMs))
@@ -325,6 +323,18 @@ async function editDiaryYesDelete(diaryId) {
 function editDiaryCancel(target) {
     floatyEditMainDiv.style.display = 'none'
     floatyEdityesDeleteBtn.style.display = 'none'
+}
+
+
+///// OTHER FUNCTIONS /////////////////////////////////////////////////////////
+
+
+function foodDictConsrtuct(inputFoodDict) {
+    let resultDict = {}
+    for (let i = 0; i < inputFoodDict.length; i++) {
+        resultDict[inputFoodDict[i][0]] = inputFoodDict[i][1]
+    }
+    return resultDict
 }
 
 function sleep(ms) {
