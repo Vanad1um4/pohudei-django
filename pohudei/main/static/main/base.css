@@ -3,14 +3,26 @@ body {
     user-select: none;
 }
 
-.menu {
+#test-input {
+    font-size: 2em;
+}
+
+.main {
+    height: 99%;
+}
+.main-content {
+    height: calc(100vh - 21vw);
+    overflow: auto;
+}
+.main-menu {
     display: flex;
     align: center;
-    width: 100vw;
+    width: 99%;
+    height: 15vw;
     /* height: 55px; */
-    position: fixed;
-    bottom: 0;
-    right: 0;
+    /* position: fixed; */
+    /* bottom: 0; */
+    /* right: 0; */
     gap: 5px;
     background-color: white;
     /* justify-content: space-evenly; */
@@ -26,8 +38,8 @@ body {
     display: flex;
     text-decoration: none;
     font-weight: bold;
-    font-size: 175%;
-    padding: 10px 0px;
+    font-size: 1.75em;
+    /* padding: 10px 0px; */
     width: 100%;
     /* align: center; */
     /* align-items: center; */

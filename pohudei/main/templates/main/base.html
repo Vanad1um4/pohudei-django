@@ -12,27 +12,34 @@
     </head>
     <body>
 
-        {# <div class="home menu-button {% if "home" in request.path %}primary-url{% else %}secondary-url{% endif %}"> #}
-        {#     <a class="a-btn" href="{% url 'home' %}">Home</a> #}
-        {# </div> #}
+        <div class="main">
 
-        {% block content %}{% endblock content %}
+            <div class="main-content">
+                {% block content %}{% endblock content %}
+                <div class="main-test">
+                    <input id="test-input" type='date'/>
+                </div>
+            </div>
 
-        <div class="menu">
-            {# <div class="menu-btn"> <a href="{% url 'home' %}">Главная</a> </div> #}
-            {% if user.is_authenticated %}
-                <div class="menu-btn {% if "weight" in request.path %}active-btn{% else %}inactive-btn{% endif %}"> <a href="{% url 'weight' %}">Вес</a> </div>
-                <div class="menu-btn {% if "diary" in request.path %}active-btn{% else %}inactive-btn{% endif %}"> <a href="{% url 'diary' %}">Еда</a> </div>
-                {# <div class="menu-btn {% if "stats" in request.path %}active-btn{% else %}inactive-btn{% endif %}"> <a href="{% url 'stats' %}">Стат.</a> </div> #}
-            {% endif %}
-            {# {% if user.is_authenticated %} <div class="menu-btn logout inactive-btn"><a class="a-btn" href="{% url 'logout' %}">Выйти</a></div> {% endif %} #}
-            {% if not user.is_authenticated %}
-                <div class="menu-btn login inactive-btn"><a class="a-btn" href="{% url 'login' %}">Вход</a></div>
-                <div class="menu-btn register inactive-btn"><a class="a-btn" href="{% url 'register' %}">Рег</a></div>
-            {% endif %}
+            <div class="main-menu">
+                {# <div class="menu-btn"> <a href="{% url 'home' %}">Главная</a> </div> #}
+                {% if user.is_authenticated %}
+                    <div class="menu-btn {% if "weight" in request.path %}active-btn{% else %}inactive-btn{% endif %}"> <a href="{% url 'weight' %}">Вес</a> </div>
+                    <div class="menu-btn {% if "diary" in request.path %}active-btn{% else %}inactive-btn{% endif %}"> <a href="{% url 'diary' %}">Еда</a> </div>
+                    <div class="menu-btn {% if "stats" in request.path %}active-btn{% else %}inactive-btn{% endif %}"> <a href="{% url 'stats' %}">Стат.</a> </div>
+                {% endif %}
+                {# {% if user.is_authenticated %} <div class="menu-btn logout inactive-btn"><a class="a-btn" href="{% url 'logout' %}">Выйти</a></div> {% endif %} #}
+                {% if not user.is_authenticated %}
+                    <div class="menu-btn login inactive-btn"><a class="a-btn" href="{% url 'login' %}">Вход</a></div>
+                    <div class="menu-btn register inactive-btn"><a class="a-btn" href="{% url 'register' %}">Рег</a></div>
+                {% endif %}
+            </div>
+
         </div>
 
         {% block js %}{% endblock js %}
+
+        <script src="{% static 'main/base.js' %}" defer></script>
 
     </body>
 </html>

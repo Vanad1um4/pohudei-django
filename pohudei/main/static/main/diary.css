@@ -2,7 +2,7 @@
     display: table;
     border-collapse: collapse;
     /* font-size: 105%; */
-    width: 100%;
+    width: 99%;
 }
 #daily-norm, #daily-curr {
     font-size: 120%;
@@ -38,7 +38,7 @@
 
 
 #add-food {
-    margin-top: 8px;
+    margin: 8px 0px;
     padding: 12px 0px;
     text-align: center;
     font-weight: bold;
@@ -46,9 +46,9 @@
     background-color: green;
     color: white;
 }
-#slug {
-    height: 55px; /* Full height */
-}
+/* #slug { */
+/*     height: 55px; */
+/* } */
 
 
 #float-dimming-search {
