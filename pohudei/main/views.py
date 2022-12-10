@@ -232,7 +232,7 @@ def stats(request):
     weights = []
     sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)
     for row in sum_kcals_and_weight:
-        print(row)
+        # print(row)
         human_dates.append(row[0].strftime("%d %b"))
         eaten_tmp = int(row[1])
         eaten.append(eaten_tmp)
@@ -300,7 +300,7 @@ def options(request):
         return redirect('noprofile')
 
     results = db_get_options(user_id)
-    print(results)
+    # print(results)
     # print(results[1][0][0])
     # if results[0] == 'success':
     return render(request, 'main/options.html', {'data': results[1]})
