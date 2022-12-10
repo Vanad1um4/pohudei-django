@@ -2,16 +2,13 @@ body {
     margin: 0px 0px;
     padding: 5px 5px;
     font-family: Helvetica, sans-serif;
-    /* font-family: sans-serif; */
-    /* font-family: Helvetica; */
     user-select: none;
     display: flex;
     justify-content: center;
-    /* align-items: center; */
 }
 
 .main {
-    /* flex-grow: 1; */
+    flex-grow: 1;
     height: calc(100vh - 10px);
     max-width: 400px;
     grid-template-rows: auto min-content;
@@ -19,18 +16,16 @@ body {
 }
 
 .main-content {
-    grid-row: 1;
     /* width: calc(100vw - 10px); */
+    width: 100%;
     overflow: auto;
 }
 
 .main-menu {
-    grid-row: 2;
     display: flex;
-    align: center;
     /* width: calc(100vw - 10px); */
+    width: 100%;
     gap: 5px;
-    background-color: white;
     margin-top: 5px;
 }
 
