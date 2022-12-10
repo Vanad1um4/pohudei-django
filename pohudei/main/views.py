@@ -18,9 +18,10 @@ def home(request):
 def weight(request):
     if request.user.is_authenticated:
         user_id = request.user.profile.user_id
+        weights_to_pull = request.user.profile.weights_to_pull
         # print('user_id:', user_id)
         if user_id:
-            results = db_get_last_weights(user_id)
+            results = db_get_last_weights(user_id, weights_to_pull)
             # for i in results[1]:
             #     print(i)
             # if results[0] == 'success':
@@ -208,8 +209,51 @@ def delete_diary_entry(request):
         return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
                             content_type='application/json; charset=utf-8')
 
-# def test_view(request):
-#     results = test()
-#     for i in results:
-#         print(i)
-#     return render(request, 'main/test.html', {'form': results})
+
+### OPTIONS FNs ###############################################################
+
+def options(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    try:
+        user_id = request.user.profile.user_id
+    except:
+        return redirect('noprofile')
+
+    results = db_get_options(user_id)
+    print(results)
+    # print(results[1][0][0])
+    # if results[0] == 'success':
+    return render(request, 'main/options.html', {'data': results[1]})
+    # return render(request, 'main/options.html')
+
+
+def set_weights_to_pull(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    if request.method != 'POST':
+        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+    try:
+        user_id = request.user.profile.user_id
+    except:
+        return redirect('noprofile')
+
+    data = json.loads(request.body)
+    results = db_set_weights_to_pull(user_id, data['weights_to_pull'])
+    # print(results)
+    if results[0] == 'success':
+        return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+    else:
+        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+
+
+### NO PROFILE FNs ############################################################
+
+
+def noprofile(request):
+    return render(request, 'main/noprofile.html')

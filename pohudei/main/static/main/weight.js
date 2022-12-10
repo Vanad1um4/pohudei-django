@@ -1,12 +1,13 @@
 const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 const divMainTable = document.querySelector('.main-table')
 const weightData = JSON.parse(document.getElementById('data').textContent)
+console.log(weightData)
 let selectedWeightId = 0
 const waitMs = 1000
 
 onLoad()
 async function onLoad() {
-    initPrep(weightData)
+    initTableConstruct(weightData)
 
     document.querySelector('.add-weight-btn').addEventListener("click", (event) => { clickedAddBtn(event) });
 
@@ -112,6 +113,7 @@ function clickedFloatyEditCancelBtn() {
 function clickedAddBtn(event) {
     document.querySelector('.floaty-add').style.display = 'block'
     const todayStr = new Date(Date.now()).toISOString().split('T')[0]
+    // console.log(new Date(Date.now()).toISOString())
     document.querySelector('.input-date').value = todayStr
     document.querySelector('.floaty-add-input').focus()
 }
@@ -157,7 +159,7 @@ function clickedFloatyAddCancelBtn() {
     document.querySelector('.floaty-add').style.display = 'none'
 }
 
-function initPrep(weightsData) {
+function initTableConstruct(weightsData) {
     const divTableHead = document.createElement('DIV')
     const divDate = document.createElement('DIV')
     const divWeight = document.createElement('DIV')

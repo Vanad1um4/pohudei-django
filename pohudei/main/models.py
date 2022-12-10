@@ -9,13 +9,13 @@ def dictfetchall(cursor):
 
 ##### WEIGHT FUNCTIONS ########################################################
 
-def db_get_last_weights(user_id):
+def db_get_last_weights(user_id, weights_to_pull):
     try:
         with connection.cursor() as c:
             c.execute(f'''
                 select id, date, weight
                 from weights
-                where users_id={user_id} and date>=current_date-6 and date<=current_date
+                where users_id={user_id} and date>current_date-{weights_to_pull} and date<=current_date
                 order by date''')
             res = c.fetchall()
         return ('success', res)
@@ -145,9 +145,29 @@ def db_get_food_names():
     return res
 
 
-# def test():
-#     with connection.cursor() as c:
-#         c.execute('SELECT * FROM users;')
-#         res = dictfetchall(c)
-#         # res = c.fetchall()
-#     return res
+##### OPTIONS FUNCTIONS #######################################################
+
+
+def db_get_options(user_id):
+    try:
+        with connection.cursor() as c:
+            c.execute(f'''select weights_to_pull from profile_profile where user_id={user_id}''')
+            # res = c.fetchall()
+            res = dictfetchall(c)
+        return ('success', res[0])
+    except Exception as exc:
+        print(exc)
+        return ('failure', [])
+
+
+def db_set_weights_to_pull(user_id, weights_to_pull):
+    try:
+        with connection.cursor() as c:
+            c.execute(f'''
+                update profile_profile
+                set weights_to_pull='{weights_to_pull}'
+                where user_id='{user_id}';''')
+        return ('success', [])
+    except Exception as exc:
+        print(exc)
+        return ('failure', [])

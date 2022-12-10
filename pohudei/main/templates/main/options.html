@@ -1,0 +1,26 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/options.css' %}">
+{% endblock css %}
+
+{% block content %}
+
+    <div class="options-div">
+        <div class="weights-pull">
+            <div class="headline">Взвешиваний показывать:</div>
+            <input class="weights-pull-num" type='number'/>
+            {# <div class="status"></div> #}
+        </div>
+    </div>
+
+    {% csrf_token %}
+
+    {{ data|json_script:'data' }}
+
+{% endblock content %}
+
+{% block js %}
+    <script src="{% static 'main/options.js' %}" defer></script>
+{% endblock js %}

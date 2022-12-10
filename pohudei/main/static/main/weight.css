@@ -1,16 +1,13 @@
 .main-table {
     display: table;
     border-collapse: collapse;
-    /* font-size: 105%; */
-    width: 100%;
+    width: calc(100vw - 11px);
 }
 
 .row {
     display: table-row;
     height: 35px;
     font-size: 115%;
-    /* height: 70px; */
-    /* pointer-events: auto; */
 }
 
 .cell {
@@ -18,7 +15,6 @@
     padding: 1px 3px;
     vertical-align: middle;
     border: 1px solid gray;
-    /* pointer-events: none; */
 }
 
 .cell-head {
@@ -37,7 +33,7 @@
 
 
 .add-weight-btn {
-    margin-top: 8px;
+    margin-top: 5px;
     padding: 12px 0px;
     text-align: center;
     font-weight: bold;
@@ -45,10 +41,6 @@
     background-color: green;
     color: white;
 }
-/* .slug { */
-/*     height: 55px; */
-/* } */
-
 
 
 /***** INFO WINDOW ***********************************************************/
@@ -107,7 +99,6 @@
     justify-content: center;
 }
 .floaty-add > .cont > .sub-cont {
-    /* width: 100%; */
     width: calc(100% - 20px);
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
@@ -181,7 +172,6 @@
     justify-content: center;
 }
 .floaty-edit > .cont > .sub-cont {
-    /* width: 100%; */
     width: calc(100% - 20px);
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
