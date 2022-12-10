@@ -11,12 +11,13 @@
         <div class="weight-chart-container">
             <canvas id="weightChart"></canvas>
         </div>
+        <div class="kcals-chart-container">
+            <canvas id="kcalsChart"></canvas>
+        </div>
     </div>
 
     {# {% csrf_token %} #}
     {{ data|json_script:'data' }}
-    {{ dates|json_script:'dates' }}
-    {{ weights|json_script:'weights' }}
 
 {% endblock content %}
 
@@ -25,29 +26,7 @@
 
     <script>
         const data = JSON.parse(document.getElementById('data').textContent)
-        {# console.log(data) #}
-
-        let humanDates = []
-        for (let idate of data['dates']) {
-            const dateFromString = new Date(idate)
-            humanDates.push(dateFromString.toLocaleString('ru', {month: 'short', day: 'numeric'}))
-        }
-
-        let rawWeights = []
-        for (let i in data['weights']) {
-            rawWeights.push({'x': humanDates[i], 'y': parseFloat(data['weights'][i])})
-        }
-
-        let averageWeights = []
-        for (let i in data['weights']) {
-            let j = 0
-            if (i-6 <= 0) { j = 0 } else { j = i-6 }
-            const tmpAvrgArr = data['weights'].slice(j,parseInt(i)+1)
-            const sum = tmpAvrgArr.reduce( ( a, b ) => parseFloat(a) + parseFloat(b), 0 )
-            const avg = sum / tmpAvrgArr.length
-
-            averageWeights.push({'x': humanDates[i], 'y': avg})
-        }
+        console.log(data)
 
         const ctx = document.querySelector('#weightChart');
         new Chart(ctx, {
@@ -55,18 +34,20 @@
             data: {
                 datasets: [{
                     label: 'Килограммчики',
-                    data: rawWeights,
+                    data: data['weights_chart']['normal'],
                     borderWidth: 2,
                     pointRadius: 2,
                     tension: 0.3,
                     order: 2,
+                    borderColor: '#2352ff91',
                 },{
                     label: 'Средненькое',
-                    data: averageWeights,
+                    data: data['weights_chart']['average'],
                     borderWidth: 3,
                     pointRadius: 2,
                     tension: 0.3,
                     order: 1,
+                    borderColor: '#ff0000a8',
                 }]
             },
             options: {
@@ -80,7 +61,41 @@
             }
         });
 
+        const ctx2 = document.querySelector('#kcalsChart');
+        new Chart(ctx2, {
+            data: {
+                datasets: [{
+                    type: 'bar',
+                    label: 'Поедено',
+                    data: data['kcals_chart']['eaten'],
+                    borderWidth: 2,
+                    pointRadius: 2,
+                    tension: 0.3,
+                    order: 2,
+                    borderColor: '#2352ff91',
+                },{
+                    type: 'line',
+                    label: 'Нормочка',
+                    data: data['kcals_chart']['target'],
+                    borderWidth: 3,
+                    pointRadius: 2,
+                    tension: 0.3,
+                    order: 1,
+                    borderColor: '#ff0000a8',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        max: 3000
+                    }
+                }
+            }
+        });
+
     </script>
 
-    <script src="{% static 'main/stats.js' %}" defer></script>
+    {# <script src="{% static 'main/stats.js' %}" defer></script> #}
 {% endblock js %}

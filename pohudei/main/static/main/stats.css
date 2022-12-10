@@ -2,5 +2,9 @@
     width: 100%;
     height: 32vh;
 }
+.kcals-chart-container {
+    width: 100%;
+    height: 32vh;
+}
 #weightChart {
 }
