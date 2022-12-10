@@ -1,8 +1,8 @@
 from django.db import connection
 
 
-def dictfetchall(cursor):
-    """Return all rows from a cursor as a dict"""
+def dict_fetchall(cursor):
+    """Returns all rows from a cursor as a dict"""
     columns = [col[0] for col in cursor.description]
     return [dict(zip(columns, row)) for row in cursor.fetchall()]
 
@@ -82,7 +82,7 @@ def db_get_everyday_sum_kcals_from_diary(user_id):
             group by d.date, w.weight
             order by d.date;
         ''')
-        # res = dictfetchall(c)
+        # res = dict_fetchall(c)
         res = c.fetchall()
     return res
 
@@ -158,7 +158,7 @@ def db_get_basic_stats(user_id):
                 order by date''')
             res = c.fetchall()
             # res = c.fetchall()
-            # res = dictfetchall(c)
+            # res = dict_fetchall(c)
         return ('success', res)
     except Exception as exc:
         print(exc)
@@ -173,7 +173,7 @@ def db_get_options(user_id):
         with connection.cursor() as c:
             c.execute(f'''select weights_to_pull from profile_profile where user_id={user_id}''')
             # res = c.fetchall()
-            res = dictfetchall(c)
+            res = dict_fetchall(c)
         return ('success', res[0])
     except Exception as exc:
         print(exc)

@@ -31,7 +31,6 @@ body {
 
 .menu-btn {
     flex-grow: 1;
-    border: 1px solid grey;
 }
 
 .menu-btn > a {
@@ -39,12 +38,14 @@ body {
     text-decoration: none;
     font-weight: bold;
     font-size: 1.75em;
-    padding: 10px 0px;
+    padding: 4px 0px;
     justify-content: center;
 }
 
 .active-btn {
-    background-color: green;
+    /* background-color: green; */
+    background-color: white;
+    border: 5px solid green;
 }
 
 .active-btn > a {
@@ -53,6 +54,7 @@ body {
 
 .inactive-btn {
     background-color: white;
+    border: 5px solid lightgrey;
 }
 
 .inactive-btn > a {

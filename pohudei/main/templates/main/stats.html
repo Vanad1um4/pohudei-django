@@ -8,7 +8,9 @@
 {% block content %}
 
     <div class="main-div">
-        <canvas id="weightChart"></canvas>
+        <div class="weight-chart-container">
+            <canvas id="weightChart"></canvas>
+        </div>
     </div>
 
     {# {% csrf_token %} #}
@@ -23,28 +25,53 @@
 
     <script>
         const data = JSON.parse(document.getElementById('data').textContent)
-        console.log(data)
-        let humanDates = []
-        for (let i of data['dates']) {
-            {# console.log(i) #}
-            const dateFromString = new Date(i)
-            humanDates.push(dateFromString.toLocaleString('ru', {month: 'long', day: 'numeric'}))
-        }
-        const ctx = document.querySelector('#weightChart');
+        {# console.log(data) #}
 
+        let humanDates = []
+        for (let idate of data['dates']) {
+            const dateFromString = new Date(idate)
+            humanDates.push(dateFromString.toLocaleString('ru', {month: 'short', day: 'numeric'}))
+        }
+
+        let rawWeights = []
+        for (let i in data['weights']) {
+            rawWeights.push({'x': humanDates[i], 'y': parseFloat(data['weights'][i])})
+        }
+
+        let averageWeights = []
+        for (let i in data['weights']) {
+            let j = 0
+            if (i-6 <= 0) { j = 0 } else { j = i-6 }
+            const tmpAvrgArr = data['weights'].slice(j,parseInt(i)+1)
+            const sum = tmpAvrgArr.reduce( ( a, b ) => parseFloat(a) + parseFloat(b), 0 )
+            const avg = sum / tmpAvrgArr.length
+
+            averageWeights.push({'x': humanDates[i], 'y': avg})
+        }
+
+        const ctx = document.querySelector('#weightChart');
         new Chart(ctx, {
             type: 'line',
             data: {
-                {# labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'], #}
-                labels: humanDates,
                 datasets: [{
-                    label: 'килограммчики',
-                    {# data: [12, 19, 3, 5, 2, 3], #}
-                    data: data['weights'],
-                    borderWidth: 1
+                    label: 'Килограммчики',
+                    data: rawWeights,
+                    borderWidth: 2,
+                    pointRadius: 2,
+                    tension: 0.3,
+                    order: 2,
+                },{
+                    label: 'Средненькое',
+                    data: averageWeights,
+                    borderWidth: 3,
+                    pointRadius: 2,
+                    tension: 0.3,
+                    order: 1,
                 }]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         {# beginAtZero: true #}

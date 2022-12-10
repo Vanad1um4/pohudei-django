@@ -228,6 +228,11 @@ def stats(request):
         print(i)
         dates.append(i[0])
         weights.append(i[1])
+
+    sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)
+    for i in sum_kcals_and_weight:
+        print(i)
+
     # if results[0] == 'success':
     return render(request, 'main/stats.html', {'data': {'dates': dates, 'weights': weights}})
     # return render(request, 'main/options.html')
