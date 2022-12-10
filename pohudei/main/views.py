@@ -227,12 +227,19 @@ def stats(request):
 
     human_dates = []
     eaten = []
+    eaten_min = 99999
+    eaten_max = 0
     weights = []
     sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)
     for row in sum_kcals_and_weight:
         print(row)
         human_dates.append(row[0].strftime("%d %b"))
-        eaten.append(float(row[1]))
+        eaten_tmp = int(row[1])
+        eaten.append(eaten_tmp)
+        if eaten_tmp > eaten_max:
+            eaten_max = eaten_tmp
+        if eaten_tmp < eaten_min:
+            eaten_min = eaten_tmp
         weights.append(float(row[2]))
 
     avg_weights = []
@@ -276,7 +283,9 @@ def stats(request):
 
     return render(request, 'main/stats.html', {'data': {
         'weights_chart': {'normal': prepped_normal_weights, 'average': prepped_average_weights},
-        'kcals_chart': {'eaten': prepped_eaten_kcals, 'target': prepped_target_kcals}}})
+        'kcals_chart': {'eaten': prepped_eaten_kcals, 'target': prepped_target_kcals},
+        'options': {'eaten_min': eaten_min, 'eaten_max': eaten_max},
+    }})
 
 
 ### OPTIONS FNs ###############################################################
