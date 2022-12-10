@@ -27,8 +27,8 @@
     <script>
         const data = JSON.parse(document.getElementById('data').textContent)
         {# console.log(data) #}
-        const kcalsChartYIncr = 100
-        const eaten_min = data['options']['eaten_min'] - kcalsChartYIncr
+        const kcalsChartYIncr = 200
+        {# const eaten_min = data['options']['eaten_min'] - kcalsChartYIncr #}
         const eaten_max = data['options']['eaten_max'] + kcalsChartYIncr
 
         const ctx = document.querySelector('#weightChart');
@@ -92,7 +92,6 @@
                 maintainAspectRatio: false,
                 scales: {
                     y: {
-                        min: eaten_min,
                         max: eaten_max,
                     }
                 }
