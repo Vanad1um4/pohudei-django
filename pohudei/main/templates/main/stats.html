@@ -1,0 +1,59 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/stats.css' %}">
+{% endblock css %}
+
+{% block content %}
+
+    <div class="main-div">
+        <canvas id="weightChart"></canvas>
+    </div>
+
+    {# {% csrf_token %} #}
+    {{ data|json_script:'data' }}
+    {{ dates|json_script:'dates' }}
+    {{ weights|json_script:'weights' }}
+
+{% endblock content %}
+
+{% block js %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const data = JSON.parse(document.getElementById('data').textContent)
+        console.log(data)
+        let humanDates = []
+        for (let i of data['dates']) {
+            {# console.log(i) #}
+            const dateFromString = new Date(i)
+            humanDates.push(dateFromString.toLocaleString('ru', {month: 'long', day: 'numeric'}))
+        }
+        const ctx = document.querySelector('#weightChart');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                {# labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'], #}
+                labels: humanDates,
+                datasets: [{
+                    label: 'килограммчики',
+                    {# data: [12, 19, 3, 5, 2, 3], #}
+                    data: data['weights'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        {# beginAtZero: true #}
+                    }
+                }
+            }
+        });
+
+    </script>
+
+    <script src="{% static 'main/stats.js' %}" defer></script>
+{% endblock js %}

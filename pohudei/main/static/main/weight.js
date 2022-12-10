@@ -24,9 +24,10 @@ function clickedWeight(target) {
     selectedWeightId = parseInt(target.parentElement.getAttribute('id').replace('weight', ''))
     document.querySelector('.floaty-edit').style.display = 'block'
     const dateStr = target.parentElement.childNodes[0].textContent
-    const dateDate = new Date(dateStr)
+    // const dateDate = new Date(dateStr)
     const weight = target.parentElement.childNodes[1].textContent
-    document.querySelector('.edit-header').textContent = `Редактируем вес от ${dateDate.toLocaleString('ru', {month: 'long', day: 'numeric'})}.`
+    // document.querySelector('.edit-header').textContent = `Редактируем вес от ${dateDate.toLocaleString('ru', {month: 'long', day: 'numeric'})}.`
+    document.querySelector('.edit-header').textContent = `Редактируем вес от ${dateStr}.`
     document.querySelector('.edit-input').value = weight
     document.querySelector('.edit-input').focus()
 }
@@ -184,7 +185,9 @@ function addRow(id, date, weight) {
     divTableRow.classList.add('row')
     divDate.classList.add('cell', 'cell-date')
     divWeight.classList.add('cell', 'cell-weight')
-    divDate.textContent = `${date}`
+    const dateFromString = new Date(date)
+    const humanDateString = dateFromString.toLocaleString('ru', {month: 'long', day: 'numeric'})
+    divDate.textContent = `${humanDateString}`
     divWeight.textContent = `${weight}`
     divTableRow.appendChild(divDate)
     divTableRow.appendChild(divWeight)
@@ -196,7 +199,8 @@ function addRow(id, date, weight) {
 // const isNumeric = (num) => (typeof(num) === 'number' || typeof(num) === "string" && num.trim() !== '') && !isNaN(num);
 
 function numTest(num) {
-    const regex = new RegExp(/\b[\d]{2}[.][\d]{1}\b/)
+    // const regex = new RegExp(/\b[\d]{2}[.][\d]{1}\b/)
+    const regex = new RegExp(/^\b[\d]{2,3}[.][\d]{1}\b$|^\b[\d]{2,3}\b$/gm)
     return regex.test(num)
 }
 

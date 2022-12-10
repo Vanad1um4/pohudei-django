@@ -145,6 +145,26 @@ def db_get_food_names():
     return res
 
 
+##### STATS FUNCTIONS #########################################################
+
+
+def db_get_basic_stats(user_id):
+    try:
+        with connection.cursor() as c:
+            c.execute(f'''
+                select date, weight
+                from weights
+                where users_id={user_id}
+                order by date''')
+            res = c.fetchall()
+            # res = c.fetchall()
+            # res = dictfetchall(c)
+        return ('success', res)
+    except Exception as exc:
+        print(exc)
+        return ('failure', [])
+
+
 ##### OPTIONS FUNCTIONS #######################################################
 
 

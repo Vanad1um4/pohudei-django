@@ -210,6 +210,29 @@ def delete_diary_entry(request):
                             content_type='application/json; charset=utf-8')
 
 
+### STATS FNs #################################################################
+
+def stats(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    try:
+        user_id = request.user.profile.user_id
+    except:
+        return redirect('noprofile')
+
+    results = db_get_basic_stats(user_id)
+    dates = []
+    weights = []
+    for i in results[1]:
+        print(i)
+        dates.append(i[0])
+        weights.append(i[1])
+    # if results[0] == 'success':
+    return render(request, 'main/stats.html', {'data': {'dates': dates, 'weights': weights}})
+    # return render(request, 'main/options.html')
+
+
 ### OPTIONS FNs ###############################################################
 
 def options(request):
