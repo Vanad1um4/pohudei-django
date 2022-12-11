@@ -1,3 +1,5 @@
+// TODO: refactor the sh*t out of it
+
 const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 
 const divMainTable = document.querySelector('#main-table')

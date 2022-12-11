@@ -1,3 +1,5 @@
+// TODO: refactor this slightly maybe?
+
 const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 const divMainTable = document.querySelector('.main-table')
 const weightData = JSON.parse(document.getElementById('data').textContent)

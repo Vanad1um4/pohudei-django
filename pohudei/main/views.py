@@ -1,3 +1,5 @@
+# TODO: standartize time throughout app
+
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from datetime import datetime, timedelta
@@ -94,6 +96,7 @@ def delete_weight(request):
 ### DIARY FNs #################################################################
 
 
+# TODO: Optimise this sh*t
 def diary(request):
     if request.user.is_authenticated:
         user_id = request.user.profile.user_id
@@ -107,6 +110,7 @@ def diary(request):
 
             avg_weights = []
             target_kcals = []
+            target_kcals.append(None)
             for i, row in enumerate(sum_kcals_and_weight):
                 j = 0
                 if i - 6 > 0:
@@ -128,7 +132,7 @@ def diary(request):
                 tmp_target_kcals = round((tmp_eaten_sum - ((avg_weights[i] - avg_weights[k]) * 7700)) / num_of_days)
                 target_kcals.append(tmp_target_kcals)
 
-            todays_target_kcals = target_kcals[-1]
+            todays_target_kcals = target_kcals[-2]
             today_food = db_get_today_food_from_diary(user_id)
             all_foods = db_get_food_names()
             return render(request, 'main/diary.html', {'data': [today_food, todays_target_kcals, all_foods]})
@@ -244,6 +248,7 @@ def stats(request):
 
     avg_weights = []
     target_kcals = []
+    target_kcals.append(None)
     for i, row in enumerate(sum_kcals_and_weight):
         j = 0
         if i - 6 > 0:
@@ -262,8 +267,18 @@ def stats(request):
         num_of_days = i - k
         if num_of_days == 0:
             num_of_days = 1
-        tmp_target_kcals = round((tmp_eaten_sum - ((avg_weights[i] - avg_weights[k]) * 7700)) / num_of_days)
-        target_kcals.append(tmp_target_kcals)
+        # if i < len(sum_kcals_and_weight)-1:
+        if len(sum_kcals_and_weight) <= 40 and i > 10 or len(sum_kcals_and_weight) > 40 and i > 30:
+            tmp_target_kcals = round((tmp_eaten_sum - ((avg_weights[i] - avg_weights[k]) * 7700)) / num_of_days)
+            target_kcals.append(tmp_target_kcals)
+        else:
+            target_kcals.append(None)
+
+    print(len(human_dates))
+    print(len(weights))
+    print(len(avg_weights))
+    print(len(eaten))
+    print(len(target_kcals))
 
     prepped_normal_weights = []
     prepped_average_weights = []
