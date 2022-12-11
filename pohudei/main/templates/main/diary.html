@@ -22,7 +22,6 @@
 
     <div id="main-table"></div>
 
-    <div id="add-food">Добавить продукт...</div>
 
     {# <div id="slug"></div> #}
 
@@ -89,6 +88,10 @@
     {% csrf_token %}
     {{ data|json_script:'data' }}
 {% endblock content %}
+
+{% block useful-fn %}
+    <div id="add-food">Добавить продукт...</div>
+{% endblock useful-fn %}
 
 {% block js %}
     <script src="{% static 'main/diary.js' %}" defer></script>

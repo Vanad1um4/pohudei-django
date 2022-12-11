@@ -34,13 +34,17 @@
 
 
 .add-weight-btn {
-    margin-top: 5px;
-    padding: 12px 0px;
     text-align: center;
     font-weight: bold;
     font-size: 150%;
-    background-color: green;
-    color: white;
+    /* padding: 12px 0px; */
+    /* background-color: green; */
+    /* color: white; */
+
+    padding: 6px 0px;
+    background-color: white;
+    border: 5px solid green;
+    color: green;
 }
 
 

@@ -33,23 +33,21 @@
     font-size: 85%;
     width: 100%;
 }
-/* .cell-foot { */
-/*     font-weight: bold; */
-/* } */
-
 
 #add-food {
-    margin: 8px 0px;
-    padding: 12px 0px;
+    /* margin: 8px 0px; */
     text-align: center;
     font-weight: bold;
     font-size: 150%;
-    background-color: green;
-    color: white;
+    /* padding: 12px 0px; */
+    /* background-color: green; */
+    /* color: white; */
+
+    padding: 6px 0px;
+    background-color: white;
+    border: 5px solid green;
+    color: green;
 }
-/* #slug { */
-/*     height: 55px; */
-/* } */
 
 
 #float-dimming-search {

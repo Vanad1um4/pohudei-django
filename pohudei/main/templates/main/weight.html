@@ -9,8 +9,6 @@
 
     <div class="main-table"></div>
 
-    <div class="add-weight-btn">Добавить вес...</div>
-
     {# <div class="slug"></div> #}
 
     <div class="floaty-info">
@@ -64,9 +62,15 @@
         </div>
     </div>
 
+
+
     {% csrf_token %}
     {{ data|json_script:'data' }}
 {% endblock content %}
+
+{% block useful-fn %}
+    <div class="add-weight-btn">Добавить вес...</div>
+{% endblock useful-fn %}
 
 {% block js %}
     <script src="{% static 'main/weight.js' %}" defer></script>

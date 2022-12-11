@@ -21,7 +21,19 @@ body {
     overflow: auto;
 }
 
+.blank {
+    height: 106px;
+}
+
 .main-menu {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 100vw;
+    background-color: white;
+}
+
+.main-menu-container {
     display: flex;
     /* width: calc(100vw - 10px); */
     width: 100%;
