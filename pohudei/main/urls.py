@@ -20,5 +20,7 @@ urlpatterns = [
 
     path('set_weights_to_pull/', views.set_weights_to_pull),
 
+    # path('test/', views.test),
+
     path('', RedirectView.as_view(url='home/')),
 ]

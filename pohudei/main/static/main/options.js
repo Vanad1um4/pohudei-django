@@ -1,7 +1,7 @@
 const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 const optionsData = JSON.parse(document.getElementById('data').textContent)
 console.log(optionsData)
-const waitMs = 2000
+const waitMs = 1000
 
 onInit()
 
@@ -48,7 +48,41 @@ async function saveWeightsPullNum() {
 }
 
 
-
 async function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+// TEST
+
+// const textarea = document.querySelector('.textarea')
+// const button = document.querySelector('.button')
+// button.addEventListener('click', () => { sendText() });
+//
+// function sendText() {
+//     const text = textarea.value
+//     fetch(`/test/`,
+//     {
+//         method: 'POST',
+//         headers: {
+//             'X-CSRFToken': csrftoken,
+//             'Accept': 'application/json',
+//             'Content-Type': 'application/json'
+//         },
+//         // body: JSON.stringify({'text': text})
+//         body: JSON.stringify({'food': text})
+//     })
+//     .then(response => response.json())
+//     .then(result => {
+//         console.log(result)
+//     })
+// }
+
+
+
+
+
+
+
+
+
+

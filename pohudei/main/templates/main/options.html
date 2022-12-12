@@ -15,6 +15,9 @@
         </div>
     </div>
 
+    {# <textarea class="textarea"></textarea> #}
+    {# <button class="button">BUTTON</button> #}
+
     {% csrf_token %}
 
     {{ data|json_script:'data' }}

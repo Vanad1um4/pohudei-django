@@ -240,7 +240,7 @@ def stats(request):
     sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)
     for row in sum_kcals_and_weight:
         # print(row)
-        human_dates.append(row[0].strftime("%d %b"))
+        human_dates.append(row[0].strftime("%d %b %Y"))
         eaten_tmp = int(row[1])
         eaten.append(eaten_tmp)
         if eaten_tmp > eaten_max:
@@ -283,11 +283,11 @@ def stats(request):
     # print(len(eaten))
     # print(len(target_kcals))
 
-    print(human_dates)
-    print(weights)
-    print(avg_weights)
-    print(eaten)
-    print(target_kcals)
+    # print(human_dates)
+    # print(weights)
+    # print(avg_weights)
+    # print(eaten)
+    # print(target_kcals)
 
     prepped_normal_weights = []
     prepped_average_weights = []
@@ -359,3 +359,49 @@ def set_weights_to_pull(request):
 
 def noprofile(request):
     return render(request, 'main/noprofile.html')
+
+
+# def test(request):
+#     user_id = request.user.profile.user_id
+#     data = json.loads(request.body)
+#     # dataTmp = data['text'].strip().split('\n')
+#     dataTmp = data['food'].strip().split('\n')
+#     dataList = []
+
+    # print(dataTmp)
+    # print(dataList)
+
+    # for i in dataTmp:
+    #     date, weight = i.split('\t')
+    #     date = datetime.strptime(date, '%d.%m.%Y').date().strftime("%Y-%m-%d")
+    #     weight = weight.replace(',', '.')
+    #     weight = float(weight)
+    #     dataList.append([date, weight])
+
+    # for j in dataList:
+    #     result = db_add_new_weight(user_id, j[0], j[1])
+    #     print(result)
+
+    # for i in dataTmp:
+    #     date, kcals = i.split('\t')
+    #     date = datetime.strptime(date, '%d.%m.%Y').date().strftime("%Y-%m-%d")
+    #     kcals = float(kcals)
+    #     dataList.append([date, kcals])
+
+    # for j in dataList:
+    #     result = db_add_new_diary_entry(user_id, j[0], 188, j[1])
+    #     print(result)
+
+    # for k in dataTmp:
+    #     date, weight, id = k.split('\t')
+    #     date = datetime.strptime(date, '%d.%m.%Y').date().strftime("%Y-%m-%d")
+    #     id = int(id)
+    #     weight = int(weight)
+    #     dataList.append([date, id, weight])
+    #
+    # for k in dataList:
+    #     result = db_add_new_diary_entry(user_id, k[0], k[1], k[2])
+    #     print(result)
+    #
+    # return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
+    #                     content_type='application/json; charset=utf-8')

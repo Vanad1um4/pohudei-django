@@ -90,6 +90,7 @@ def db_get_everyday_sum_kcals_from_diary(user_id):
 def db_get_today_food_from_diary(user_id):
     with connection.cursor() as c:
         # select c.name, d.food_weight, c.kcals, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten
+        # where d.date='2022-12-06' and d.users_id={user_id}
         c.execute(f'''
             select d.id, c.name, d.food_weight, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten_kcals
             from diary d join catalogue c on d.catalogue_id=c.id
