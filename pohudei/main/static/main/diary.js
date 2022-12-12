@@ -11,13 +11,17 @@ const floatSearch = document.querySelector('#float-dimming-search')
 const addBtn = document.querySelector('#add-food')
 const closeBtn = document.querySelector('#float-cancel')
 const inputSearchField = document.querySelector('#float-input')
-const resCont = document.querySelector('#float-results-cont')
+const resCont = document.querySelector('#float-results-container')
 
 const floatyAddNew = document.querySelector('#floaty-add-new')
 const floatyAddInput = document.querySelector('#floaty-add-input')
 const floatyAddInfo = document.querySelector('#floaty-add-info')
 const floatyInfoDiv = document.querySelector('#floaty-info-div')
 const floatyInfoText = document.querySelector('#floaty-info-text')
+
+const floatyAddName = document.querySelector('#floaty-add-name')
+const floatyAddYes = document.querySelector('#floaty-add-yes')
+const floatyAddNo = document.querySelector('#floaty-add-no')
 
 const floatyEditMainDiv = document.querySelector('#floaty-edit')
 const floatyEditFoodName = document.querySelector('#name-food')
@@ -34,16 +38,19 @@ const todaysFood = data[0]
 const todaysNormKcals = data[1]
 let todaysEatenKcals = 0
 let foodDict = {}
-const waitMs = 1000
+// const waitMs = 1000
+const waitMs = 0
 
 onLoad()
 
 function onLoad() {
     mainTableOfDiaryEntriesConstruct(data)
+
     addBtn.addEventListener("click", function clicked(event) {
         floatSearch.style.display = 'block'
         inputSearchField.focus()
     });
+
     closeBtn.addEventListener("click", function clicked(event) {
         floatSearch.style.display = 'none'
         inputSearchField.value = ''
@@ -54,7 +61,28 @@ function onLoad() {
 
 
     });
+
+    floatyAddYes.addEventListener("click", function clicked(event) {
+        floatyAddYesPressed(event.target)
+    })
+
+    floatyAddNo.addEventListener("click", function clicked() {
+        floatyAddNew.style.display = 'none'
+        floatSearch.style.display = 'block'
+        inputSearchField.focus()
+    })
+
     inputSearchField.addEventListener("input", function clicked(event) { foodSearchInputUpdate(event.target) });
+
+
+    floatyEditUpdateBtn.addEventListener("click", (event) => { editDiaryUpdate(event.target) });
+
+    floatyEditdeleteBtn.addEventListener("click", () => { editDiaryDelete() });
+
+    floatyEdityesDeleteBtn.addEventListener("click", (event) => { editDiaryYesDelete(event.target) });
+
+    floatyEditcancelBtn.addEventListener("click", () => { editDiaryCancel() });
+
     foodDict = foodDictConsrtuct(data[2])
 }
 
@@ -79,29 +107,23 @@ function foodSearchInputUpdate(target) {
         resDiv.textContent = `${tempFoodDict[i]}`
         resCont.appendChild(resDiv)
 
-        resDiv.addEventListener("click", function clicked(event) { foodResultClicked(event.target, tempFoodDict) });
+        resDiv.addEventListener("click", function clicked(event) { foodResultClicked(event.target) });
     }
 }
 
-function foodResultClicked(target, tempFoodDict) {
+// let floatyAddName = document.querySelector('#floaty-add-name')
+// let floatyAddYes = document.querySelector('#floaty-add-yes')
+// let floatyAddNo = document.querySelector('#floaty-add-no')
+
+function foodResultClicked(target) {
     let foodId = parseInt(target.getAttribute('id').replace('food', ''))
     floatSearch.style.display = 'none'
 
-    const floatyAddName = document.querySelector('#floaty-add-name')
-    const floatyAddYes = document.querySelector('#floaty-add-yes')
-    const floatyAddNo = document.querySelector('#floaty-add-no')
+    floatyAddYes.setAttribute('name', 'food' + foodId)
 
     floatyAddName.textContent = target.textContent
     floatyAddInfo.textContent = 'Введите вес блюда:'
 
-    floatyAddYes.addEventListener("click", function clicked() {
-        floatyAddYesPressed(foodId)
-    })
-    floatyAddNo.addEventListener("click", function clicked() {
-        floatyAddNew.style.display = 'none'
-        floatSearch.style.display = 'block'
-        inputSearchField.focus()
-    })
     floatyAddInput.value = ''
 
     floatyAddNew.style.display = 'block'
@@ -109,7 +131,8 @@ function foodResultClicked(target, tempFoodDict) {
     floatyAddInput.focus()
 }
 
-async function floatyAddYesPressed(foodId) {
+async function floatyAddYesPressed(target) {
+    const foodId = parseInt(target.getAttribute('name').replace('food', ''))
     const newWeight = parseInt(floatyAddInput.value)
     if (newWeight === '') {
         floatyAddInfo.textContent = 'Вы не ввели вес!'
@@ -225,6 +248,8 @@ function addRow(id, name, weight, kcals, todaysNormKcals) {
 
 function clickedDiary(target) {
     let diaryId = parseInt(target.parentElement.getAttribute('id').replace('diary', ''))
+    floatyEditUpdateBtn.setAttribute('name', 'diary' + diaryId)
+    floatyEdityesDeleteBtn.setAttribute('name', 'diary' + diaryId)
     let diaryFoodName = ''
     let diaryFoodWeight = 0
     floatyEditMainDiv.style.display = 'block'
@@ -236,14 +261,10 @@ function clickedDiary(target) {
     }
     floatyEditWeightOrig.value = diaryFoodWeight
     floatyEditFoodName.textContent = diaryFoodName
-
-    floatyEditUpdateBtn.addEventListener("click", () => { editDiaryUpdate(diaryId) });
-    floatyEditdeleteBtn.addEventListener("click", () => { editDiaryDelete() });
-    floatyEdityesDeleteBtn.addEventListener("click", () => { editDiaryYesDelete(diaryId) });
-    floatyEditcancelBtn.addEventListener("click", () => { editDiaryCancel() });
 }
 
-async function editDiaryUpdate(diaryId) {
+async function editDiaryUpdate(target) {
+    let diaryId = parseInt(target.getAttribute('name').replace('diary', ''))
     const weightOrig = parseInt(floatyEditWeightOrig.value)
     let weightMinus = parseInt(floatyEditWeightMinus.value)
     if (!(isNumeric(weightMinus))){weightMinus = 0}
@@ -292,7 +313,8 @@ function editDiaryDelete() {
     floatyEdityesDeleteBtn.style.display = 'block'
 }
 
-async function editDiaryYesDelete(diaryId) {
+async function editDiaryYesDelete(target) {
+    let diaryId = parseInt(target.getAttribute('name').replace('diary', ''))
 
     floatyEditMainDiv.style.display = 'none'
     floatyInfoDiv.style.display = 'block'

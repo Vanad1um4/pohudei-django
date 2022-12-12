@@ -1,7 +1,6 @@
 .main-table {
     display: table;
     border-collapse: collapse;
-    /* width: calc(100vw - 11px); */
     width: 99%;
 }
 
@@ -31,16 +30,10 @@
     font-size: 85%;
 }
 
-
-
 .add-weight-btn {
     text-align: center;
     font-weight: bold;
     font-size: 150%;
-    /* padding: 12px 0px; */
-    /* background-color: green; */
-    /* color: white; */
-
     padding: 6px 0px;
     background-color: white;
     border: 5px solid green;
@@ -94,16 +87,20 @@
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.5);
 }
-
-.floaty-add > .cont {
-    width: calc(100% - 50px);
-    height: calc(100% - 50px);
-    margin: 25px 25px;
+.floaty-add > .wrap {
+    width: calc(100% - 10px);
+    height: 100%;
+    margin: 0px 5px;
+}
+.floaty-add > .wrap > .cont {
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
 }
-.floaty-add > .cont > .sub-cont {
+.floaty-add > .wrap > .cont > .sub-cont {
+    max-width: 380px;
     width: calc(100% - 20px);
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
@@ -113,43 +110,41 @@
     color: white;
     font-weight: 900;
 }
-.floaty-add > .cont > .sub-cont > .add-header {
+.floaty-add > .wrap > .cont > .sub-cont > .add-header {
     font-size: 1.5em;
 }
-.floaty-add > .cont > .sub-cont > .send-btn {
+.floaty-add > .wrap > .cont > .sub-cont > .send-btn {
     font-size: 1.5em;
     border: 3px solid green;
 }
-.floaty-add > .cont > .sub-cont > .cancel-btn {
+.floaty-add > .wrap > .cont > .sub-cont > .cancel-btn {
     font-size: 1.5em;
     border: 3px solid grey;
 }
-
-
-.floaty-add > .cont > .sub-cont-date, .sub-cont-weight {
+.floaty-add > .wrap > .cont > .sub-cont-date, .sub-cont-weight {
     display: grid;
     grid-template-columns: 30% 70%;
 }
-.floaty-add > .cont > .sub-cont > .div-date-warn, .div-weight-warn {
+.floaty-add > .wrap > .cont > .sub-cont > .div-date-warn, .div-weight-warn {
     display: none;
     grid-column: span 2;
     color: orange;
     border: 3px solid orange;
 }
-.floaty-add > .cont > .sub-cont > .div-date-name, .div-weight-name {
+.floaty-add > .wrap > .cont > .sub-cont > .div-date-name, .div-weight-name {
     font-size: 1.5em;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.floaty-add > .cont > .sub-cont > .input-date, .floaty-add-input {
+.floaty-add > .wrap > .cont > .sub-cont > .input-date, .floaty-add-input {
     font-size: 2em;
     background: transparent;
     color: white;
     font-weight: 900;
     text-align: center;
 }
-.floaty-add > .cont > .sub-cont > .input-date {
+.floaty-add > .wrap > .cont > .sub-cont > .input-date {
     font-size: 1.5em;
 }
 
@@ -167,16 +162,20 @@
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.5);
 }
-
-.floaty-edit > .cont {
-    width: calc(100% - 50px);
-    height: calc(100% - 50px);
-    margin: 25px 25px;
+.floaty-edit > .wrap {
+    width: calc(100% - 10px);
+    height: 100%;
+    margin: 0px 5px;
+}
+.floaty-edit > .wrap > .cont {
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
 }
-.floaty-edit > .cont > .sub-cont {
+.floaty-edit > .wrap > .cont > .sub-cont {
+    max-width: 380px;
     width: calc(100% - 20px);
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
@@ -186,53 +185,53 @@
     color: white;
     font-weight: 900;
 }
-.floaty-edit > .cont > .sub-cont > .edit-header {
+.floaty-edit > .wrap > .cont > .sub-cont > .edit-header {
     font-size: 1.5em;
 }
-.floaty-edit > .cont > .sub-cont > .edit-update {
+.floaty-edit > .wrap > .cont > .sub-cont > .edit-update {
     font-size: 1.5em;
     border: 3px solid green;
     margin-top: 10px;
 }
-.floaty-edit > .cont > .sub-cont > .edit-delete {
+.floaty-edit > .wrap > .cont > .sub-cont > .edit-delete {
     font-size: 1.5em;
     border: 3px solid red;
 }
-.floaty-edit > .cont > .sub-cont > .edit-delete-yes {
+.floaty-edit > .wrap > .cont > .sub-cont > .edit-delete-yes {
     display: none;
     font-size: 1.5em;
     background-color: red;
     margin-top: 10px;
 }
-.floaty-edit > .cont > .sub-cont > .edit-cancel {
+.floaty-edit > .wrap > .cont > .sub-cont > .edit-cancel {
     font-size: 1.5em;
     border: 3px solid grey;
 }
-.floaty-edit > .cont > .sub-cont-weight {
+.floaty-edit > .wrap > .cont > .sub-cont-weight {
     display: grid;
     grid-template-columns: 55% 45%;
 }
-.floaty-edit > .cont > .sub-cont > .edit-warn {
+.floaty-edit > .wrap > .cont > .sub-cont > .edit-warn {
     display: none;
     grid-column: span 2;
     color: orange;
     border: 3px solid orange;
     margin-bottom: 10px;
 }
-.floaty-edit > .cont > .sub-cont > .edit-name {
+.floaty-edit > .wrap > .cont > .sub-cont > .edit-name {
     font-size: 1.5em;
     line-height: 0.8;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.floaty-edit > .cont > .sub-cont > .edit-input {
+.floaty-edit > .wrap > .cont > .sub-cont > .edit-input {
     font-size: 2em;
     background: transparent;
     color: white;
     font-weight: 900;
     text-align: center;
 }
-.floaty-edit > .cont > .sub-cont > .edit-update {
+.floaty-edit > .wrap > .cont > .sub-cont > .edit-update {
     grid-column: span 2;
 }

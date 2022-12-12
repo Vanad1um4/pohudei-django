@@ -28,11 +28,16 @@ body {
 .main-menu {
     position: fixed;
     bottom: 0;
-    right: 0;
-    width: 100vw;
+    /* right: 0; */
+    max-width: 400px;
+    width: calc(100vw - 10px);
     background-color: white;
 }
 
+.main-menu > .useful-fn-container {
+    overflow: hidden;
+    white-space: nowrap;
+}
 .main-menu-container {
     display: flex;
     /* width: calc(100vw - 10px); */
@@ -43,6 +48,8 @@ body {
 
 .menu-btn {
     flex-grow: 1;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .menu-btn > a {

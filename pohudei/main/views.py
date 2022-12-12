@@ -132,7 +132,10 @@ def diary(request):
                 tmp_target_kcals = round((tmp_eaten_sum - ((avg_weights[i] - avg_weights[k]) * 7700)) / num_of_days)
                 target_kcals.append(tmp_target_kcals)
 
-            todays_target_kcals = target_kcals[-2]
+            try:
+                todays_target_kcals = target_kcals[-2]
+            except:
+                todays_target_kcals = 0
             today_food = db_get_today_food_from_diary(user_id)
             all_foods = db_get_food_names()
             return render(request, 'main/diary.html', {'data': [today_food, todays_target_kcals, all_foods]})
@@ -274,11 +277,17 @@ def stats(request):
         else:
             target_kcals.append(None)
 
-    print(len(human_dates))
-    print(len(weights))
-    print(len(avg_weights))
-    print(len(eaten))
-    print(len(target_kcals))
+    # print(len(human_dates))
+    # print(len(weights))
+    # print(len(avg_weights))
+    # print(len(eaten))
+    # print(len(target_kcals))
+
+    print(human_dates)
+    print(weights)
+    print(avg_weights)
+    print(eaten)
+    print(target_kcals)
 
     prepped_normal_weights = []
     prepped_average_weights = []
