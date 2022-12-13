@@ -8,11 +8,21 @@
 {% block content %}
 
     <div class="main-div">
-        <div class="weight-chart-container">
+        <div class="weight-chart-container chart-container">
+            <div class='headline'>График веса за всё время</div>
             <canvas id="weightChart"></canvas>
         </div>
-        <div class="kcals-chart-container">
+        <div class="weight-chart-container-90 chart-container">
+            <div class='headline'>График веса за последние 3 месяца</div>
+            <canvas id="weightChart90"></canvas>
+        </div>
+        <div class="kcals-chart-container chart-container">
+            <div class='headline'>График калорий за всё время</div>
             <canvas id="kcalsChart"></canvas>
+        </div>
+        <div class="kcals-chart-container-90 chart-container">
+            <div class='headline'>График калорий за последние 3 месяца</div>
+            <canvas id="kcalsChart90"></canvas>
         </div>
     </div>
 
@@ -31,8 +41,8 @@
         {# const eaten_min = data['options']['eaten_min'] - kcalsChartYIncr #}
         const eaten_max = data['options']['eaten_max'] + kcalsChartYIncr
 
-        const ctx = document.querySelector('#weightChart');
-        new Chart(ctx, {
+        const ctxWeight = document.querySelector('#weightChart');
+        new Chart(ctxWeight, {
             type: 'line',
             data: {
                 datasets: [{
@@ -64,8 +74,44 @@
             }
         });
 
-        const ctx2 = document.querySelector('#kcalsChart');
-        new Chart(ctx2, {
+        if (data['weights_chart']['normal'].length > 90) {
+            document.querySelector('.weight-chart-container-90').style.display = 'block'
+            const ctxWeight90 = document.querySelector('#weightChart90');
+            new Chart(ctxWeight90, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'Килограммчики',
+                        data: data['weights_chart']['normal'].slice(-90),
+                        borderWidth: 2,
+                        pointRadius: 2,
+                        tension: 0.3,
+                        order: 2,
+                        borderColor: '#2352ff91',
+                    },{
+                        label: 'Средненькое',
+                        data: data['weights_chart']['average'].slice(-90),
+                        borderWidth: 3,
+                        pointRadius: 2,
+                        tension: 0.3,
+                        order: 1,
+                        borderColor: '#ff0000a8',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            {# beginAtZero: true #}
+                        }
+                    }
+                }
+            });
+        }
+
+        const ctxKcals = document.querySelector('#kcalsChart');
+        new Chart(ctxKcals, {
             data: {
                 datasets: [{
                     type: 'bar',
@@ -92,11 +138,49 @@
                 maintainAspectRatio: false,
                 scales: {
                     y: {
-                        max: eaten_max,
+                        {# max: eaten_max, #}
+                        beginAtZero: true,
                     }
                 }
             }
         });
+
+        if (data['kcals_chart']['eaten'].length > 90) {
+            document.querySelector('.kcals-chart-container-90').style.display = 'block'
+            const ctxKcals90 = document.querySelector('#kcalsChart90');
+            new Chart(ctxKcals90, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'Покушано',
+                        data: data['kcals_chart']['eaten'].slice(-90),
+                        borderWidth: 2,
+                        pointRadius: 2,
+                        tension: 0.3,
+                        order: 2,
+                        borderColor: '#2352ff91',
+                    },{
+                        label: 'Нормочка',
+                        data: data['kcals_chart']['target'].slice(-90),
+                        borderWidth: 3,
+                        pointRadius: 2,
+                        tension: 0.3,
+                        order: 1,
+                        borderColor: '#ff0000a8',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            {# max: eaten_max, #}
+                            {# beginAtZero: true, #}
+                        }
+                    }
+                }
+            });
+        }
 
     </script>
 

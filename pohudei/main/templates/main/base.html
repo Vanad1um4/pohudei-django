@@ -26,7 +26,7 @@
                 <div class="main-menu-container">
                     {% if user.is_authenticated %}
                         <div class="menu-btn {% if "weight" in request.path %}active-btn{% else %}inactive-btn{% endif %}"> <a href="{% url 'weight' %}">⚖️</a> </div>
-                        <div class="menu-btn {% if "diary" in request.path %}active-btn{% else %}inactive-btn{% endif %}"> <a href="{% url 'diary' %}">🍏</a> </div>
+                        <div class="menu-btn {% if "diary" in request.path or "home" in request.path %}active-btn{% else %}inactive-btn{% endif %}"> <a href="{% url 'diary' %}">🍏</a> </div>
                         <div class="menu-btn {% if "stats" in request.path %}active-btn{% else %}inactive-btn{% endif %}"> <a href="{% url 'stats' %}">📊</a> </div>
                         <div class="menu-btn {% if "options" in request.path %}active-btn{% else %}inactive-btn{% endif %}"> <a href="{% url 'options' %}">⚙️</a> </div>
                     {% endif %}

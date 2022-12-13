@@ -110,7 +110,7 @@ def diary(request):
 
             avg_weights = []
             target_kcals = []
-            target_kcals.append(None)
+            target_kcals.append(0)
             for i, row in enumerate(sum_kcals_and_weight):
                 j = 0
                 if i - 6 > 0:
@@ -131,6 +131,12 @@ def diary(request):
                     num_of_days = 1
                 tmp_target_kcals = round((tmp_eaten_sum - ((avg_weights[i] - avg_weights[k]) * 7700)) / num_of_days)
                 target_kcals.append(tmp_target_kcals)
+
+            if len(target_kcals) <= 60:
+                target_kcals = list(list_averaged(target_kcals, 3, True, 0))
+
+            if len(target_kcals) > 60:
+                target_kcals = list(list_averaged(target_kcals, 14, True, 0))
 
             try:
                 todays_target_kcals = target_kcals[-2]
@@ -251,7 +257,7 @@ def stats(request):
 
     avg_weights = []
     target_kcals = []
-    target_kcals.append(None)
+    target_kcals.append(0)
     for i, row in enumerate(sum_kcals_and_weight):
         j = 0
         if i - 6 > 0:
@@ -271,11 +277,11 @@ def stats(request):
         if num_of_days == 0:
             num_of_days = 1
         # if i < len(sum_kcals_and_weight)-1:
-        if len(sum_kcals_and_weight) <= 40 and i > 10 or len(sum_kcals_and_weight) > 40 and i > 30:
-            tmp_target_kcals = round((tmp_eaten_sum - ((avg_weights[i] - avg_weights[k]) * 7700)) / num_of_days)
-            target_kcals.append(tmp_target_kcals)
-        else:
-            target_kcals.append(None)
+        # if len(sum_kcals_and_weight) <= 40 and i > 10 or len(sum_kcals_and_weight) > 40 and i > 30:
+        tmp_target_kcals = round((tmp_eaten_sum - ((avg_weights[i] - avg_weights[k]) * 7700)) / num_of_days)
+        target_kcals.append(tmp_target_kcals)
+        # else:
+        #     target_kcals.append(None)
 
     # print(len(human_dates))
     # print(len(weights))
@@ -287,6 +293,41 @@ def stats(request):
     # print(weights)
     # print(avg_weights)
     # print(eaten)
+    # print(target_kcals)
+
+    # print(list_averaged(target_kcals, 7, True, 2))
+
+    # print(len(target_kcals))
+    # print(len(list_averaged(target_kcals, 7, True, 0)))
+
+    # avg_target_kcals = list_averaged(target_kcals, 1, True, 0)
+    # print(avg_target_kcals)
+
+    # for i in target_kcals:
+    #     list_len = len(target_kcals)
+    #     if len(target_kcals) < 60:
+
+    # for j, _ in enumerate(target_kcals):
+    #     # print(j)
+    #     if len(target_kcals) < 60:
+    #         if j < len(target_kcals) / 2:
+    #             target_kcals[j] = None
+    #     else:
+    #         if j < 30:
+    #             target_kcals[j] = None
+
+    if len(target_kcals) <= 60:
+        target_kcals = list(list_averaged(target_kcals, 3, True, 0))
+        for i, _ in enumerate(target_kcals):
+            if i <= len(target_kcals) / 2:
+                target_kcals[i] = None
+
+    if len(target_kcals) > 60:
+        target_kcals = list(list_averaged(target_kcals, 14, True, 0))
+        for i, _ in enumerate(target_kcals):
+            if i <= 30:
+                target_kcals[i] = None
+
     # print(target_kcals)
 
     prepped_normal_weights = []
@@ -310,6 +351,25 @@ def stats(request):
         'kcals_chart': {'eaten': prepped_eaten_kcals, 'target': prepped_target_kcals},
         'options': {'eaten_min': eaten_min, 'eaten_max': eaten_max},
     }})
+
+
+def list_averaged(init_list, avg_range, round_bool, round_places=0):
+    result_list = []
+    for i, _ in enumerate(init_list):
+        j = 0
+        if i - avg_range+1 > 0:
+            j = i - avg_range+1
+        tmp_avg_list = init_list[j:i+1]
+        # print(tmp_avg_list)
+        tmp_avg_sum = sum(tmp_avg_list)
+        if round_bool == True:
+            tmp_result_value = round(tmp_avg_sum / len(tmp_avg_list), round_places)
+            if round_places == 0:
+                tmp_result_value = int(tmp_result_value)
+        else:
+            tmp_result_value = tmp_avg_sum / len(tmp_avg_list)
+        result_list.append(tmp_result_value)
+    return result_list
 
 
 ### OPTIONS FNs ###############################################################
