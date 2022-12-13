@@ -141,8 +141,8 @@
                     label: 'Покушано',
                     data: data['kcals_chart']['eaten'],
                     borderWidth: 2,
-                    pointRadius: 2,
-                    tension: 0.3,
+                    {# pointRadius: 2, #}
+                    {# tension: 0.3, #}
                     order: 2,
                     borderColor: '#2352ff91',
                 },{
@@ -150,7 +150,7 @@
                     label: 'Нормочка',
                     data: data['kcals_chart']['target'],
                     borderWidth: 3,
-                    pointRadius: 2,
+                    pointRadius: 0,
                     tension: 0.3,
                     order: 1,
                     borderColor: '#ff0000a8',
@@ -183,21 +183,23 @@
             document.querySelector('.kcals-chart-container-90').style.display = 'block'
             const ctxKcals90 = document.querySelector('#kcalsChart90');
             new Chart(ctxKcals90, {
-                type: 'line',
+                {# type: 'line', #}
                 data: {
                     datasets: [{
+                        type: 'bar',
                         label: 'Покушано',
                         data: data['kcals_chart']['eaten'].slice(-90),
                         borderWidth: 2,
-                        pointRadius: 2,
-                        tension: 0.3,
+                        {# pointRadius: 2, #}
+                        {# tension: 0.3, #}
                         order: 2,
                         borderColor: '#2352ff91',
                     },{
+                        type: 'line',
                         label: 'Нормочка',
                         data: data['kcals_chart']['target'].slice(-90),
                         borderWidth: 3,
-                        pointRadius: 2,
+                        pointRadius: 0,
                         tension: 0.3,
                         order: 1,
                         borderColor: '#ff0000a8',
@@ -209,7 +211,7 @@
                     scales: {
                         y: {
                             {# max: eaten_max, #}
-                            {# beginAtZero: true, #}
+                            beginAtZero: true,
                         }
                     },
                     plugins: {

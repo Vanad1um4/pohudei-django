@@ -36,6 +36,7 @@ const floatyEdityesDeleteBtn = document.querySelector('#yes-delete-btn')
 const floatyEditcancelBtn = document.querySelector('#edit-cancel-btn')
 
 const data = JSON.parse(document.getElementById('data').textContent)
+console.log(data)
 const todaysFood = data[0]
 const todaysNormKcals = data[1]
 let todaysEatenKcals = 0
@@ -206,6 +207,8 @@ function mainTableOfDiaryEntriesConstruct() {
     divTableHead.appendChild(divPerc)
     divMainTable.appendChild(divTableHead)
 
+    divTableHead.addEventListener("click", (event) => { copyTable() });
+
     currValKcalsDiv.textContent = 0
     currValPercDiv.textContent = 0
 
@@ -363,6 +366,31 @@ async function editDiaryYesDelete(target) {
 function editDiaryCancel(target) {
     floatyEditMainDiv.style.display = 'none'
     floatyEdityesDeleteBtn.style.display = 'none'
+}
+
+
+///// TABLE COPY FUNCTIONS ////////////////////////////////////////////////////
+
+
+function copyTable() {
+    const today = new Date(Date.now())
+    const humanToday = today.toLocaleDateString('ru')
+    let resultString = ''
+    for (let i in data[0]) {
+        resultString += humanToday
+        resultString += '\t'
+        resultString += data[0][i][1] + ' NEW'
+        resultString += '\t'
+        resultString += data[0][i][2]
+        resultString += '\n'
+    }
+    const input = document.createElement('textarea');
+    input.innerHTML = resultString;
+    document.body.appendChild(input);
+    input.select();
+    const result = document.execCommand('copy');
+    document.body.removeChild(input);
+    // console.log(result)
 }
 
 
