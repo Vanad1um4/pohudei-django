@@ -4,6 +4,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from datetime import datetime, timedelta
 from .models import *
+import os.path
 import json
 import locale
 locale.setlocale(locale.LC_ALL, "ru_RU.utf8")
@@ -20,6 +21,7 @@ def home(request):
 
 
 def weight(request):
+    backup()
     if request.user.is_authenticated:
         user_id = request.user.profile.user_id
         weights_to_pull = request.user.profile.weights_to_pull
@@ -240,19 +242,12 @@ def stats(request):
 
     human_dates = []
     eaten = []
-    eaten_min = 99999
-    eaten_max = 0
     weights = []
     sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)
     for row in sum_kcals_and_weight:
         # print(row)
         human_dates.append(row[0].strftime("%d %b %Y"))
-        eaten_tmp = int(row[1])
-        eaten.append(eaten_tmp)
-        if eaten_tmp > eaten_max:
-            eaten_max = eaten_tmp
-        if eaten_tmp < eaten_min:
-            eaten_min = eaten_tmp
+        eaten.append(int(row[1]))
         weights.append(float(row[2]))
 
     avg_weights = []
@@ -295,37 +290,16 @@ def stats(request):
     # print(eaten)
     # print(target_kcals)
 
-    # print(list_averaged(target_kcals, 7, True, 2))
-
-    # print(len(target_kcals))
-    # print(len(list_averaged(target_kcals, 7, True, 0)))
-
-    # avg_target_kcals = list_averaged(target_kcals, 1, True, 0)
-    # print(avg_target_kcals)
-
-    # for i in target_kcals:
-    #     list_len = len(target_kcals)
-    #     if len(target_kcals) < 60:
-
-    # for j, _ in enumerate(target_kcals):
-    #     # print(j)
-    #     if len(target_kcals) < 60:
-    #         if j < len(target_kcals) / 2:
-    #             target_kcals[j] = None
-    #     else:
-    #         if j < 30:
-    #             target_kcals[j] = None
-
     if len(target_kcals) <= 60:
         target_kcals = list(list_averaged(target_kcals, 3, True, 0))
         for i, _ in enumerate(target_kcals):
-            if i <= len(target_kcals) / 2:
+            if i < len(target_kcals) / 2:
                 target_kcals[i] = None
 
     if len(target_kcals) > 60:
         target_kcals = list(list_averaged(target_kcals, 14, True, 0))
         for i, _ in enumerate(target_kcals):
-            if i <= 30:
+            if i < 30:
                 target_kcals[i] = None
 
     # print(target_kcals)
@@ -341,15 +315,10 @@ def stats(request):
 
         prepped_eaten_kcals.append({'x': human_dates[i], 'y': eaten[i]})
         prepped_target_kcals.append({'x': human_dates[i], 'y': target_kcals[i]})
-        # target_kcals_tmp = target_kcals[i]
-        # if target_kcals_tmp > 3000:
-        #     target_kcals_tmp = None
-        # prepped_target_kcals.append({'x': human_dates[i], 'y': target_kcals_tmp})
 
     return render(request, 'main/stats.html', {'data': {
         'weights_chart': {'normal': prepped_normal_weights, 'average': prepped_average_weights},
         'kcals_chart': {'eaten': prepped_eaten_kcals, 'target': prepped_target_kcals},
-        'options': {'eaten_min': eaten_min, 'eaten_max': eaten_max},
     }})
 
 
@@ -414,11 +383,34 @@ def set_weights_to_pull(request):
                             content_type='application/json; charset=utf-8')
 
 
-### NO PROFILE FNs ############################################################
+##### NO PROFILE FNs ##########################################################
 
 
 def noprofile(request):
     return render(request, 'main/noprofile.html')
+
+
+##### BACKUP FUNCTIONS ########################################################
+
+def backup():
+    yesterday = datetime.today() - timedelta(days=1)
+    date_str = yesterday.strftime("%Y-%m-%d")
+    if not os.path.isfile(f'data_backup/{date_str}.txt'):
+        db = db_backup(date_str)[1]
+        result_list = []
+        for i in db:
+            row = {}
+            row['id'] = i['id']
+            row['users_id'] = i['users_id']
+            row['date'] = i['date'].strftime("%Y-%m-%d")
+            row['catalogue_id'] = i['catalogue_id']
+            row['food_weight'] = i['food_weight']
+            row['name'] = i['name']
+            row['kcals'] = i['kcals']
+            row['calc_kcals'] = int(i['calc_kcals'])
+            result_list.append(row)
+        with open(f'data_backup/{date_str}.txt', 'w', encoding='utf-8') as f:
+            json.dump(result_list, f, ensure_ascii=False, indent=4)
 
 
 # def test(request):

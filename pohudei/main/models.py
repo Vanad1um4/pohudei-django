@@ -192,3 +192,22 @@ def db_set_weights_to_pull(user_id, weights_to_pull):
     except Exception as exc:
         print(exc)
         return ('failure', [])
+
+
+##### BACKUP FUNCTIONS ########################################################
+
+
+def db_backup(date_str):
+    try:
+        with connection.cursor() as c:
+            c.execute(f'''
+                select *, round(d.food_weight / 100.0 * c.kcals) as calc_kcals
+                from diary d join catalogue c on d.catalogue_id=c.id
+                where d.date='{date_str}'
+                order by d.date asc, d.id asc;''')
+            # res = c.fetchall()
+            res = dict_fetchall(c)
+        return ('success', res)
+    except Exception as exc:
+        print(exc)
+        return ('failure', [])
