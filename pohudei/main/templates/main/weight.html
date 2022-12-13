@@ -66,8 +66,6 @@
         </div>
     </div>
 
-
-
     {% csrf_token %}
     {{ data|json_script:'data' }}
 {% endblock content %}

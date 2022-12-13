@@ -19,14 +19,16 @@ const floatyAddInfo = document.querySelector('#floaty-add-info')
 const floatyInfoDiv = document.querySelector('#floaty-info-div')
 const floatyInfoText = document.querySelector('#floaty-info-text')
 
+const floatyAddCont = document.querySelector('#floaty-add-cont')
 const floatyAddName = document.querySelector('#floaty-add-name')
 const floatyAddYes = document.querySelector('#floaty-add-yes')
 const floatyAddNo = document.querySelector('#floaty-add-no')
 
+const floatyEditCont = document.querySelector('.floaty-edit-cont')
 const floatyEditMainDiv = document.querySelector('#floaty-edit')
 const floatyEditFoodName = document.querySelector('#name-food')
 const floatyEditWeightOrig = document.querySelector('#edit-weight-input-curr')
-const floatyEditWeightMinus = document.querySelector('#edit-weight-input-subtract')
+const floatyEditWeightChange = document.querySelector('#edit-weight-input-change')
 const floatyEditUpdateInfo = document.querySelector('#update-info')
 const floatyEditUpdateBtn = document.querySelector('#update-btn')
 const floatyEditdeleteBtn = document.querySelector('#delete-btn')
@@ -62,9 +64,11 @@ function onLoad() {
 
     });
 
-    floatyAddYes.addEventListener("click", function clicked(event) {
-        floatyAddYesPressed(event.target)
+    floatyAddInput.addEventListener("keyup", function clicked(event) {
+        if (event.key === 'Enter') { floatyAddYesPressed(event.target) }
     })
+
+    floatyAddYes.addEventListener("click", function clicked(event) { floatyAddYesPressed(event.target) })
 
     floatyAddNo.addEventListener("click", function clicked() {
         floatyAddNew.style.display = 'none'
@@ -74,6 +78,10 @@ function onLoad() {
 
     inputSearchField.addEventListener("input", function clicked(event) { foodSearchInputUpdate(event.target) });
 
+
+
+    floatyEditWeightChange.addEventListener("keyup", function clicked(event) {
+        if (event.key === 'Enter') { editDiaryUpdate(event.target) } })
 
     floatyEditUpdateBtn.addEventListener("click", (event) => { editDiaryUpdate(event.target) });
 
@@ -111,15 +119,11 @@ function foodSearchInputUpdate(target) {
     }
 }
 
-// let floatyAddName = document.querySelector('#floaty-add-name')
-// let floatyAddYes = document.querySelector('#floaty-add-yes')
-// let floatyAddNo = document.querySelector('#floaty-add-no')
-
 function foodResultClicked(target) {
     let foodId = parseInt(target.getAttribute('id').replace('food', ''))
     floatSearch.style.display = 'none'
 
-    floatyAddYes.setAttribute('name', 'food' + foodId)
+    floatyAddCont.setAttribute('name', 'food' + foodId)
 
     floatyAddName.textContent = target.textContent
     floatyAddInfo.textContent = 'Введите вес блюда:'
@@ -132,7 +136,7 @@ function foodResultClicked(target) {
 }
 
 async function floatyAddYesPressed(target) {
-    const foodId = parseInt(target.getAttribute('name').replace('food', ''))
+    const foodId = parseInt(target.parentElement.parentElement.getAttribute('name').replace('food', ''))
     const newWeight = parseInt(floatyAddInput.value)
     if (newWeight === '') {
         floatyAddInfo.textContent = 'Вы не ввели вес!'
@@ -143,28 +147,31 @@ async function floatyAddYesPressed(target) {
         floatyAddNew.style.display = 'none'
         floatyInfoDiv.style.display = 'block'
         floatyInfoText.textContent = 'Ждите...'
-
-        fetch(`/add_food_to_diary/`,
-        {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrftoken,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({'food_id': foodId, 'food_weight': newWeight})
-        })
-            .then(response => response.json())
-            .then(result => {
-                if (result['result'] == 'success') {
-                    floatyInfoText.textContent = 'Успешно'
-                } else if (result['result'] == 'failure') {
-                    floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
-                }
-            })
-            .then(await sleep(waitMs))
-            .then(() => { window.location.reload() })
+        fetchAdd(foodId, newWeight)
     }
+}
+
+async function fetchAdd(foodId, newWeight) {
+    fetch(`/add_food_to_diary/`,
+    {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({'food_id': foodId, 'food_weight': newWeight})
+    })
+        .then(response => response.json())
+        .then(result => {
+            if (result['result'] == 'success') {
+                floatyInfoText.textContent = 'Успешно'
+            } else if (result['result'] == 'failure') {
+                floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
+            }
+        })
+        .then(await sleep(waitMs))
+        .then(() => { window.location.reload() })
 }
 
 
@@ -248,8 +255,9 @@ function addRow(id, name, weight, kcals, todaysNormKcals) {
 
 function clickedDiary(target) {
     let diaryId = parseInt(target.parentElement.getAttribute('id').replace('diary', ''))
-    floatyEditUpdateBtn.setAttribute('name', 'diary' + diaryId)
-    floatyEdityesDeleteBtn.setAttribute('name', 'diary' + diaryId)
+    floatyEditCont.setAttribute('name', 'diary' + diaryId)
+    // floatyEditUpdateBtn.setAttribute('name', 'diary' + diaryId)
+    // floatyEdityesDeleteBtn.setAttribute('name', 'diary' + diaryId)
     let diaryFoodName = ''
     let diaryFoodWeight = 0
     floatyEditMainDiv.style.display = 'block'
@@ -261,14 +269,18 @@ function clickedDiary(target) {
     }
     floatyEditWeightOrig.value = diaryFoodWeight
     floatyEditFoodName.textContent = diaryFoodName
+    floatyEditWeightChange.focus()
 }
 
 async function editDiaryUpdate(target) {
-    let diaryId = parseInt(target.getAttribute('name').replace('diary', ''))
+    // console.log(target.parentElement.parentElement.parentElement.parentElement)
+    let diaryId = parseInt(target.parentElement.parentElement.parentElement.parentElement.getAttribute('name').replace('diary', ''))
+    console.log(diaryId)
     const weightOrig = parseInt(floatyEditWeightOrig.value)
-    let weightMinus = parseInt(floatyEditWeightMinus.value)
-    if (!(isNumeric(weightMinus))){weightMinus = 0}
-    const resultWeight = weightOrig - weightMinus
+    let weightChange = parseInt(floatyEditWeightChange.value)
+    // console.log(weightChange)
+    if (!(isNumeric(weightChange))){weightChange = 0}
+    const resultWeight = weightOrig + weightChange
     floatyEditUpdateInfo.style.display = 'none'
     if (resultWeight == 0) {
         floatyEditUpdateInfo.style.display = 'block'
@@ -284,29 +296,31 @@ async function editDiaryUpdate(target) {
         floatyInfoDiv.style.display = 'block'
         floatyInfoText.textContent = 'Ждите...'
 
-        fetch(`/update_diary_entry/`,
-        {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrftoken,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({'diary_id': diaryId, 'new_weight': resultWeight})
-        })
-            .then(response => response.json())
-            .then(result => {
-                if (result['result'] == 'success') {
-                    floatyInfoText.textContent = 'Успешно'
-                } else if (result['result'] == 'failure') {
-                    floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
-                }
-            })
-            .then(await sleep(waitMs))
-            .then(() => { window.location.reload() })
-
+        fetchEdit(diaryId, resultWeight)
     }
+}
 
+async function fetchEdit(diaryId, resultWeight) {
+    fetch(`/update_diary_entry/`,
+    {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({'diary_id': diaryId, 'new_weight': resultWeight})
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result['result'] == 'success') {
+            floatyInfoText.textContent = 'Успешно'
+        } else if (result['result'] == 'failure') {
+            floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
+        }
+    })
+    .then(await sleep(waitMs))
+    .then(() => { window.location.reload() })
 }
 
 function editDiaryDelete() {
@@ -314,7 +328,9 @@ function editDiaryDelete() {
 }
 
 async function editDiaryYesDelete(target) {
-    let diaryId = parseInt(target.getAttribute('name').replace('diary', ''))
+    // console.log(target.parentElement.parentElement)
+    // let diaryId = parseInt(target.getAttribute('name').replace('diary', ''))
+    let diaryId = parseInt(target.parentElement.parentElement.getAttribute('name').replace('diary', ''))
 
     floatyEditMainDiv.style.display = 'none'
     floatyInfoDiv.style.display = 'block'

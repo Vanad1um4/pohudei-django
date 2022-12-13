@@ -13,13 +13,26 @@ async function onLoad() {
 
     document.querySelector('.add-weight-btn').addEventListener("click", (event) => { clickedAddBtn(event) });
 
-    document.querySelector('.floaty-add-send-btn').addEventListener("click", (event) => { clickedFloatyAddSendBtn(event) });
+    document.querySelector('.floaty-add-send-btn').addEventListener("click", () => { clickedFloatyAddSendBtn() });
+
+    document.querySelector('.floaty-add-input').addEventListener("keyup", () => {
+        if (event.key === 'Enter') { clickedFloatyAddSendBtn() }
+    })
+
     document.querySelector('.floaty-add-cancel-btn').addEventListener("click", () => { clickedFloatyAddCancelBtn() });
 
+
+
     document.querySelector('.floaty-edit-update').addEventListener("click", () => { clickedFloatyEditUpdateBtn() });
+
+    document.querySelector('.floaty-edit-input').addEventListener("keyup", () => {
+        if (event.key === 'Enter') { clickedFloatyEditUpdateBtn() }
+    })
+
     document.querySelector('.floaty-edit-delete').addEventListener("click", () => { clickedFloatyEditDeleteBtn() });
     document.querySelector('.floaty-edit-delete-yes').addEventListener("click", () => { clickedFloatyEditDeleteYesBtn() });
     document.querySelector('.floaty-edit-cancel').addEventListener("click", () => { clickedFloatyEditCancelBtn() });
+
 }
 
 function clickedWeight(target) {
@@ -121,7 +134,7 @@ function clickedAddBtn(event) {
     document.querySelector('.floaty-add-input').focus()
 }
 
-async function clickedFloatyAddSendBtn(event) {
+async function clickedFloatyAddSendBtn() {
     const messageDiv = document.querySelector('.floaty-info-message')
     const dateValue = document.querySelector('.input-date').value
     const weightValue = document.querySelector('.floaty-add-input').value
