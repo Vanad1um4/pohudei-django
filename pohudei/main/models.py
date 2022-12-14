@@ -1,4 +1,7 @@
 from django.db import connection
+from .log import *
+
+logger = get_logger()  # pyright: ignore
 
 
 def dict_fetchall(cursor):
@@ -20,7 +23,7 @@ def db_get_last_weights(user_id, weights_to_pull):
             res = c.fetchall()
         return ('success', res)
     except Exception as exc:
-        print(exc)
+        logger.exception(exc)
         return ('failure', [])
 
 
@@ -42,7 +45,7 @@ def db_add_new_weight(user_id, date, weight):
             else:
                 return ('duplication', [])
     except Exception as exc:
-        print(exc)
+        logger.exception(exc)
         return ('failure', [])
 
 
@@ -55,7 +58,7 @@ def db_update_weight(user_id, weight_id, weight):
                 where id={weight_id} and users_id={user_id}; ''')
             return ('success', [])
     except Exception as exc:
-        print(exc)
+        logger.exception(exc)
         return ('failure', [])
 
 
@@ -67,37 +70,45 @@ def db_delete_weight(user_id, weight_id):
                 where id={weight_id} and users_id={user_id}; ''')
             return ('success', [])
     except Exception as exc:
-        print(exc)
+        logger.exception(exc)
         return ('failure', [])
 
 
 ##### DIARY FUNCTIONS #########################################################
 
 def db_get_everyday_sum_kcals_from_diary(user_id):
-    with connection.cursor() as c:
-        c.execute(f'''
-            select d.date, sum(round(d.food_weight / 100.0 * c.kcals)) as eaten, w.weight
-            from diary d join catalogue c on d.catalogue_id=c.id join weights w on d.users_id=w.users_id
-            where d.users_id={user_id} and d.date=w.date
-            group by d.date, w.weight
-            order by d.date;
-        ''')
-        # res = dict_fetchall(c)
-        res = c.fetchall()
-    return res
+    try:
+        with connection.cursor() as c:
+            c.execute(f'''
+                select d.date, sum(round(d.food_weight / 100.0 * c.kcals)) as eaten, w.weight
+                from diary d join catalogue c on d.catalogue_id=c.id join weights w on d.users_id=w.users_id
+                where d.users_id={user_id} and d.date=w.date
+                group by d.date, w.weight
+                order by d.date;
+            ''')
+            # res = dict_fetchall(c)
+            res = c.fetchall()
+        return res
+    except Exception as exc:
+        logger.exception(exc)
+        return []
 
 
 def db_get_today_food_from_diary(user_id):
-    with connection.cursor() as c:
-        # select c.name, d.food_weight, c.kcals, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten
-        # where d.date='2022-12-06' and d.users_id={user_id}
-        c.execute(f'''
-            select d.id, c.name, d.food_weight, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten_kcals
-            from diary d join catalogue c on d.catalogue_id=c.id
-            where d.date=current_date and d.users_id={user_id}
-            order by d.id;''')
-        res = c.fetchall()
-    return res
+    try:
+        with connection.cursor() as c:
+            # select c.name, d.food_weight, c.kcals, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten
+            # where d.date='2022-12-06' and d.users_id={user_id}
+            c.execute(f'''
+                select d.id, c.name, d.food_weight, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten_kcals
+                from diary d join catalogue c on d.catalogue_id=c.id
+                where d.date=current_date and d.users_id={user_id}
+                order by d.id;''')
+            res = c.fetchall()
+        return res
+    except Exception as exc:
+        logger.exception(exc)
+        return []
 
 
 def db_add_new_diary_entry(user_id, date, food_id, weight):
@@ -108,7 +119,7 @@ def db_add_new_diary_entry(user_id, date, food_id, weight):
                 values ({user_id}, '{date}', {food_id}, {weight});''')
             return 'success'
     except Exception as exc:
-        print(exc)
+        logger.exception(exc)
         return 'failure'
 
 
@@ -121,7 +132,7 @@ def db_update_diary_entry(user_id, diary_id, new_food_weight):
                 where id='{diary_id}' and users_id='{user_id}';''')
             return 'success'
     except Exception as exc:
-        print(exc)
+        logger.exception(exc)
         return 'failure'
 
 
@@ -133,17 +144,21 @@ def db_del_diary_entry(user_id, diary_id):
                 where id='{diary_id}' and users_id={user_id};''')
             return 'success'
     except Exception as exc:
-        print(exc)
+        logger.exception(exc)
         return 'failure'
 
 
 ##### CATALOGUE FUNCTIONS #####################################################
 
 def db_get_food_names():
-    with connection.cursor() as c:
-        c.execute('select id, name from catalogue order by name')
-        res = c.fetchall()
-    return res
+    try:
+        with connection.cursor() as c:
+            c.execute('select id, name from catalogue order by name')
+            res = c.fetchall()
+        return res
+    except Exception as exc:
+        logger.exception(exc)
+        return []
 
 
 ##### STATS FUNCTIONS #########################################################
@@ -162,7 +177,7 @@ def db_get_basic_stats(user_id):
             # res = dict_fetchall(c)
         return ('success', res)
     except Exception as exc:
-        print(exc)
+        logger.exception(exc)
         return ('failure', [])
 
 
@@ -177,7 +192,7 @@ def db_get_options(user_id):
             res = dict_fetchall(c)
         return ('success', res[0])
     except Exception as exc:
-        print(exc)
+        logger.exception(exc)
         return ('failure', [])
 
 
@@ -190,7 +205,7 @@ def db_set_weights_to_pull(user_id, weights_to_pull):
                 where user_id='{user_id}';''')
         return ('success', [])
     except Exception as exc:
-        print(exc)
+        logger.exception(exc)
         return ('failure', [])
 
 
@@ -209,5 +224,5 @@ def db_backup(date_str):
             res = dict_fetchall(c)
         return ('success', res)
     except Exception as exc:
-        print(exc)
+        logger.exception(exc)
         return ('failure', [])

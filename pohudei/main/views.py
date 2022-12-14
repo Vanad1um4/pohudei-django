@@ -1,15 +1,16 @@
 # TODO: standartize time throughout app
-# TODO: LOGGING!
-
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from datetime import datetime, timedelta
 from .models import *
+from .log import *
 import os.path
-import json
 import locale
+import json
 
 locale.setlocale(locale.LC_ALL, "ru_RU.utf8")
+
+logger = get_logger()  # pyright: ignore
 
 
 def home(request):
@@ -27,12 +28,9 @@ def weight(request):
     if request.user.is_authenticated:
         user_id = request.user.profile.user_id
         weights_to_pull = request.user.profile.weights_to_pull
-        # print('user_id:', user_id)
         if user_id:
             results = db_get_last_weights(user_id, weights_to_pull)
-            # for i in results[1]:
-            #     print(i)
-            # if results[0] == 'success':
+            logger.debug(f'{user_id = }, {weights_to_pull = }, {results = }')
             return render(request, 'main/weight.html', {'data': results[1]})
         return redirect('home')
     return redirect('login')
@@ -44,7 +42,7 @@ def add_new_weight(request):
         if user_id:
             data = json.loads(request.body)
             result = db_add_new_weight(user_id, data['date'], data['weight'])
-            # print(result)
+            logger.debug(f'{user_id = }, {data = }, {result = }')
             if result[0] == 'success':
                 return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
                                     content_type='application/json; charset=utf-8')
@@ -64,9 +62,8 @@ def update_weight(request):
         user_id = request.user.profile.user_id
         if user_id:
             data = json.loads(request.body)
-            # print(data)
             result = db_update_weight(user_id, data['weight_id'], data['weight'])
-            # print(result)
+            logger.debug(f'{user_id = }, {data = }, {result = }')
             if result[0] == 'success':
                 return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
                                     content_type='application/json; charset=utf-8')
@@ -83,9 +80,8 @@ def delete_weight(request):
         user_id = request.user.profile.user_id
         if user_id:
             data = json.loads(request.body)
-            # print(data)
             result = db_delete_weight(user_id, data['weight_id'])
-            # print(result)
+            logger.debug(f'{user_id = }, {data = }, {result = }')
             if result[0] == 'success':
                 return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
                                     content_type='application/json; charset=utf-8')
@@ -150,6 +146,7 @@ def diary(request):
             today_food = db_get_today_food_from_diary(user_id)
             all_foods = db_get_food_names()
 
+            logger.debug(f'{user_id = }, {today_food = }, {todays_target_kcals = }')
             return render(request, 'main/diary.html', {'data': [today_food, todays_target_kcals, all_foods]})
         return redirect('home')
     return redirect('login')
@@ -157,18 +154,15 @@ def diary(request):
 
 def add_food_to_diary(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
         user_id = request.user.profile.user_id
-        # print('user_id:', user_id)
+        data = json.loads(request.body)
         if user_id:
-            # print('user_id:', user_id)
-            # print('data:', data)
-
             today = datetime.today()
             today_str = today.strftime("%Y-%m-%d")
             # yesterday = datetime.today() - timedelta(days=1)  # TODO: make food addition for different dates
 
             result = db_add_new_diary_entry(user_id, today_str, data['food_id'], data['food_weight'])
+            logger.debug(f'{user_id = }, {data = }, {result = }')
             if result == 'success':
                 return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
                                     content_type='application/json; charset=utf-8')
@@ -185,12 +179,13 @@ def add_food_to_diary(request):
 
 def update_diary_entry(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
         user_id = request.user.profile.user_id
+        data = json.loads(request.body)
         diary_id = data['diary_id']
         new_food_weight = data['new_weight']
         if user_id:
             result = db_update_diary_entry(user_id, diary_id, new_food_weight)
+            logger.debug(f'{user_id = }, {data = }, {result = }')
             if result == 'success':
                 return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
                                     content_type='application/json; charset=utf-8')
@@ -212,6 +207,7 @@ def delete_diary_entry(request):
         diary_id = data['diary_id']
         if user_id:
             result = db_del_diary_entry(user_id, diary_id)
+            logger.debug(f'{user_id = }, {data = }, {result = }')
             if result == 'success':
                 return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
                                     content_type='application/json; charset=utf-8')
@@ -249,7 +245,6 @@ def stats(request):
     weights = []
     sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)
     for row in sum_kcals_and_weight:
-        # print(row)
         human_dates.append(row[0].strftime("%d %b %Y"))
         eaten.append(int(row[1]))
         weights.append(float(row[2]))
@@ -320,6 +315,7 @@ def stats(request):
         prepped_eaten_kcals.append({'x': human_dates[i], 'y': eaten[i]})
         prepped_target_kcals.append({'x': human_dates[i], 'y': target_kcals[i]})
 
+    logger.debug(f'{user_id = }')
     return render(request, 'main/stats.html', {'data': {
         'weights_chart': {'normal': prepped_normal_weights, 'average': prepped_average_weights},
         'kcals_chart': {'eaten': prepped_eaten_kcals, 'target': prepped_target_kcals},
@@ -357,11 +353,8 @@ def options(request):
         return redirect('noprofile')
 
     results = db_get_options(user_id)
-    # print(results)
-    # print(results[1][0][0])
-    # if results[0] == 'success':
+    logger.debug(f'{user_id = }, {results = }')
     return render(request, 'main/options.html', {'data': results[1]})
-    # return render(request, 'main/options.html')
 
 
 def set_weights_to_pull(request):
@@ -379,6 +372,7 @@ def set_weights_to_pull(request):
     data = json.loads(request.body)
     results = db_set_weights_to_pull(user_id, data['weights_to_pull'])
     # print(results)
+    logger.debug(f'{user_id = }, {data = }, {results = }')
     if results[0] == 'success':
         return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
                             content_type='application/json; charset=utf-8')
@@ -391,6 +385,7 @@ def set_weights_to_pull(request):
 
 
 def noprofile(request):
+    logger.debug(f'')
     return render(request, 'main/noprofile.html')
 
 
@@ -400,6 +395,7 @@ def noprofile(request):
 def backup():
     yesterday = datetime.today() - timedelta(days=1)
     date_str = yesterday.strftime("%Y-%m-%d")
+    logger.debug(f'executed')
     if not os.path.isfile(f'data_backup/{date_str}.txt'):
         db_result = db_backup(date_str)[1]
         result_list = []
@@ -416,11 +412,7 @@ def backup():
             result_list.append(row)
         with open(f'data_backup/{date_str}.txt', 'w', encoding='utf-8') as f:
             json.dump(result_list, f, ensure_ascii=False, indent=4)
-        # print(result_list)
-        # for i in result_list:
-        #     print(i)
-        # for i in db_result:
-        #     print(i)
+        logger.debug(f'created')
 
 
 # def test(request):
