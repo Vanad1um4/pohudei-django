@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 pohudei/pohudei-project/settings.py
 env
-logs
+logs/debug.log
+logs/exceptions.log
 data_backup
 nohup.out
