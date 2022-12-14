@@ -1,4 +1,5 @@
 # TODO: standartize time throughout app
+# TODO: LOGGING!
 
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
@@ -7,6 +8,7 @@ from .models import *
 import os.path
 import json
 import locale
+
 locale.setlocale(locale.LC_ALL, "ru_RU.utf8")
 
 
@@ -113,7 +115,7 @@ def diary(request):
             avg_weights = []
             target_kcals = []
             target_kcals.append(0)
-            for i, row in enumerate(sum_kcals_and_weight):
+            for i, _ in enumerate(sum_kcals_and_weight):
                 j = 0
                 if i - 6 > 0:
                     j = i - 6
@@ -144,8 +146,10 @@ def diary(request):
                 todays_target_kcals = target_kcals[-2]
             except:
                 todays_target_kcals = 0
+
             today_food = db_get_today_food_from_diary(user_id)
             all_foods = db_get_food_names()
+
             return render(request, 'main/diary.html', {'data': [today_food, todays_target_kcals, all_foods]})
         return redirect('home')
     return redirect('login')
@@ -392,15 +396,16 @@ def noprofile(request):
 
 ##### BACKUP FUNCTIONS ########################################################
 
+
 def backup():
     yesterday = datetime.today() - timedelta(days=1)
     date_str = yesterday.strftime("%Y-%m-%d")
     if not os.path.isfile(f'data_backup/{date_str}.txt'):
-        db = db_backup(date_str)[1]
+        db_result = db_backup(date_str)[1]
         result_list = []
-        for i in db:
+        for i in db_result:
             row = {}
-            row['id'] = i['id']
+            row['diary_id'] = i['diary_id']
             row['users_id'] = i['users_id']
             row['date'] = i['date'].strftime("%Y-%m-%d")
             row['catalogue_id'] = i['catalogue_id']
@@ -411,6 +416,11 @@ def backup():
             result_list.append(row)
         with open(f'data_backup/{date_str}.txt', 'w', encoding='utf-8') as f:
             json.dump(result_list, f, ensure_ascii=False, indent=4)
+        # print(result_list)
+        # for i in result_list:
+        #     print(i)
+        # for i in db_result:
+        #     print(i)
 
 
 # def test(request):

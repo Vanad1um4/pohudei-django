@@ -34,6 +34,7 @@ const floatyEditUpdateBtn = document.querySelector('#update-btn')
 const floatyEditdeleteBtn = document.querySelector('#delete-btn')
 const floatyEdityesDeleteBtn = document.querySelector('#yes-delete-btn')
 const floatyEditcancelBtn = document.querySelector('#edit-cancel-btn')
+let diaryId
 
 const data = JSON.parse(document.getElementById('data').textContent)
 console.log(data)
@@ -257,7 +258,7 @@ function addRow(id, name, weight, kcals, todaysNormKcals) {
 
 
 function clickedDiary(target) {
-    let diaryId = parseInt(target.parentElement.getAttribute('id').replace('diary', ''))
+    diaryId = parseInt(target.parentElement.getAttribute('id').replace('diary', ''))
     floatyEditCont.setAttribute('name', 'diary' + diaryId)
     // floatyEditUpdateBtn.setAttribute('name', 'diary' + diaryId)
     // floatyEdityesDeleteBtn.setAttribute('name', 'diary' + diaryId)
@@ -277,8 +278,8 @@ function clickedDiary(target) {
 
 async function editDiaryUpdate(target) {
     // console.log(target.parentElement.parentElement.parentElement.parentElement)
-    let diaryId = parseInt(target.parentElement.parentElement.parentElement.parentElement.getAttribute('name').replace('diary', ''))
-    console.log(diaryId)
+    // let diaryId = parseInt(target.parentElement.parentElement.parentElement.parentElement.getAttribute('name').replace('diary', ''))
+    // console.log(diaryId)
     const weightOrig = parseInt(floatyEditWeightOrig.value)
     let weightChange = parseInt(floatyEditWeightChange.value)
     // console.log(weightChange)
@@ -303,7 +304,7 @@ async function editDiaryUpdate(target) {
     }
 }
 
-async function fetchEdit(diaryId, resultWeight) {
+async function fetchEdit(id, weight) {
     fetch(`/update_diary_entry/`,
     {
         method: 'POST',
@@ -312,7 +313,7 @@ async function fetchEdit(diaryId, resultWeight) {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({'diary_id': diaryId, 'new_weight': resultWeight})
+        body: JSON.stringify({'diary_id': id, 'new_weight': weight})
     })
     .then(response => response.json())
     .then(result => {
@@ -333,7 +334,7 @@ function editDiaryDelete() {
 async function editDiaryYesDelete(target) {
     // console.log(target.parentElement.parentElement)
     // let diaryId = parseInt(target.getAttribute('name').replace('diary', ''))
-    let diaryId = parseInt(target.parentElement.parentElement.getAttribute('name').replace('diary', ''))
+    // let diaryId = parseInt(target.parentElement.parentElement.getAttribute('name').replace('diary', ''))
 
     floatyEditMainDiv.style.display = 'none'
     floatyInfoDiv.style.display = 'block'

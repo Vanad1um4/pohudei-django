@@ -201,7 +201,7 @@ def db_backup(date_str):
     try:
         with connection.cursor() as c:
             c.execute(f'''
-                select *, round(d.food_weight / 100.0 * c.kcals) as calc_kcals
+                select d.id as diary_id, *, round(d.food_weight / 100.0 * c.kcals) as calc_kcals
                 from diary d join catalogue c on d.catalogue_id=c.id
                 where d.date='{date_str}'
                 order by d.date asc, d.id asc;''')
