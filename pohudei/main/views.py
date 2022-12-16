@@ -292,7 +292,7 @@ def stats(request):
     if len(target_kcals) <= 60:
         target_kcals = list(list_averaged(target_kcals, 3, True, 0))
         for i, _ in enumerate(target_kcals):
-            if i < len(target_kcals) / 2:
+            if i + 1 < len(target_kcals) / 2:
                 target_kcals[i] = None
 
     if len(target_kcals) > 60:

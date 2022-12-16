@@ -13,6 +13,7 @@
     height: 35px;
     font-size: 115%;
     /* height: 70px; */
+    /* background: linear-gradient(to left, #ff0000 50%, #0000ff 50%); */
     /* pointer-events: auto; */
 }
 .cell {

@@ -192,7 +192,7 @@ function mainTableOfDiaryEntriesConstruct() {
     const divPerc = document.createElement('DIV')
     divTableHead.classList.add('row')
     // divNum.classList.add('cell', 'cell-head')
-    divName.classList.add('cell', 'cell-head')
+    divName.classList.add('cell', 'cell-head', 'cell-name')
     divWeight.classList.add('cell', 'cell-head')
     divKcals.classList.add('cell', 'cell-head')
     divPerc.classList.add('cell', 'cell-head')
@@ -238,7 +238,8 @@ function addRow(id, name, weight, kcals, todaysNormKcals) {
     divName.textContent = `${name}`
     divWeight.textContent = `${weight}`
     divKcals.textContent = `${kcals}`
-    divPerc.textContent = `${Math.round(kcals / todaysNormKcals * 100)}`
+    const percent = Math.round(kcals / todaysNormKcals * 100)
+    divPerc.textContent = `${percent}`
     // divTableRow.appendChild(divNum)
     divTableRow.appendChild(divName)
     divTableRow.appendChild(divWeight)
@@ -246,7 +247,10 @@ function addRow(id, name, weight, kcals, todaysNormKcals) {
     divTableRow.appendChild(divPerc)
     divMainTable.appendChild(divTableRow)
 
+    // body.style.backgroundImage = "linear-gradient(to right, "+ color_1.value +", "+ color_2.value +")";
+
     divTableRow.addEventListener("click", (event) => { clickedDiary(event.target) });
+    divTableRow.style.backgroundImage = `linear-gradient(to right, #D2FFC9 ${percent}%, #FFFFFF ${percent}%)`;
 
     currValKcals += kcals
     currValKcalsDiv.textContent = currValKcals
