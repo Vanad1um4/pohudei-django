@@ -247,8 +247,6 @@ function addRow(id, name, weight, kcals, todaysNormKcals) {
     divTableRow.appendChild(divPerc)
     divMainTable.appendChild(divTableRow)
 
-    // body.style.backgroundImage = "linear-gradient(to right, "+ color_1.value +", "+ color_2.value +")";
-
     divTableRow.addEventListener("click", (event) => { clickedDiary(event.target) });
     divTableRow.style.backgroundImage = `linear-gradient(to right, #D2FFC9 ${percent}%, #FFFFFF ${percent}%)`;
 
