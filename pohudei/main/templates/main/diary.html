@@ -6,6 +6,7 @@
 {% endblock css %}
 
 {% block content %}
+
     <div id="daily-norm">
         <span class="norm-txt">Норма на сегодня: </span>
         <b><span class="norm-val"></span></b>
@@ -22,70 +23,74 @@
 
     <div id="main-table"></div>
 
-
-    {# <div id="slug"></div> #}
-
-    <div id="float-dimming-search">
-            <div id="float-results-wrap">
-                <div id="float-results-container"> </div>
-            </div>
-            <div id="float-controls-wrap">
-                <div class="float-controls">
-                    <input id="float-input" type='text'/>
-                    <div id="float-cancel">❌</div>
-                </div>
-            </div>
+    <div id="main-weight">
+        <div class="warning this-days-weight-warning"></div>
+        <div class="header this-days-weight-header"></div>
+        <input class="input-date this-days-weight-input" type='number'/>
     </div>
 
-    <div id="floaty-add-new">
-        <div id="floaty-add-wrapper">
-            <div id="floaty-add-cont">
-                <div id="floaty-add-name"></div>
-                <div id="floaty-add-info"></div>
-                <div id="floaty-add-div-input">
-                    <input id="floaty-add-input" type='number'/>
+    <div class="floaty-search">
+        <div class="results-wrap">
+            <div class="container floaty-search-results-cont">
+            </div>
+        </div>
+        <div class="controls-wrap">
+            <div class="controls">
+                <input class="input-field floaty-search-input-field" type='text'/>
+                <div class="cancel-btn floaty-search-cancel-btn">❌</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="floaty-add-new">
+        <div class="wrapper">
+            <div class="container floaty-add-container">
+                <div class="name floaty-add-name"></div>
+                <div class="info floaty-add-info"></div>
+                <div class="input-div">
+                    <input class="input-field floaty-add-input" type='number'/>
                 </div>
-                <div id="floaty-add-controls">
-                    <div id="floaty-add-no">❌</div>
-                    <div id="floaty-add-yes">✅</div>
+                <div class="controls">
+                    <div class="no floaty-add-no">❌</div>
+                    <div class="yes floaty-add-yes">✅</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="floaty-edit">
-        <div id="cont" class="floaty-edit-cont">
-            <div id="name-div">
-                <div id="name-head">Редактирование записи:</div>
-                <div id="name-food"></div>
+    <div class="floaty-edit">
+        <div class="container">
+            <div class="header-div">
+                <div class="name-head">Редактирование записи:</div>
+                <div class="name-food floaty-edit-header"></div>
             </div>
-            <div id="edit-weight-div">
-                <div id="edit-weight-inputs">
-                    <div id="edit-weight-cont01">
-                        <div id="edit-weight-input-name01">Ввести новый вес:</div>
-                        <input id="edit-weight-input-curr" type='number'/>
+            <div class="update-weight-wrap">
+                <div class="inputs-cont">
+                    <div class="input-div-new">
+                        <div class="header">Новый вес:</div>
+                        <input class="input-field floaty-edit-weight-input-new" type='number'/>
                     </div>
-                    <div id="edit-weight-cont02">
-                        <div id="edit-weight-input-name02">Или изменить на столько:</div>
-                        <input id="edit-weight-input-change" type='number'/>
+                    <div class="input-div-change">
+                        <div class="header">Изменить на:</div>
+                        <input class="input-field floaty-edit-weight-input-change" type='number'/>
                     </div>
                 </div>
-                <div id="update-info"></div>
-                <div id="update-btn">Обновить вес</div>
+                <div class="update-info floaty-edit-update-info"></div>
+                <div class="update-btn floaty-edit-update-btn">Обновить вес</div>
             </div>
-            <div id="delete-div">
-                <div id="delete-btn">Удалить запись</div>
-                <div id="yes-delete-btn">ДА, УДАЛИТЬ!</div>
+            <div class="delete-div">
+                <div class="delete-btn floaty-edit-delete-btn">Удалить запись</div>
+                <div class="yes-delete-btn floaty-edit-yes-delete-btn">ДА, УДАЛИТЬ!</div>
             </div>
-            <div id="edit-cancel">
-                <div id="edit-cancel-btn">Отмена</div>
+            <div class="cancel-div">
+                <div class="cancel-btn floaty-edit-cancel-btn">Отмена</div>
             </div>
         </div>
     </div>
 
-    <div id="floaty-info-div">
-        <div id="floaty-info-cont">
-            <div id="floaty-info-text"></div>
+    <div class="floaty-info">
+        <div class="container">
+            <div class="header floaty-info-header"></div>
         </div>
     </div>
 

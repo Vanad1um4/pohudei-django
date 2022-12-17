@@ -1,4 +1,5 @@
 from django.db import connection
+from datetime import datetime
 from .log import *
 
 logger = get_logger()  # pyright: ignore
@@ -11,6 +12,28 @@ def dict_fetchall(cursor):
 
 
 ##### WEIGHT FUNCTIONS ########################################################
+
+def db_get_one_weight(user_id, date_iso):
+    try:
+        if date_iso == None:
+            today = datetime.today()
+            date_iso = today.strftime('%Y-%m-%d')
+        with connection.cursor() as c:
+            c.execute(f'''
+                select id, date, weight
+                from weights
+                where users_id={user_id} and date='{date_iso}';''')
+            # where users_id={user_id} and date=('{date_iso}')::date;''')
+            res = c.fetchall()
+            if res:
+                return ('success', res)
+            else:
+                return ('no_data', [])
+
+    except Exception as exc:
+        logger.exception(exc)
+        return ('failure', [])
+
 
 def db_get_last_weights(user_id, weights_to_pull):
     try:
@@ -27,17 +50,42 @@ def db_get_last_weights(user_id, weights_to_pull):
         return ('failure', [])
 
 
+def db_update_weight_from_diary(user_id, date, weight):
+    try:
+        with connection.cursor() as c:
+            c.execute(f'''
+                select id
+                from weights
+                where users_id={user_id} and date='{date}';''')
+            id = c.fetchall()
+            # print(id[0][0])
+            if id:
+                c.execute(f'''
+                    update weights
+                    set weight={weight}
+                    where id={id[0][0]} and users_id={user_id}; ''')
+            elif not id:
+                c.execute(f'''
+                    insert into weights (users_id, date, weight)
+                    values ({user_id}, '{date}', {weight}); ''')
+
+            return ('success', [])
+
+    except Exception as exc:
+        logger.exception(exc)
+        return ('failure', [])
+
+
 def db_add_new_weight(user_id, date, weight):
     try:
         with connection.cursor() as c:
             c.execute(f'''
                 select id
                 from weights
-                where users_id={user_id} and date=('{date}')::date;''')
-            # where users_id={user_id} and date=to_date({date}, 'YYYY-MM-DD');''')
-            res = c.fetchall()
-            # print(res)
-            if not res:
+                where users_id={user_id} and date='{date}';''')
+            id = c.fetchall()
+            # print(id[0][0])
+            if not id:
                 c.execute(f'''
                     insert into weights (users_id, date, weight)
                     values ({user_id}, '{date}', {weight});''')
@@ -94,6 +142,7 @@ def db_get_everyday_sum_kcals_from_diary(user_id):
         return []
 
 
+# LEGACY
 def db_get_today_food_from_diary(user_id):
     try:
         with connection.cursor() as c:
@@ -103,6 +152,27 @@ def db_get_today_food_from_diary(user_id):
                 select d.id, c.name, d.food_weight, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten_kcals
                 from diary d join catalogue c on d.catalogue_id=c.id
                 where d.date=current_date and d.users_id={user_id}
+                order by d.id;''')
+            res = c.fetchall()
+        return res
+    except Exception as exc:
+        logger.exception(exc)
+        return []
+
+
+# NEW
+def db_get_food_from_diary(user_id, date_iso):
+    try:
+        if date_iso == None:
+            today = datetime.today()
+            date_iso = today.strftime('%Y-%m-%d')
+        with connection.cursor() as c:
+            # select c.name, d.food_weight, c.kcals, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten
+            # where d.date='2022-12-06' and d.users_id={user_id}
+            c.execute(f'''
+                select d.id, c.name, d.food_weight, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten_kcals
+                from diary d join catalogue c on d.catalogue_id=c.id
+                where d.date=('{date_iso}')::date and d.users_id={user_id}
                 order by d.id;''')
             res = c.fetchall()
         return res
@@ -212,13 +282,13 @@ def db_set_weights_to_pull(user_id, weights_to_pull):
 ##### BACKUP FUNCTIONS ########################################################
 
 
-def db_backup(date_str):
+def db_backup(date_iso):
     try:
         with connection.cursor() as c:
             c.execute(f'''
                 select d.id as diary_id, *, round(d.food_weight / 100.0 * c.kcals) as calc_kcals
                 from diary d join catalogue c on d.catalogue_id=c.id
-                where d.date='{date_str}'
+                where d.date='{date_iso}'
                 order by d.date asc, d.id asc;''')
             # res = c.fetchall()
             res = dict_fetchall(c)

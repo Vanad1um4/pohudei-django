@@ -97,59 +97,119 @@ def delete_weight(request):
 
 
 # TODO: Optimise this sh*t
-def diary(request):
-    if request.user.is_authenticated:
+# def diary(request):
+#     if request.user.is_authenticated:
+#         user_id = request.user.profile.user_id
+#         if user_id:
+#             eaten = []
+#             weights = []
+#             sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)
+#             for row in sum_kcals_and_weight:
+#                 eaten.append(float(row[1]))
+#                 weights.append(float(row[2]))
+#
+#             avg_weights = []
+#             target_kcals = []
+#             target_kcals.append(0)
+#             for i, _ in enumerate(sum_kcals_and_weight):
+#                 j = 0
+#                 if i - 6 > 0:
+#                     j = i - 6
+#                 tmp_weights_list = weights[j:i+1]
+#                 tmp_weights_sum = sum(tmp_weights_list)
+#                 tmp_avg_weight = round(tmp_weights_sum / len(tmp_weights_list), 2)
+#                 avg_weights.append(tmp_avg_weight)
+#
+#                 k = 0
+#                 if i - 30 > 0:
+#                     k = i - 30
+#                 tmp_eaten_list = eaten[k:i+1]
+#                 tmp_eaten_sum = sum(tmp_eaten_list)
+#
+#                 num_of_days = i - k
+#                 if num_of_days == 0:
+#                     num_of_days = 1
+#                 tmp_target_kcals = round((tmp_eaten_sum - ((avg_weights[i] - avg_weights[k]) * 7700)) / num_of_days)
+#                 target_kcals.append(tmp_target_kcals)
+#
+#             if len(target_kcals) <= 60:
+#                 target_kcals = list(list_averaged(target_kcals, 3, True, 0))
+#
+#             if len(target_kcals) > 60:
+#                 target_kcals = list(list_averaged(target_kcals, 14, True, 0))
+#
+#             try:
+#                 todays_target_kcals = target_kcals[-2]
+#             except:
+#                 todays_target_kcals = 0
+#
+#             today_food = db_get_today_food_from_diary(user_id)
+#             all_foods = db_get_food_names()
+#
+#             logger.debug(f'{user_id = }, {today_food = }, {todays_target_kcals = }')
+#             return render(request, 'main/diary.html', {'data': [today_food, todays_target_kcals, all_foods]})
+#         return redirect('home')
+#     return redirect('login')
+
+
+def diary(request, date_iso=None):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    try:
         user_id = request.user.profile.user_id
-        if user_id:
-            eaten = []
-            weights = []
-            sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)
-            for row in sum_kcals_and_weight:
-                eaten.append(float(row[1]))
-                weights.append(float(row[2]))
+    except:
+        return redirect('noprofile')
 
-            avg_weights = []
-            target_kcals = []
-            target_kcals.append(0)
-            for i, _ in enumerate(sum_kcals_and_weight):
-                j = 0
-                if i - 6 > 0:
-                    j = i - 6
-                tmp_weights_list = weights[j:i+1]
-                tmp_weights_sum = sum(tmp_weights_list)
-                tmp_avg_weight = round(tmp_weights_sum / len(tmp_weights_list), 2)
-                avg_weights.append(tmp_avg_weight)
+    if date_iso == None:
+        today = datetime.today()
+        date_iso = today.strftime('%Y-%m-%d')
 
-                k = 0
-                if i - 30 > 0:
-                    k = i - 30
-                tmp_eaten_list = eaten[k:i+1]
-                tmp_eaten_sum = sum(tmp_eaten_list)
+    this_days_food = db_get_food_from_diary(user_id, date_iso)
 
-                num_of_days = i - k
-                if num_of_days == 0:
-                    num_of_days = 1
-                tmp_target_kcals = round((tmp_eaten_sum - ((avg_weights[i] - avg_weights[k]) * 7700)) / num_of_days)
-                target_kcals.append(tmp_target_kcals)
+    _, _, _, _, target_kcals = stats_calc(user_id)
+    if len(target_kcals) <= 60:
+        target_kcals = list(list_averaged(target_kcals, 3, True, 0))
+    if len(target_kcals) > 60:
+        target_kcals = list(list_averaged(target_kcals, 14, True, 0))
+    try:
+        this_days_target_kcals = target_kcals[-2]
+    except:
+        this_days_target_kcals = 0
 
-            if len(target_kcals) <= 60:
-                target_kcals = list(list_averaged(target_kcals, 3, True, 0))
+    result = db_get_one_weight(user_id, date_iso)
+    # print(result)
+    if result[0] == 'success':
+        this_days_weight = result[1][0][2]
+    else:
+        this_days_weight = None
 
-            if len(target_kcals) > 60:
-                target_kcals = list(list_averaged(target_kcals, 14, True, 0))
+    all_foods = db_get_food_names()
 
-            try:
-                todays_target_kcals = target_kcals[-2]
-            except:
-                todays_target_kcals = 0
+    logger.debug(f'{user_id = }, {this_days_food = }, {this_days_target_kcals = }')
+    return render(request, 'main/diary.html', {'data': {'this_days_date': date_iso, 'this_days_food': this_days_food, 'this_days_target_kcals': this_days_target_kcals, 'this_days_weight': this_days_weight, 'all_foods': all_foods}})
 
-            today_food = db_get_today_food_from_diary(user_id)
-            all_foods = db_get_food_names()
 
-            logger.debug(f'{user_id = }, {today_food = }, {todays_target_kcals = }')
-            return render(request, 'main/diary.html', {'data': [today_food, todays_target_kcals, all_foods]})
-        return redirect('home')
-    return redirect('login')
+def update_weight_new(request):
+    if request.method != 'POST':
+        return HttpResponse(json.dumps({'result': 'failure, not POST'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    try:
+        user_id = request.user.profile.user_id
+    except:
+        return HttpResponse(json.dumps({'result': 'failure, no user_id'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+
+    data = json.loads(request.body)
+
+    result = db_update_weight_from_diary(user_id, data['date'], data['weight'])
+    print(result)
+
+    return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
+                        content_type='application/json; charset=utf-8')
 
 
 def add_food_to_diary(request):
@@ -233,49 +293,52 @@ def stats(request):
     except:
         return redirect('noprofile')
 
-    # results = db_get_basic_stats(user_id)
     # dates = []
+    # human_dates = []
     # weights = []
+    # avg_weights = []
+    # eaten = []
+    # target_kcals = []
+    #
+    # results = db_get_basic_stats(user_id)
+    #
     # for i in results[1]:
     #     dates.append(i[0])
     #     weights.append(i[1])
+    #
+    # sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)
+    # for row in sum_kcals_and_weight:
+    #     human_dates.append(row[0].strftime("%d %b %Y"))
+    #     eaten.append(int(row[1]))
+    #     weights.append(float(row[2]))
+    #
+    # target_kcals.append(0)
+    # for i, row in enumerate(sum_kcals_and_weight):
+    #     j = 0
+    #     if i - 6 > 0:
+    #         j = i - 6
+    #     tmp_weights_list = weights[j:i+1]
+    #     tmp_weights_sum = sum(tmp_weights_list)
+    #     tmp_avg_weight = round(tmp_weights_sum / len(tmp_weights_list), 2)
+    #     avg_weights.append(tmp_avg_weight)
+    #
+    #     k = 0
+    #     if i - 30 > 0:
+    #         k = i - 30
+    #     tmp_eaten_list = eaten[k:i+1]
+    #     tmp_eaten_sum = sum(tmp_eaten_list)
+    #
+    #     num_of_days = i - k
+    #     if num_of_days == 0:
+    #         num_of_days = 1
+    #     # if i < len(sum_kcals_and_weight)-1:
+    #     # if len(sum_kcals_and_weight) <= 40 and i > 10 or len(sum_kcals_and_weight) > 40 and i > 30:
+    #     tmp_target_kcals = round((tmp_eaten_sum - ((avg_weights[i] - avg_weights[k]) * 7700)) / num_of_days)
+    #     target_kcals.append(tmp_target_kcals)
+    #     # else:
+    #     #     target_kcals.append(None)
 
-    human_dates = []
-    eaten = []
-    weights = []
-    sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)
-    for row in sum_kcals_and_weight:
-        human_dates.append(row[0].strftime("%d %b %Y"))
-        eaten.append(int(row[1]))
-        weights.append(float(row[2]))
-
-    avg_weights = []
-    target_kcals = []
-    target_kcals.append(0)
-    for i, row in enumerate(sum_kcals_and_weight):
-        j = 0
-        if i - 6 > 0:
-            j = i - 6
-        tmp_weights_list = weights[j:i+1]
-        tmp_weights_sum = sum(tmp_weights_list)
-        tmp_avg_weight = round(tmp_weights_sum / len(tmp_weights_list), 2)
-        avg_weights.append(tmp_avg_weight)
-
-        k = 0
-        if i - 30 > 0:
-            k = i - 30
-        tmp_eaten_list = eaten[k:i+1]
-        tmp_eaten_sum = sum(tmp_eaten_list)
-
-        num_of_days = i - k
-        if num_of_days == 0:
-            num_of_days = 1
-        # if i < len(sum_kcals_and_weight)-1:
-        # if len(sum_kcals_and_weight) <= 40 and i > 10 or len(sum_kcals_and_weight) > 40 and i > 30:
-        tmp_target_kcals = round((tmp_eaten_sum - ((avg_weights[i] - avg_weights[k]) * 7700)) / num_of_days)
-        target_kcals.append(tmp_target_kcals)
-        # else:
-        #     target_kcals.append(None)
+    human_dates, eaten, weights, avg_weights, target_kcals = stats_calc(user_id)
 
     # print(len(human_dates))
     # print(len(weights))
@@ -322,7 +385,52 @@ def stats(request):
     }})
 
 
-def list_averaged(init_list, avg_range, round_bool, round_places=0):
+def stats_calc(user_id):
+    dates = []
+    human_dates = []
+    weights = []
+    avg_weights = []
+    eaten = []
+    target_kcals = []
+
+    results = db_get_basic_stats(user_id)
+
+    for i in results[1]:
+        dates.append(i[0])
+        weights.append(i[1])
+
+    sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)
+    for row in sum_kcals_and_weight:
+        human_dates.append(row[0].strftime("%d %b %Y"))
+        eaten.append(int(row[1]))
+        weights.append(float(row[2]))
+
+    target_kcals.append(0)
+    for i, row in enumerate(sum_kcals_and_weight):
+        j = 0
+        if i - 6 > 0:
+            j = i - 6
+        tmp_weights_list = weights[j:i+1]
+        tmp_weights_sum = sum(tmp_weights_list)
+        tmp_avg_weight = round(tmp_weights_sum / len(tmp_weights_list), 2)
+        avg_weights.append(tmp_avg_weight)
+
+        k = 0
+        if i - 30 > 0:
+            k = i - 30
+        tmp_eaten_list = eaten[k:i+1]
+        tmp_eaten_sum = sum(tmp_eaten_list)
+
+        num_of_days = i - k
+        if num_of_days == 0:
+            num_of_days = 1
+        tmp_target_kcals = round((tmp_eaten_sum - ((avg_weights[i] - avg_weights[k]) * 7700)) / num_of_days)
+        target_kcals.append(tmp_target_kcals)
+
+    return human_dates, eaten, weights, avg_weights, target_kcals
+
+
+def list_averaged(init_list, avg_range, round_bool=False, round_places=0):
     result_list = []
     for i, _ in enumerate(init_list):
         j = 0
@@ -394,10 +502,10 @@ def noprofile(request):
 
 def backup():
     yesterday = datetime.today() - timedelta(days=1)
-    date_str = yesterday.strftime("%Y-%m-%d")
+    date_iso = yesterday.strftime("%Y-%m-%d")
     logger.debug(f'executed')
-    if not os.path.isfile(f'data_backup/{date_str}.txt'):
-        db_result = db_backup(date_str)[1]
+    if not os.path.isfile(f'data_backup/{date_iso}.txt'):
+        db_result = db_backup(date_iso)[1]
         result_list = []
         for i in db_result:
             row = {}
@@ -410,7 +518,7 @@ def backup():
             row['kcals'] = i['kcals']
             row['calc_kcals'] = int(i['calc_kcals'])
             result_list.append(row)
-        with open(f'data_backup/{date_str}.txt', 'w', encoding='utf-8') as f:
+        with open(f'data_backup/{date_iso}.txt', 'w', encoding='utf-8') as f:
             json.dump(result_list, f, ensure_ascii=False, indent=4)
         logger.debug(f'created')
 

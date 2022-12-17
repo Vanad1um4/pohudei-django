@@ -1,54 +1,109 @@
-// TODO: refactor the sh*t out of it
-
-const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
-
 const divMainTable = document.querySelector('#main-table')
 const currValKcalsDiv = document.querySelector('.curr-kcals')
-let currValKcals = 0
 const currValPercDiv = document.querySelector('.curr-perc')
 
-const floatSearch = document.querySelector('#float-dimming-search')
 const addBtn = document.querySelector('#add-food')
-const closeBtn = document.querySelector('#float-cancel')
-const inputSearchField = document.querySelector('#float-input')
-const resCont = document.querySelector('#float-results-container')
 
-const floatyAddNew = document.querySelector('#floaty-add-new')
-const floatyAddInput = document.querySelector('#floaty-add-input')
-const floatyAddInfo = document.querySelector('#floaty-add-info')
-const floatyInfoDiv = document.querySelector('#floaty-info-div')
-const floatyInfoText = document.querySelector('#floaty-info-text')
+const thisDaysWeightWarning = document.querySelector('.this-days-weight-warning')
+const thisDaysWeightHeader = document.querySelector('.this-days-weight-header')
+const thisDaysWeightInput = document.querySelector('.this-days-weight-input')
 
-const floatyAddCont = document.querySelector('#floaty-add-cont')
-const floatyAddName = document.querySelector('#floaty-add-name')
-const floatyAddYes = document.querySelector('#floaty-add-yes')
-const floatyAddNo = document.querySelector('#floaty-add-no')
+const floatSearch = document.querySelector('.floaty-search')
+const resCont = document.querySelector('.floaty-search-results-cont')
+const closeBtn = document.querySelector('.floaty-search-cancel-btn')
+const inputSearchField = document.querySelector('.floaty-search-input-field')
 
-const floatyEditCont = document.querySelector('.floaty-edit-cont')
-const floatyEditMainDiv = document.querySelector('#floaty-edit')
-const floatyEditFoodName = document.querySelector('#name-food')
-const floatyEditWeightOrig = document.querySelector('#edit-weight-input-curr')
-const floatyEditWeightChange = document.querySelector('#edit-weight-input-change')
-const floatyEditUpdateInfo = document.querySelector('#update-info')
-const floatyEditUpdateBtn = document.querySelector('#update-btn')
-const floatyEditdeleteBtn = document.querySelector('#delete-btn')
-const floatyEdityesDeleteBtn = document.querySelector('#yes-delete-btn')
-const floatyEditcancelBtn = document.querySelector('#edit-cancel-btn')
-let diaryId
+const floatyAddNew = document.querySelector('.floaty-add-new')
+const floatyAddCont = document.querySelector('.floaty-add-container')
+const floatyAddName = document.querySelector('.floaty-add-name')
+const floatyAddInput = document.querySelector('.floaty-add-input')
+const floatyAddInfo = document.querySelector('.floaty-add-info')
+const floatyAddYes = document.querySelector('.floaty-add-yes')
+const floatyAddNo = document.querySelector('.floaty-add-no')
 
+const floatyEditMainDiv = document.querySelector('.floaty-edit')
+const floatyEditFoodName = document.querySelector('.floaty-edit-header')
+const floatyEditWeightNew = document.querySelector('.floaty-edit-weight-input-new')
+const floatyEditWeightChange = document.querySelector('.floaty-edit-weight-input-change')
+const floatyEditUpdateInfo = document.querySelector('.floaty-edit-update-info')
+const floatyEditUpdateBtn = document.querySelector('.floaty-edit-update-btn')
+const floatyEditdeleteBtn = document.querySelector('.floaty-edit-delete-btn')
+const floatyEdityesDeleteBtn = document.querySelector('.floaty-edit-yes-delete-btn')
+const floatyEditcancelBtn = document.querySelector('.floaty-edit-cancel-btn')
+
+const floatyInfoDiv = document.querySelector('.floaty-info')
+const floatyInfoText = document.querySelector('.floaty-info-header')
+
+const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 const data = JSON.parse(document.getElementById('data').textContent)
 console.log(data)
-const todaysFood = data[0]
-const todaysNormKcals = data[1]
-let todaysEatenKcals = 0
+const dateISO = data['this_days_date']
+const thisDaysFood = data['this_days_food']
+const thisDaysNormKcals = data['this_days_target_kcals']
+const thisDaysWeight = data['this_days_weight']
+const foodDictRaw = data['all_foods']
+
+let currValKcals = 0
+let diaryId
 let foodDict = {}
-// const waitMs = 1000
-const waitMs = 0
+let todaysEatenKcals = 0
+const waitMsInfo = 500
+const waitMsWeightChange = 2000
 
 onLoad()
 
+async function saveWeight() {
+    const lastVal = thisDaysWeightInput.value
+    await sleep(waitMsWeightChange)
+    const newVal = thisDaysWeightInput.value
+    if (lastVal === newVal) {
+        if (!(numTest(newVal))) {
+            thisDaysWeightWarning.style.display = 'block'
+            thisDaysWeightWarning.textContent = 'Вес должен быть в формате 99.9'
+        } else {
+            thisDaysWeightInput.disabled = true
+            thisDaysWeightInput.style.background = 'silver'
+
+            fetch(`/update_weight_new/`,
+            {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({'date': dateISO, 'weight': newVal})
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if (result['result'] === 'success') {
+                        console.log('success')
+                        thisDaysWeightInput.disabled = false
+                        thisDaysWeightInput.style.background = 'green'
+                        thisDaysWeightWarning.style.display = 'none'
+                    } else if (result['result'] === 'failure') {
+                        console.log('failure')
+                        thisDaysWeightInput.disabled = false
+                        thisDaysWeightInput.style.background = 'red'
+                        // thisDaysWeightWarning.style.display = 'none'
+                        thisDaysWeightWarning.textContent = 'Что-то пошло не так...'
+                    }
+                })
+                .then(await sleep(waitMsWeightChange))
+                .then(() => { thisDaysWeightInput.style.background = 'transparent' })
+        }
+    }
+}
+
 function onLoad() {
     mainTableOfDiaryEntriesConstruct(data)
+
+    const dateFromString = new Date(dateISO)
+    const humanDateString = dateFromString.toLocaleString('ru', {month: 'long', day: 'numeric'})
+    thisDaysWeightHeader.textContent = `Вес на ${humanDateString}:`
+    thisDaysWeightInput.value = thisDaysWeight
+
+    thisDaysWeightInput.addEventListener('input', () => { saveWeight() });
 
     addBtn.addEventListener("click", function clicked(event) {
         floatSearch.style.display = 'block'
@@ -62,8 +117,6 @@ function onLoad() {
         while (resCont.firstChild) {
             resCont.firstChild.remove()
         }
-
-
     });
 
     floatyAddInput.addEventListener("keyup", function clicked(event) {
@@ -82,18 +135,17 @@ function onLoad() {
 
 
 
-    floatyEditWeightChange.addEventListener("keyup", function clicked(event) {
-        if (event.key === 'Enter') { editDiaryUpdate(event.target) } })
+    floatyEditWeightChange.addEventListener("keyup", function clicked(event) { if (event.key === 'Enter') { editDiaryUpdate() } })
 
-    floatyEditUpdateBtn.addEventListener("click", (event) => { editDiaryUpdate(event.target) });
+    floatyEditUpdateBtn.addEventListener("click", (event) => { editDiaryUpdate() });
 
     floatyEditdeleteBtn.addEventListener("click", () => { editDiaryDelete() });
 
-    floatyEdityesDeleteBtn.addEventListener("click", (event) => { editDiaryYesDelete(event.target) });
+    floatyEdityesDeleteBtn.addEventListener("click", (event) => { editDiaryYesDelete() });
 
     floatyEditcancelBtn.addEventListener("click", () => { editDiaryCancel() });
 
-    foodDict = foodDictConsrtuct(data[2])
+    foodDict = foodDictPrep(data[2])
 }
 
 function foodSearchInputUpdate(target) {
@@ -149,6 +201,7 @@ async function floatyAddYesPressed(target) {
         floatyAddNew.style.display = 'none'
         floatyInfoDiv.style.display = 'block'
         floatyInfoText.textContent = 'Ждите...'
+        floatyInfoText.style.color = 'white'
         fetchAdd(foodId, newWeight)
     }
 }
@@ -167,12 +220,14 @@ async function fetchAdd(foodId, newWeight) {
         .then(response => response.json())
         .then(result => {
             if (result['result'] == 'success') {
-                floatyInfoText.textContent = 'Успешно'
+                floatyInfoText.textContent = 'Успешно!'
+                floatyInfoText.style.color = 'LawnGreen'
             } else if (result['result'] == 'failure') {
                 floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
+                floatyInfoText.style.color = 'red'
             }
         })
-        .then(await sleep(waitMs))
+        .then(await sleep(waitMsInfo))
         .then(() => { window.location.reload() })
 }
 
@@ -182,26 +237,22 @@ async function fetchAdd(foodId, newWeight) {
 
 function mainTableOfDiaryEntriesConstruct() {
     const normVal = document.querySelector('.norm-val')
-    normVal.textContent = todaysNormKcals
+    normVal.textContent = thisDaysNormKcals
 
     const divTableHead = document.createElement('DIV')
-    // const divNum = document.createElement('DIV')
     const divName = document.createElement('DIV')
     const divWeight = document.createElement('DIV')
     const divKcals = document.createElement('DIV')
     const divPerc = document.createElement('DIV')
     divTableHead.classList.add('row')
-    // divNum.classList.add('cell', 'cell-head')
     divName.classList.add('cell', 'cell-head', 'cell-name')
     divWeight.classList.add('cell', 'cell-head')
     divKcals.classList.add('cell', 'cell-head')
     divPerc.classList.add('cell', 'cell-head')
-    // divNum.textContent = '№'
     divName.textContent = 'Блюдо'
     divWeight.textContent = 'Вес'
     divKcals.textContent = 'Ккал'
     divPerc.textContent = '%'
-    // divTableHead.appendChild(divNum)
     divTableHead.appendChild(divName)
     divTableHead.appendChild(divWeight)
     divTableHead.appendChild(divKcals)
@@ -213,34 +264,29 @@ function mainTableOfDiaryEntriesConstruct() {
     currValKcalsDiv.textContent = 0
     currValPercDiv.textContent = 0
 
-    for (let i = 0; i < todaysFood.length; i++) {
-        // addRow(i+1, todaysFood[i][0], todaysFood[i][1], todaysFood[i][2], todaysNormKcals)
-        addRow(todaysFood[i][0], todaysFood[i][1], todaysFood[i][2], todaysFood[i][3], todaysNormKcals)
+    for (let i = 0; i < thisDaysFood.length; i++) {
+        addRow(thisDaysFood[i][0], thisDaysFood[i][1], thisDaysFood[i][2], thisDaysFood[i][3], thisDaysNormKcals)
     }
 }
 
 
-function addRow(id, name, weight, kcals, todaysNormKcals) {
+function addRow(id, name, weight, kcals, thisDaysNormKcals) {
     const divTableRow = document.createElement('DIV')
-    // const divNum = document.createElement('DIV')
     const divName = document.createElement('DIV')
     const divWeight = document.createElement('DIV')
     const divKcals = document.createElement('DIV')
     const divPerc = document.createElement('DIV')
     divTableRow.classList.add('row')
     divTableRow.setAttribute('id', 'diary' + id)
-    // divNum.classList.add('cell', 'cell-num')
     divName.classList.add('cell', 'cell-name')
     divWeight.classList.add('cell', 'cell-w')
     divKcals.classList.add('cell', 'cell-k')
     divPerc.classList.add('cell', 'cell-p')
-    // divNum.textContent = `${i}`
     divName.textContent = `${name}`
     divWeight.textContent = `${weight}`
     divKcals.textContent = `${kcals}`
-    const percent = Math.round(kcals / todaysNormKcals * 100)
+    const percent = Math.round(kcals / thisDaysNormKcals * 100)
     divPerc.textContent = `${percent}`
-    // divTableRow.appendChild(divNum)
     divTableRow.appendChild(divName)
     divTableRow.appendChild(divWeight)
     divTableRow.appendChild(divKcals)
@@ -248,11 +294,11 @@ function addRow(id, name, weight, kcals, todaysNormKcals) {
     divMainTable.appendChild(divTableRow)
 
     divTableRow.addEventListener("click", (event) => { clickedDiary(event.target) });
-    divTableRow.style.backgroundImage = `linear-gradient(to right, #D2FFC9 ${percent}%, #FFFFFF ${percent}%)`;
+    divTableRow.style.backgroundImage = `linear-gradient(to right, #c5cfff ${percent}%, #ffffff 0%)`;
 
     currValKcals += kcals
     currValKcalsDiv.textContent = currValKcals
-    currValPercDiv.textContent = Math.round(currValKcals / todaysNormKcals * 100)
+    currValPercDiv.textContent = Math.round(currValKcals / thisDaysNormKcals * 100)
 }
 
 
@@ -261,30 +307,23 @@ function addRow(id, name, weight, kcals, todaysNormKcals) {
 
 function clickedDiary(target) {
     diaryId = parseInt(target.parentElement.getAttribute('id').replace('diary', ''))
-    floatyEditCont.setAttribute('name', 'diary' + diaryId)
-    // floatyEditUpdateBtn.setAttribute('name', 'diary' + diaryId)
-    // floatyEdityesDeleteBtn.setAttribute('name', 'diary' + diaryId)
     let diaryFoodName = ''
     let diaryFoodWeight = 0
     floatyEditMainDiv.style.display = 'block'
-    for (let i in data[0]) {
-        if (data[0][i][0] === diaryId) {
-            diaryFoodName = data[0][i][1]
-            diaryFoodWeight = data[0][i][2]
+    for (let i in thisDaysFood) {
+        if (thisDaysFood[i][0] === diaryId) {
+            diaryFoodName = thisDaysFood[i][1]
+            diaryFoodWeight = thisDaysFood[i][2]
         }
     }
-    floatyEditWeightOrig.value = diaryFoodWeight
+    floatyEditWeightNew.value = diaryFoodWeight
     floatyEditFoodName.textContent = diaryFoodName
     floatyEditWeightChange.focus()
 }
 
-async function editDiaryUpdate(target) {
-    // console.log(target.parentElement.parentElement.parentElement.parentElement)
-    // let diaryId = parseInt(target.parentElement.parentElement.parentElement.parentElement.getAttribute('name').replace('diary', ''))
-    // console.log(diaryId)
-    const weightOrig = parseInt(floatyEditWeightOrig.value)
+async function editDiaryUpdate() {
+    const weightOrig = parseInt(floatyEditWeightNew.value)
     let weightChange = parseInt(floatyEditWeightChange.value)
-    // console.log(weightChange)
     if (!(isNumeric(weightChange))){weightChange = 0}
     const resultWeight = weightOrig + weightChange
     floatyEditUpdateInfo.style.display = 'none'
@@ -301,6 +340,7 @@ async function editDiaryUpdate(target) {
         floatyEditMainDiv.style.display = 'none'
         floatyInfoDiv.style.display = 'block'
         floatyInfoText.textContent = 'Ждите...'
+        floatyInfoText.style.color = 'white'
 
         fetchEdit(diaryId, resultWeight)
     }
@@ -320,12 +360,14 @@ async function fetchEdit(id, weight) {
     .then(response => response.json())
     .then(result => {
         if (result['result'] == 'success') {
-            floatyInfoText.textContent = 'Успешно'
+            floatyInfoText.textContent = 'Успешно!'
+            floatyInfoText.style.color = 'LawnGreen'
         } else if (result['result'] == 'failure') {
             floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
+            floatyInfoText.style.color = 'red'
         }
     })
-    .then(await sleep(waitMs))
+    .then(await sleep(waitMsInfo))
     .then(() => { window.location.reload() })
 }
 
@@ -333,14 +375,11 @@ function editDiaryDelete() {
     floatyEdityesDeleteBtn.style.display = 'block'
 }
 
-async function editDiaryYesDelete(target) {
-    // console.log(target.parentElement.parentElement)
-    // let diaryId = parseInt(target.getAttribute('name').replace('diary', ''))
-    // let diaryId = parseInt(target.parentElement.parentElement.getAttribute('name').replace('diary', ''))
-
+async function editDiaryYesDelete() {
     floatyEditMainDiv.style.display = 'none'
     floatyInfoDiv.style.display = 'block'
     floatyInfoText.textContent = 'Ждите...'
+    floatyInfoText.style.color = 'white'
 
     fetch(`/delete_diary_entry/`,
     {
@@ -355,18 +394,20 @@ async function editDiaryYesDelete(target) {
         .then(response => response.json())
         .then(result => {
             if (result['result'] == 'success') {
-                floatyInfoText.textContent = 'Успешно'
+                floatyInfoText.textContent = 'Успешно!'
+                floatyInfoText.style.color = 'LawnGreen'
             } else if (result['result'] == 'failure') {
                 floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
+                floatyInfoText.style.color = 'red'
             }
         })
-        .then(await sleep(waitMs))
+        .then(await sleep(waitMsInfo))
         .then(() => { window.location.reload() })
 }
 
 
 
-function editDiaryCancel(target) {
+function editDiaryCancel() {
     floatyEditMainDiv.style.display = 'none'
     floatyEdityesDeleteBtn.style.display = 'none'
 }
@@ -379,12 +420,12 @@ function copyTable() {
     const today = new Date(Date.now())
     const humanToday = today.toLocaleDateString('ru')
     let resultString = ''
-    for (let i in data[0]) {
+    for (let i in thisDaysFood) {
         resultString += humanToday
         resultString += '\t'
-        resultString += data[0][i][1] + ' NEW'
+        resultString += thisDaysFood[i][1] + ' NEW'
         resultString += '\t'
-        resultString += data[0][i][2]
+        resultString += thisDaysFood[i][2]
         resultString += '\n'
     }
     const input = document.createElement('textarea');
@@ -400,10 +441,10 @@ function copyTable() {
 ///// OTHER FUNCTIONS /////////////////////////////////////////////////////////
 
 
-function foodDictConsrtuct(inputFoodDict) {
+function foodDictPrep() {
     let resultDict = {}
-    for (let i = 0; i < inputFoodDict.length; i++) {
-        resultDict[inputFoodDict[i][0]] = inputFoodDict[i][1]
+    for (let i = 0; i < foodDictRaw.length; i++) {
+        resultDict[foodDictRaw[i][0]] = foodDictRaw[i][1]
     }
     return resultDict
 }
@@ -412,4 +453,8 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function numTest(num) {
+    const regex = new RegExp(/^\b[\d]{2,3}[.][\d]{1}\b$|^\b[\d]{2,3}\b$/gm)
+    return regex.test(num)
+}
 const isNumeric = (num) => (typeof(num) === 'number' || typeof(num) === "string" && num.trim() !== '') && !isNaN(num);

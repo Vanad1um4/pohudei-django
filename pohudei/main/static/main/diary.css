@@ -1,8 +1,6 @@
 #main-table {
     display: table;
     border-collapse: collapse;
-    /* font-size: 105%; */
-    /* width: calc(100vw - 10px); */
 }
 #daily-norm, #daily-curr {
     font-size: 120%;
@@ -12,16 +10,12 @@
     display: table-row;
     height: 35px;
     font-size: 115%;
-    /* height: 70px; */
-    /* background: linear-gradient(to left, #ff0000 50%, #0000ff 50%); */
-    /* pointer-events: auto; */
 }
 .cell {
     display: table-cell;
     padding: 1px 3px;
     vertical-align: middle;
     border: 1px solid gray;
-    /* pointer-events: none; */
 }
 .cell-head {
     text-align: center;
@@ -35,184 +29,63 @@
     width: 100%;
 }
 
-#add-food {
-    /* margin: 8px 0px; */
-    text-align: center;
-    font-weight: bold;
-    font-size: 150%;
-    /* padding: 12px 0px; */
-    /* background-color: green; */
-    /* color: white; */
 
+
+#main-weight {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 2vh;
+    /* font-size: 1.5em; */
+    align-items: center;
+    justify-content: center;
+}
+#main-weight > .warning {
+    display: none;
+    width: 100%;
+    text-align: center;
+    font-size: 1.0em;
+    font-weight: 700;
+    /* margin-top: 10px; */
+    margin-bottom: 6px;
+    padding: 4px 0px;
+    border: 3px solid orange;
+}
+#main-weight > .header {
+    flex-grow: 1;
+    font-size: 1.4em;
+    padding: 7px 3px;
+}
+#main-weight > .input-date {
+    flex-grow: 5;
+    width: 10vw;
+    font-size: 1.6em;
+    font-weight: 700;
+    text-align: center;
+    padding: 3px 0px;
+    border: 3px solid green;
+}
+
+
+
+
+
+
+
+
+
+#add-food {
+    text-align: center;
+    font-weight: 700;
+    font-size: 150%;
     padding: 6px 0px;
     background-color: white;
     border: 5px solid green;
     color: green;
 }
 
+/***** FLOATY WINDOW | SEARCH FOOD *******************************************/
 
-#float-dimming-search {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 0px; /* Location of the box */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
-}
-#float-results-wrap {
-    margin-top: 0px; /* Location of the box */
-    padding: 0;
-    /* width: calc(100% - 50px); */
-    /* width: calc(100% - 0px); */
-    height: calc(100% - 65px);
-    /* margin-top: 25px; */
-    /* margin-left: 25px; */
-    /* margin-right: 25px; */
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-}
-#float-results-container {
-    overflow: auto;
-    /* flex-grow: 1; */
-    max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    /* justify-content: flex-end; */
-    align-items: center;
-    width: -webkit-fill-available;
-    padding: 0px 10px;
-}
-.float-results-line {
-    /* width: 90%; */
-    width: -webkit-fill-available;
-    font-size: 125%;
-    padding: 7px 7px;
-    margin: 7px 0px 0px 0px;
-    color: white;
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
-}
-#float-controls-wrap{
-    /* position: fixed; */
-    /* z-index: 2; */
-    /* bottom: 0; */
-    /* width: calc(100% - 50px); */
-    height: 50px; /* Full height */
-    margin: 10px 0px 0px 0px;
-    /* margin-left: 25px; */
-    /* margin-right: 25px; */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.float-controls{
-    display: flex;
-    /* width: 85vw; */
-    max-width: 400px;
-    padding: 0px 10px;
-}
-#float-input{
-    font-size: 200%;
-    width: calc(100% - 58px);
-    margin-right: 10px;
-    /* background: transparent; */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
-    color: white;
-    font-weight: 900;
-    padding-left: 10px;
-}
-#float-cancel {
-    /* background-color: red; */
-    /* color: white; */
-    /* font-weight: 900; */
-    font-size: 250%;
-    /* padding: 0px 0px; */
-    /* width: 50px; */
-}
-#float-input, #float-cancel {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-
-
-#floaty-add-new {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 0px; /* Location of the box */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
-}
-#floaty-add-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-#floaty-add-cont {
-    /* margin-top: 0px; */
-    /* padding: 0; */
-    /* width: calc(100% - 50px); */
-    /* height: calc(100% - 75px); */
-    margin: 25px 25px;
-    max-width: 400px;
-    /* margin-left: 25px; */
-    /* margin-right: 25px; */
-}
-#floaty-add-name, #floaty-add-info, #floaty-add-div-input, #floaty-add-controls {
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
-    margin: 9px 0px;
-}
-#floaty-add-name {
-    font-size: 125%;
-    padding: 7px 7px;
-    color: white;
-}
-#floaty-add-info {
-    /* font-size: 125%; */
-    padding: 7px 7px;
-    color: white;
-    text-align: center;
-}
-#floaty-add-div-input {
-    width: 100%; /* Full width */
-}
-#floaty-add-input {
-    font-size: 200%;
-    background: transparent;
-    color: white;
-    font-weight: 900;
-    width: 98%; /* Full width */
-    text-align: center;
-}
-#floaty-add-controls {
-    display: flex;
-    /* justify-content: center; */
-    justify-content: space-evenly;
-}
-#floaty-add-yes, #floaty-add-no {
-    /* display: inline; */
-    font-size: 250%;
-    margin: 10px 0px;
-}
-
-
-
-
-#floaty-info-div {
+.floaty-search {
     display: none;
     position: fixed;
     z-index: 1;
@@ -224,7 +97,245 @@
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.5);
 }
-#floaty-info-cont {
+
+.floaty-search > .results-wrap {
+    margin-top: 0px;
+    padding: 0;
+    height: calc(100% - 65px);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.floaty-search > .results-wrap > .container {
+    overflow: auto;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: -webkit-fill-available;
+}
+
+.floaty-search > .results-wrap > .container > .float-results-line {
+    width: -webkit-fill-available;
+    font-size: 125%;
+    padding: 7px 7px;
+    margin: 7px 0px 0px 0px;
+    color: white;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.5);
+}
+
+.floaty-search > .controls-wrap {
+    height: 50px;
+    margin: 10px 0px 0px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.floaty-search > .controls-wrap > .controls {
+    display: flex;
+    max-width: 400px;
+    padding: 0px 10px;
+}
+
+.floaty-search > .controls-wrap > .controls > .input-field {
+    font-size: 200%;
+    width: calc(100% - 58px);
+    margin-right: 10px;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+    font-weight: 700;
+    padding-left: 10px;
+}
+
+.floaty-search > .controls-wrap > .controls > .cancel-btn {
+    font-size: 250%;
+}
+
+.floaty-search > .controls-wrap > .controls > .input-field, .cancel-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/***** FLOATY WINDOW | ADD NEW DIARY ENTRY ***********************************/
+
+.floaty-add-new {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 0px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.5);
+}
+
+.floaty-add-new > .wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.floaty-add-new > .wrapper > .container {
+    margin: 25px 25px;
+    max-width: 400px;
+}
+
+.floaty-add-new > .wrapper > .container > .name, .info, .input-div, .controls {
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.5);
+    margin: 9px 0px;
+}
+
+.floaty-add-new > .wrapper > .container > .name {
+    font-size: 125%;
+    padding: 7px 7px;
+    color: white;
+}
+
+.floaty-add-new > .wrapper > .container > .info {
+    padding: 7px 7px;
+    color: white;
+    text-align: center;
+}
+
+.floaty-add-new > .wrapper > .container > .input-div {
+    width: 100%;
+}
+
+.floaty-add-new > .wrapper > .container > .input-div > .input-field {
+    font-size: 200%;
+    background: transparent;
+    color: white;
+    font-weight: 700;
+    width: 98%;
+    text-align: center;
+}
+
+.floaty-add-new > .wrapper > .container > .controls {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.floaty-add-new > .wrapper > .container > .controls > .no, .yes {
+    font-size: 250%;
+    margin: 10px 0px;
+}
+
+/***** FLOATY WINDOW | EDIT DIARY ENTRY **************************************/
+
+.floaty-edit {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 0px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.5);
+}
+
+.floaty-edit > .container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.floaty-edit > .container > .header-div, .update-weight-wrap, .delete-div, .cancel-div {
+    width: calc(100% - 20px);
+    max-width: 380px;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.5);
+    padding: 10px 10px;
+    margin: 5px 0px;
+    text-align: center;
+    font-size: 1.5em;
+    color: white;
+    font-weight: 700;
+}
+
+.floaty-edit > .container > .header-div {
+    font-size: 1.0em;
+}
+
+.floaty-edit > .container > .header-div > .name-food {
+    margin-top: 10px;
+}
+
+.floaty-edit > .container > .update-weight-wrap > .inputs-cont {
+    display: flex;
+    justify-content: center;
+}
+
+.floaty-edit > .container > .update-weight-wrap > .inputs-cont > .input-div-new, .input-div-change {
+    font-size: 16px;
+    padding: 0px 5px;
+}
+
+.floaty-edit > .container > .update-weight-wrap > .inputs-cont > .input-div-new > .input-field, .input-div-change > .input-field {
+    font-size: 1.5em;
+    background: transparent;
+    color: white;
+    font-weight: 700;
+    width: 80%;
+    text-align: center;
+    margin-top: 5px;
+}
+.floaty-edit > .container > .update-weight-wrap > .update-info {
+    display: none;
+    font-size: 0.6em;
+    margin-top: 10px;
+    color: orange;
+    border: 3px solid orange;
+}
+
+.floaty-edit > .container > .update-weight-wrap > .update-btn {
+    font-size: 1.1em;
+    margin-top: 10px;
+    border: 3px solid green;
+}
+
+.floaty-edit > .container > .delete-div > .delete-btn, .yes-delete-btn {
+    font-size: 1.1em;
+}
+
+.floaty-edit > .container > .delete-div > .delete-btn {
+    border: 3px solid red;
+}
+
+.floaty-edit > .container > .delete-div > .yes-delete-btn {
+    display: none;
+    background: red;
+    margin-top: 10px;
+}
+
+/***** FLOATY WINDOW | INFO WINDOW *******************************************/
+
+.floaty-info {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 0px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.5);
+}
+
+.floaty-info > .container {
     width: calc(100% - 100px);
     height: calc(100% - 100px);
     margin: 50px 50px;
@@ -232,101 +343,13 @@
     justify-content: center;
     align-items: center;
 }
-#floaty-info-text {
+
+.floaty-info > .container > .header {
     font-size: 200%;
     color: white;
-    font-weight: 900;
+    font-weight: 700;
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.5);
     text-align: center;
     padding: 10px 20px;
-}
-
-
-
-#floaty-edit {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 0px; /* Location of the box */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
-}
-#floaty-edit > #cont {
-    /* width: calc(100% - 50px); */
-    /* height: calc(100% - 50px); */
-    height: 100%;
-    /* margin: 25px 25px; */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-#floaty-edit > #cont > #name-div, #edit-weight-div, #delete-div, #edit-cancel {
-    /* width: 100%; */
-    width: calc(100% - 20px);
-    max-width: 380px;
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
-    padding: 10px 10px;
-    margin: 5px 0px;
-    text-align: center;
-    font-size: 150%;
-    color: white;
-    font-weight: 900;
-}
-#floaty-edit > #cont > #name-div {
-    font-size: 100%;
-}
-#floaty-edit > #cont > #name-div > #name-food {
-    margin-top: 10px;
-}
-
-
-
-
-#edit-weight-inputs {
-    display: flex;
-    justify-content: center;
-}
-#edit-weight-inputs > #edit-weight-cont01, #edit-weight-cont02 {
-    font-size: 16px;
-    padding: 0px 5px;
-}
-#edit-weight-inputs > #edit-weight-cont01 > #edit-weight-input-curr, #edit-weight-cont02 > #edit-weight-input-change {
-    font-size: 1.5em;
-    background: transparent;
-    color: white;
-    font-weight: 900;
-    width: 80%;
-    text-align: center;
-    margin-top: 5px;
-}
-
-#floaty-edit > #cont > #edit-weight-div > #update-info {
-    display: none;
-    font-size: 0.6em;
-    margin-top: 10px;
-    color: orange;
-    border: 3px solid orange;
-}
-#floaty-edit > #cont > #edit-weight-div > #update-btn {
-    font-size: 1.1em;
-    margin-top: 10px;
-    border: 3px solid green;
-}
-#floaty-edit > #cont > #delete-div > #delete-btn, #yes-delete-btn {
-    font-size: 1.1em;
-}
-#floaty-edit > #cont > #delete-div > #delete-btn {
-    border: 3px solid red;
-}
-#floaty-edit > #cont > #delete-div > #yes-delete-btn {
-    display: none;
-    background: red;
-    margin-top: 10px;
 }

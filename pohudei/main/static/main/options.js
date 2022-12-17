@@ -42,9 +42,7 @@ async function saveWeightsPullNum() {
             })
             .then(await sleep(waitMs))
             .then(() => { document.querySelector('.weights-pull-num').style.background = 'transparent' })
-
     }
-
 }
 
 

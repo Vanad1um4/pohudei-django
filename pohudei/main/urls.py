@@ -6,6 +6,7 @@ urlpatterns = [
     path('home/', views.diary, name='home'),
     path('weight/', views.weight, name='weight'),
     path('diary/', views.diary, name='diary'),
+    path('diary/<date_iso>/', views.diary),
     path('stats/', views.stats, name='stats'),
     path('options/', views.options, name='options'),
     path('noprofile/', views.noprofile, name='noprofile'),
@@ -13,6 +14,8 @@ urlpatterns = [
     path('add_new_weight/', views.add_new_weight),
     path('update_weight/', views.update_weight),
     path('delete_weight/', views.delete_weight),
+
+    path('update_weight_new/', views.update_weight_new),
 
     path('add_food_to_diary/', views.add_food_to_diary),
     path('update_diary_entry/', views.update_diary_entry),
