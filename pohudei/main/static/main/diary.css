@@ -96,6 +96,7 @@
     flex-grow: 1;
     font-size: 1.4em;
     padding: 7px 3px;
+    text-align: center;
     white-space: nowrap;
 }
 #main-weight > .input-date {
