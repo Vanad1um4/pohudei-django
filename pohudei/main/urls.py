@@ -6,7 +6,7 @@ urlpatterns = [
     path('home/', views.diary, name='home'),
     path('weight/', views.weight, name='weight'),
     path('diary/', views.diary, name='diary'),
-    path('diary/<date_iso>/', views.diary),
+    path('diary/<date_iso>/', views.diary, name='diary'),
     path('stats/', views.stats, name='stats'),
     path('options/', views.options, name='options'),
     path('noprofile/', views.noprofile, name='noprofile'),

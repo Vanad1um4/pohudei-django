@@ -95,63 +95,6 @@ def delete_weight(request):
 
 ### DIARY FNs #################################################################
 
-
-# TODO: Optimise this sh*t
-# def diary(request):
-#     if request.user.is_authenticated:
-#         user_id = request.user.profile.user_id
-#         if user_id:
-#             eaten = []
-#             weights = []
-#             sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)
-#             for row in sum_kcals_and_weight:
-#                 eaten.append(float(row[1]))
-#                 weights.append(float(row[2]))
-#
-#             avg_weights = []
-#             target_kcals = []
-#             target_kcals.append(0)
-#             for i, _ in enumerate(sum_kcals_and_weight):
-#                 j = 0
-#                 if i - 6 > 0:
-#                     j = i - 6
-#                 tmp_weights_list = weights[j:i+1]
-#                 tmp_weights_sum = sum(tmp_weights_list)
-#                 tmp_avg_weight = round(tmp_weights_sum / len(tmp_weights_list), 2)
-#                 avg_weights.append(tmp_avg_weight)
-#
-#                 k = 0
-#                 if i - 30 > 0:
-#                     k = i - 30
-#                 tmp_eaten_list = eaten[k:i+1]
-#                 tmp_eaten_sum = sum(tmp_eaten_list)
-#
-#                 num_of_days = i - k
-#                 if num_of_days == 0:
-#                     num_of_days = 1
-#                 tmp_target_kcals = round((tmp_eaten_sum - ((avg_weights[i] - avg_weights[k]) * 7700)) / num_of_days)
-#                 target_kcals.append(tmp_target_kcals)
-#
-#             if len(target_kcals) <= 60:
-#                 target_kcals = list(list_averaged(target_kcals, 3, True, 0))
-#
-#             if len(target_kcals) > 60:
-#                 target_kcals = list(list_averaged(target_kcals, 14, True, 0))
-#
-#             try:
-#                 todays_target_kcals = target_kcals[-2]
-#             except:
-#                 todays_target_kcals = 0
-#
-#             today_food = db_get_today_food_from_diary(user_id)
-#             all_foods = db_get_food_names()
-#
-#             logger.debug(f'{user_id = }, {today_food = }, {todays_target_kcals = }')
-#             return render(request, 'main/diary.html', {'data': [today_food, todays_target_kcals, all_foods]})
-#         return redirect('home')
-#     return redirect('login')
-
-
 def diary(request, date_iso=None):
     if not request.user.is_authenticated:
         return redirect('login')
@@ -159,6 +102,20 @@ def diary(request, date_iso=None):
         user_id = request.user.profile.user_id
     except:
         return redirect('noprofile')
+
+    dates = {}
+    if date_iso == None:
+        this_day = datetime.today()
+    else:
+        this_day = datetime.fromisoformat(date_iso)
+    dates['this_day_iso'] = this_day.strftime('%Y-%m-%d')
+    dates['this_day_human'] = this_day.strftime('%d %b')
+    prev_day = this_day - timedelta(days=1)
+    dates['prev_day_iso'] = prev_day.strftime('%Y-%m-%d')
+    dates['prev_day_human'] = prev_day.strftime('%d %b')
+    next_day = this_day + timedelta(days=1)
+    dates['next_day_iso'] = next_day.strftime('%Y-%m-%d')
+    dates['next_day_human'] = next_day.strftime('%d %b')
 
     if date_iso == None:
         today = datetime.today()
@@ -186,17 +143,21 @@ def diary(request, date_iso=None):
     all_foods = db_get_food_names()
 
     logger.debug(f'{user_id = }, {this_days_food = }, {this_days_target_kcals = }')
-    return render(request, 'main/diary.html', {'data': {'this_days_date': date_iso, 'this_days_food': this_days_food, 'this_days_target_kcals': this_days_target_kcals, 'this_days_weight': this_days_weight, 'all_foods': all_foods}})
+    return render(request, 'main/diary.html', {'data': {
+        'dates': dates, 'this_days_food': this_days_food, 'this_days_target_kcals': this_days_target_kcals, 'this_days_weight': this_days_weight, 'all_foods': all_foods
+    }})
+    # return render(request, 'main/diary.html', {'data': {
+    #     'dates': dates, 'this_days_date': date_iso, 'this_days_food': this_days_food,
+    #     'this_days_target_kcals': this_days_target_kcals, 'this_days_weight': this_days_weight, 'all_foods': all_foods
+    # }})
 
 
 def update_weight_new(request):
     if request.method != 'POST':
         return HttpResponse(json.dumps({'result': 'failure, not POST'}),  # pyright: ignore
                             content_type='application/json; charset=utf-8')
-
     if not request.user.is_authenticated:
         return redirect('login')
-
     try:
         user_id = request.user.profile.user_id
     except:
@@ -217,11 +178,7 @@ def add_food_to_diary(request):
         user_id = request.user.profile.user_id
         data = json.loads(request.body)
         if user_id:
-            today = datetime.today()
-            today_str = today.strftime("%Y-%m-%d")
-            # yesterday = datetime.today() - timedelta(days=1)  # TODO: make food addition for different dates
-
-            result = db_add_new_diary_entry(user_id, today_str, data['food_id'], data['food_weight'])
+            result = db_add_new_diary_entry(user_id, data['date_iso'], data['food_id'], data['food_weight'])
             logger.debug(f'{user_id = }, {data = }, {result = }')
             if result == 'success':
                 return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore

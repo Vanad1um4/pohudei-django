@@ -64,7 +64,7 @@ body {
 .active-btn {
     /* background-color: green; */
     background-color: white;
-    border: 5px solid green;
+    border: 3px solid green;
 }
 
 .active-btn > a {
@@ -73,7 +73,7 @@ body {
 
 .inactive-btn {
     background-color: white;
-    border: 5px solid lightgrey;
+    border: 3px solid lightgrey;
 }
 
 .inactive-btn > a {

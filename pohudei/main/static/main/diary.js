@@ -1,3 +1,6 @@
+const chooseDateInput = document.querySelector('#choose-date')
+const thisDateDiv = document.querySelector('.this-date-div')
+
 const divMainTable = document.querySelector('#main-table')
 const currValKcalsDiv = document.querySelector('.curr-kcals')
 const currValPercDiv = document.querySelector('.curr-perc')
@@ -37,7 +40,7 @@ const floatyInfoText = document.querySelector('.floaty-info-header')
 const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 const data = JSON.parse(document.getElementById('data').textContent)
 console.log(data)
-const dateISO = data['this_days_date']
+const thisDaysDateISO = data['dates']['this_day_iso']
 const thisDaysFood = data['this_days_food']
 const thisDaysNormKcals = data['this_days_target_kcals']
 const thisDaysWeight = data['this_days_weight']
@@ -52,56 +55,24 @@ const waitMsWeightChange = 2000
 
 onLoad()
 
-async function saveWeight() {
-    const lastVal = thisDaysWeightInput.value
-    await sleep(waitMsWeightChange)
-    const newVal = thisDaysWeightInput.value
-    if (lastVal === newVal) {
-        if (!(numTest(newVal))) {
-            thisDaysWeightWarning.style.display = 'block'
-            thisDaysWeightWarning.textContent = 'Вес должен быть в формате 99.9'
-        } else {
-            thisDaysWeightInput.disabled = true
-            thisDaysWeightInput.style.background = 'silver'
-
-            fetch(`/update_weight_new/`,
-            {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': csrftoken,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({'date': dateISO, 'weight': newVal})
-            })
-                .then(response => response.json())
-                .then(result => {
-                    if (result['result'] === 'success') {
-                        console.log('success')
-                        thisDaysWeightInput.disabled = false
-                        thisDaysWeightInput.style.background = 'green'
-                        thisDaysWeightWarning.style.display = 'none'
-                    } else if (result['result'] === 'failure') {
-                        console.log('failure')
-                        thisDaysWeightInput.disabled = false
-                        thisDaysWeightInput.style.background = 'red'
-                        // thisDaysWeightWarning.style.display = 'none'
-                        thisDaysWeightWarning.textContent = 'Что-то пошло не так...'
-                    }
-                })
-                .then(await sleep(waitMsWeightChange))
-                .then(() => { thisDaysWeightInput.style.background = 'transparent' })
-        }
-    }
-}
-
 function onLoad() {
     mainTableOfDiaryEntriesConstruct(data)
 
-    const dateFromString = new Date(dateISO)
+    const dateFromString = new Date(thisDaysDateISO)
     const humanDateString = dateFromString.toLocaleString('ru', {month: 'long', day: 'numeric'})
     thisDaysWeightHeader.textContent = `Вес на ${humanDateString}:`
     thisDaysWeightInput.value = thisDaysWeight
+
+    chooseDateInput.addEventListener('input', () => {
+        const date = chooseDateInput.value
+        if (date) {
+            window.location = `/diary/${date}/`
+        }
+    });
+
+    thisDateDiv.addEventListener("click", () => {
+        chooseDateInput.showPicker()
+    })
 
     thisDaysWeightInput.addEventListener('input', () => { saveWeight() });
 
@@ -133,19 +104,55 @@ function onLoad() {
 
     inputSearchField.addEventListener("input", function clicked(event) { foodSearchInputUpdate(event.target) });
 
-
-
     floatyEditWeightChange.addEventListener("keyup", function clicked(event) { if (event.key === 'Enter') { editDiaryUpdate() } })
-
     floatyEditUpdateBtn.addEventListener("click", (event) => { editDiaryUpdate() });
-
     floatyEditdeleteBtn.addEventListener("click", () => { editDiaryDelete() });
-
     floatyEdityesDeleteBtn.addEventListener("click", (event) => { editDiaryYesDelete() });
-
     floatyEditcancelBtn.addEventListener("click", () => { editDiaryCancel() });
-
     foodDict = foodDictPrep(data[2])
+}
+
+async function saveWeight() {
+    const lastVal = thisDaysWeightInput.value
+    await sleep(waitMsWeightChange)
+    const newVal = thisDaysWeightInput.value
+    if (lastVal === newVal) {
+        if (!(numTest(newVal))) {
+            thisDaysWeightWarning.style.display = 'block'
+            thisDaysWeightWarning.textContent = 'Вес должен быть в формате 99.9'
+        } else {
+            thisDaysWeightInput.disabled = true
+            thisDaysWeightInput.style.background = 'silver'
+
+            fetch(`/update_weight_new/`,
+            {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({'date': thisDaysDateISO, 'weight': newVal})
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if (result['result'] === 'success') {
+                        console.log('success')
+                        thisDaysWeightInput.disabled = false
+                        thisDaysWeightInput.style.background = 'green'
+                        thisDaysWeightWarning.style.display = 'none'
+                    } else if (result['result'] === 'failure') {
+                        console.log('failure')
+                        thisDaysWeightInput.disabled = false
+                        thisDaysWeightInput.style.background = 'red'
+                        // thisDaysWeightWarning.style.display = 'none'
+                        thisDaysWeightWarning.textContent = 'Что-то пошло не так...'
+                    }
+                })
+                .then(await sleep(waitMsWeightChange))
+                .then(() => { thisDaysWeightInput.style.background = 'transparent' })
+        }
+    }
 }
 
 function foodSearchInputUpdate(target) {
@@ -215,7 +222,7 @@ async function fetchAdd(foodId, newWeight) {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({'food_id': foodId, 'food_weight': newWeight})
+        body: JSON.stringify({'date_iso': thisDaysDateISO, 'food_id': foodId, 'food_weight': newWeight})
     })
         .then(response => response.json())
         .then(result => {

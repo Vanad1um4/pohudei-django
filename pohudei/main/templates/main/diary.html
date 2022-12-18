@@ -7,6 +7,12 @@
 
 {% block content %}
 
+    <div id="pages">
+        <div class="prev"><a href="{% url 'diary' date_iso=data.dates.prev_day_iso %}">⬅️{{ data.dates.prev_day_human }}</a></div>
+        <div class="this this-date-div"> {{ data.dates.this_day_human }} 🗓️ <input id="choose-date" type="date" value="{{ data.dates.this_day_iso }}"/> </div>
+        <div class="next"><a href="{% url 'diary' date_iso=data.dates.next_day_iso %}">{{ data.dates.next_day_human }}➡️</a></div>
+    </div>
+
     <div id="main-weight">
         <div class="warning this-days-weight-warning"></div>
         <div class="header this-days-weight-header"></div>
