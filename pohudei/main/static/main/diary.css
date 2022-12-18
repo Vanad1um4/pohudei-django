@@ -34,7 +34,8 @@
 #main-weight {
     display: flex;
     flex-wrap: wrap;
-    margin-top: 2vh;
+    /* margin-top: 2vh; */
+    margin-bottom: 2vh;
     /* font-size: 1.5em; */
     align-items: center;
     justify-content: center;
