@@ -19,14 +19,21 @@
     width: 33vw;
     height: 100%;
     text-align: center;
-    font-size: 1.2em;
-    padding: 3px 0px;
-    height: 29px;
+    font-size: 1.3em;
+    /* padding: 3px 0px; */
+    /* height: 29px; */
+}
+#pages > .this {
+    padding: 5px 0px;
 }
 #pages > div > a {
+    display: block;
     text-decoration: none;
     color: black;
     font-weight: 700;
+    width: 100%;
+    height: 100%;
+    padding: 5px 0px;
 }
 #choose-date {
     /* width: 33vw; */

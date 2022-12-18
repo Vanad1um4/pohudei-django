@@ -105,9 +105,12 @@ def diary(request, date_iso=None):
 
     dates = {}
     if date_iso == None:
-        this_day = datetime.today()
+        this_day = datetime.today().date()
+        days_delta_int = 0
     else:
-        this_day = datetime.fromisoformat(date_iso)
+        this_day = datetime.fromisoformat(date_iso).date()
+        date_delta = this_day - datetime.today().date()
+        days_delta_int = date_delta.days
     dates['this_day_iso'] = this_day.strftime('%Y-%m-%d')
     dates['this_day_human'] = this_day.strftime('%d %b')
     prev_day = this_day - timedelta(days=1)
@@ -129,7 +132,8 @@ def diary(request, date_iso=None):
     if len(target_kcals) > 60:
         target_kcals = list(list_averaged(target_kcals, 14, True, 0))
     try:
-        this_days_target_kcals = target_kcals[-2]
+        offset = -2 + days_delta_int
+        this_days_target_kcals = target_kcals[offset]
     except:
         this_days_target_kcals = 0
 
