@@ -54,10 +54,11 @@
     flex-grow: 1;
     font-size: 1.4em;
     padding: 7px 3px;
+    white-space: nowrap;
 }
 #main-weight > .input-date {
-    flex-grow: 5;
-    width: 10vw;
+    flex-grow: 3;
+    width: 50px;
     font-size: 1.6em;
     font-weight: 700;
     text-align: center;
