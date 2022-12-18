@@ -96,6 +96,7 @@ def delete_weight(request):
 ### DIARY FNs #################################################################
 
 def diary(request, date_iso=None):
+    backup()
     if not request.user.is_authenticated:
         return redirect('login')
     try:
