@@ -1,5 +1,5 @@
 from django.db import connection
-from datetime import datetime
+from datetime import date, datetime
 from .log import *
 
 logger = get_logger()  # pyright: ignore
@@ -291,8 +291,13 @@ def db_backup(date_iso):
                 where d.date='{date_iso}'
                 order by d.date asc, d.id asc;''')
             # res = c.fetchall()
-            res = dict_fetchall(c)
-        return ('success', res)
+            food = dict_fetchall(c)
+            c.execute(f'''
+                select * from weights
+                where date='{date_iso}'
+                ;''')
+            weights = dict_fetchall(c)
+        return ('success', (food, weights))
     except Exception as exc:
         logger.exception(exc)
-        return ('failure', [])
+        return ('failure', [{}, {}])

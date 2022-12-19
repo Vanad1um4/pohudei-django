@@ -463,23 +463,34 @@ def noprofile(request):
 
 
 def backup():
-    yesterday = datetime.today() - timedelta(days=1)
+    yesterday = datetime.today().date() - timedelta(days=1)
     date_iso = yesterday.strftime("%Y-%m-%d")
     logger.debug(f'executed')
+    # if True:
     if not os.path.isfile(f'data_backup/{date_iso}.txt'):
-        db_result = db_backup(date_iso)[1]
+        food, weights = db_backup(date_iso)[1]
         result_list = []
-        for i in db_result:
+        for i in food:
             row = {}
             row['diary_id'] = i['diary_id']
             row['users_id'] = i['users_id']
             row['date'] = i['date'].strftime("%Y-%m-%d")
             row['catalogue_id'] = i['catalogue_id']
             row['food_weight'] = i['food_weight']
+            row['food_id'] = i['id']
             row['name'] = i['name']
             row['kcals'] = i['kcals']
             row['calc_kcals'] = int(i['calc_kcals'])
             result_list.append(row)
+        for i in weights:
+            row = {}
+            row['weight_id'] = i['id']
+            row['users_id'] = i['users_id']
+            row['date'] = i['date'].strftime("%Y-%m-%d")
+            row['weight'] = float(i['weight'])
+            result_list.append(row)
+        # print(result_list)
+        # with open(f'data_backup/{date_iso}-all.txt', 'w', encoding='utf-8') as f:
         with open(f'data_backup/{date_iso}.txt', 'w', encoding='utf-8') as f:
             json.dump(result_list, f, ensure_ascii=False, indent=4)
         logger.debug(f'created')
