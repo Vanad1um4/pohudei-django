@@ -22,26 +22,32 @@ body {
 }
 
 .blank {
-    height: 106px;
+    height: 50vh;
 }
 
 .main-menu {
-    position: fixed;
+    /* position: fixed; */
     bottom: 0;
     /* right: 0; */
     max-width: 400px;
-    width: calc(100vw - 10px);
+    /* width: calc(100vw - 10px); */
+    width: 100%;
     background-color: white;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .main-menu > .useful-fn-container {
     overflow: hidden;
     white-space: nowrap;
+    /* width: 90%; */
+    width: calc(100vw - 10px);
 }
 .main-menu-container {
     display: flex;
-    /* width: calc(100vw - 10px); */
-    width: 100%;
+    /* width: 90%; */
+    width: calc(100vw - 10px);
     gap: 5px;
     margin-top: 5px;
 }
@@ -56,7 +62,7 @@ body {
     display: flex;
     text-decoration: none;
     font-weight: bold;
-    font-size: 1.75em;
+    font-size: 27px;
     padding: 4px 0px;
     justify-content: center;
 }

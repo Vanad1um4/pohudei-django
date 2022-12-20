@@ -44,7 +44,8 @@ const thisDaysDateISO = data['dates']['this_day_iso']
 const thisDaysFood = data['this_days_food']
 const thisDaysNormKcals = data['this_days_target_kcals']
 const thisDaysWeight = data['this_days_weight']
-const foodDictRaw = data['all_foods']
+// const foodDictRaw = data['all_foods']
+const foodArray = data['all_foods']
 
 let currValKcals = 0
 let diaryId
@@ -109,7 +110,6 @@ function onLoad() {
     floatyEditdeleteBtn.addEventListener("click", () => { editDiaryDelete() });
     floatyEdityesDeleteBtn.addEventListener("click", (event) => { editDiaryYesDelete() });
     floatyEditcancelBtn.addEventListener("click", () => { editDiaryCancel() });
-    foodDict = foodDictPrep(data[2])
 }
 
 async function saveWeight() {
@@ -158,10 +158,10 @@ async function saveWeight() {
 function foodSearchInputUpdate(target) {
     const queryArray = target.value.toLowerCase().split(' ').filter(val => val.length > 0)
 
-    let tempFoodDict = {}
-    for (let i in foodDict) {
-        if (queryArray.every(word => foodDict[i].toLowerCase().includes(word))){
-            tempFoodDict[i] = foodDict[i]
+    let tempFoodArray = []
+    for (let i in foodArray) {
+        if (queryArray.every(word => foodArray[i][1].toLowerCase().includes(word))){
+            tempFoodArray.push([foodArray[i][0], foodArray[i][1]])
         }
     }
 
@@ -169,11 +169,12 @@ function foodSearchInputUpdate(target) {
         resCont.firstChild.remove()
     }
 
-    for (let i in tempFoodDict) {
+    for (let i in tempFoodArray) {
+        console.log(tempFoodArray[i])
         const resDiv = document.createElement('DIV')
         resDiv.classList.add('float-results-line')
-        resDiv.setAttribute('id', 'food' + i)
-        resDiv.textContent = `${tempFoodDict[i]}`
+        resDiv.setAttribute('id', 'food' + tempFoodArray[i][0])
+        resDiv.textContent = `${tempFoodArray[i][1]}`
         resCont.appendChild(resDiv)
 
         resDiv.addEventListener("click", function clicked(event) { foodResultClicked(event.target) });
@@ -424,7 +425,7 @@ function editDiaryCancel() {
 
 
 function copyTable() {
-    const today = new Date(Date.now())
+    const today = new Date(thisDaysDateISO)
     const humanToday = today.toLocaleDateString('ru')
     let resultString = ''
     for (let i in thisDaysFood) {
@@ -448,17 +449,15 @@ function copyTable() {
 ///// OTHER FUNCTIONS /////////////////////////////////////////////////////////
 
 
-function foodDictPrep() {
-    let resultDict = {}
-    for (let i = 0; i < foodDictRaw.length; i++) {
-        resultDict[foodDictRaw[i][0]] = foodDictRaw[i][1]
-    }
-    return resultDict
-}
+// function foodDictPrep() {
+//     let resultDict = {}
+//     for (let i = 0; i < foodDictRaw.length; i++) {
+//         resultDict[foodDictRaw[i][0]] = foodDictRaw[i][1]
+//     }
+//     return resultDict
+// }
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+function sleep(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
 
 function numTest(num) {
     const regex = new RegExp(/^\b[\d]{2,3}[.][\d]{1}\b$|^\b[\d]{2,3}\b$/gm)

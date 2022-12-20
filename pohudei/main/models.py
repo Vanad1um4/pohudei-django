@@ -220,15 +220,116 @@ def db_del_diary_entry(user_id, diary_id):
 
 ##### CATALOGUE FUNCTIONS #####################################################
 
-def db_get_food_names():
+def db_get_all_food_names(user_id):
     try:
         with connection.cursor() as c:
-            c.execute('select id, name from catalogue order by name')
+            c.execute(f'''
+                select id, name from catalogue
+                where users_id=0 or users_id={user_id}
+                order by name''')
             res = c.fetchall()
         return res
     except Exception as exc:
         logger.exception(exc)
         return []
+
+
+def db_get_users_food_names(user_id, admin=False):
+    try:
+        with connection.cursor() as c:
+            if admin:
+                c.execute(f'''
+                    select id, name, kcals from catalogue
+                    order by name''')
+                foods = c.fetchall()
+            else:
+                c.execute(f'''
+                    select id, name, kcals from catalogue
+                    where users_id={user_id}
+                    order by name''')
+                foods = c.fetchall()
+        return ('success', foods)
+    except Exception as exc:
+        logger.exception(exc)
+        return ('failure', [])
+
+
+def db_add_new_food_to_catalogue(user_id, food_name, food_kcals, admin=False):
+    try:
+        with connection.cursor() as c:
+            c.execute(f'''
+                select id
+                from catalogue
+                where name='{food_name}';''')
+            id = c.fetchall()
+            if id:
+                return ('duplication', [])
+            elif admin:
+                c.execute(f'''
+                    insert into catalogue (name, kcals, users_id)
+                    values ('{food_name}', {food_kcals}, 0);''')
+                return ('success', [])
+            elif not admin:
+                c.execute(f'''
+                    insert into catalogue (name, kcals, users_id)
+                    values ('{food_name}', {food_kcals}, {user_id});''')
+                return ('success', [])
+            else:
+                return ('failure', [])
+    except Exception as exc:
+        logger.exception(exc)
+        return ('failure', [])
+
+
+def db_update_food_in_catalogue(user_id, food_id, food_name, food_kcals, admin=False):
+    try:
+        with connection.cursor() as c:
+            c.execute(f'''
+                select id
+                from catalogue
+                where id!='{food_id}' and name='{food_name}';''')
+            id = c.fetchall()
+            if id:
+                return ('duplication', [])
+            elif admin:
+                c.execute(f'''
+                    update catalogue
+                    set name='{food_name}', kcals={food_kcals}
+                    where id='{food_id}';''')
+                return ('success', [])
+            elif not admin:
+                c.execute(f'''
+                    update catalogue
+                    set name='{food_name}', kcals={food_kcals}
+                    where id='{food_id}' and users_id='{user_id}';''')
+                return ('success', [])
+            else:
+                return ('failure', [])
+    except Exception as exc:
+        logger.exception(exc)
+        return ('failure', [])
+
+
+def db_delete_food_from_catalogue(food_id):
+    try:
+        with connection.cursor() as c:
+            c.execute(f'''
+                select id from diary
+                where catalogue_id='{food_id}';''')
+            id = c.fetchall()
+            print(id)
+            if id:
+                return ('in use', [])
+            elif not id:
+                c.execute(f'''
+                    delete from catalogue
+                    where id='{food_id}';''')
+                return ('success', [])
+            else:
+                return ('failure', [])
+    except Exception as exc:
+        logger.exception(exc)
+        return ('failure', [])
 
 
 ##### STATS FUNCTIONS #########################################################

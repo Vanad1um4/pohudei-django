@@ -1,0 +1,84 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/foods.css' %}">
+{% endblock css %}
+
+{% block content %}
+
+    <div class="main-header">{% if user.is_staff %}Полный{% else %}Мой&nbsp;личный{% endif %} каталог&nbsp;продуктов</div>
+
+    <div id="main-table"></div>
+
+    <div class="floaty-add-new">
+        <div class="wrapper">
+            <div class="container">
+                <div class="header">Добавление продукта в личный каталог</div>
+                <div class="name">
+                    <div class="header">Введите название продукта:</div>
+                    <div class="warning floaty-add-name-warn">Это поле не может быть пустым. Введите название продукта.</div>
+                    <textarea class="textarea-field floaty-add-name-textarea" type='text' placeholder='тыц...'></textarea>
+                </div>
+                <div class="kcals">
+                    <div class="header">Введите количество килокалорий на 100 грамм:</div>
+                    <div class="warning floaty-add-kcals-warn">Здесь должно быть только число. Целое. Без пробелов, точек и запятых.</div>
+                    <input class="input-field floaty-add-kcals-input" type='number' placeholder='тыц...'/>
+                </div>
+                <div class="controls">
+                    <div class="no floaty-add-no">❌</div>
+                    <div class="yes floaty-add-yes">✅</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="floaty-edit">
+        <div class="wrapper">
+            <div class="container">
+                <div class="header">Изменение продукта в личном каталоге</div>
+                <div class="name">
+                    <div class="header">Название продукта:</div>
+                    <div class="warning floaty-edit-name-warn">Это поле не может быть пустым. Введите название продукта.</div>
+                    <textarea class="textarea-field floaty-edit-name-textarea" type='text' placeholder='тыц...'></textarea>
+                </div>
+                <div class="kcals">
+                    <div class="header">Килокалорий на 100 грамм:</div>
+                    <div class="warning floaty-edit-kcals-warn">Здесь должно быть только число. Целое. Без пробелов, точек и запятых.</div>
+                    <input class="input-field floaty-edit-kcals-input" type='number' placeholder='тыц...'/>
+                </div>
+                <div class="controls-edit">
+                    <div class="update-btn floaty-edit-update-btn">Сохранить</div>
+                </div>
+                <div class="controls-delete">
+                    <div class="delete-btn floaty-edit-delete-btn">Удалить</div>
+                    <div class="yes-delete-btn floaty-edit-yes-delete-btn">ДА, УДАЛИТЬ!</div>
+                </div>
+                <div class="controls-cancel">
+                    <div class="cancel-btn floaty-edit-cancel-btn">Отмена</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="floaty-info">
+        <div class="container">
+            <div class="header floaty-info-header"></div>
+        </div>
+    </div>
+
+    {% csrf_token %}
+    {{ data|json_script:'data' }}
+
+{% endblock content %}
+
+{% block useful-fn %}
+    <div id="add-food">Добавить продукт...</div>
+{% endblock useful-fn %}
+
+{% block js %}
+    <script src="{% static 'main/foods.js' %}" defer></script>
+{% endblock js %}
+

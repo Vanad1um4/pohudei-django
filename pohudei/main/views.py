@@ -1,4 +1,6 @@
 # TODO: standartize time throughout app
+# TODO: improve logging
+
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from datetime import datetime, timedelta
@@ -23,74 +25,53 @@ def home(request):
 ### WEIGHT FNs ################################################################
 
 
-def weight(request):
-    backup()
-    if request.user.is_authenticated:
-        user_id = request.user.profile.user_id
-        weights_to_pull = request.user.profile.weights_to_pull
-        if user_id:
-            results = db_get_last_weights(user_id, weights_to_pull)
-            logger.debug(f'{user_id = }, {weights_to_pull = }, {results = }')
-            return render(request, 'main/weight.html', {'data': results[1]})
-        return redirect('home')
-    return redirect('login')
+# def weight(request):
+#     backup()
+#     if request.user.is_authenticated:
+#         user_id = request.user.profile.user_id
+#         weights_to_pull = request.user.profile.weights_to_pull
+#         if user_id:
+#             results = db_get_last_weights(user_id, weights_to_pull)
+#             logger.debug(f'{user_id = }, {weights_to_pull = }, {results = }')
+#             return render(request, 'main/weight.html', {'data': results[1]})
+#         return redirect('home')
+#     return redirect('login')
 
 
-def add_new_weight(request):
-    if request.user.is_authenticated:
-        user_id = request.user.profile.user_id
-        if user_id:
-            data = json.loads(request.body)
-            result = db_add_new_weight(user_id, data['date'], data['weight'])
-            logger.debug(f'{user_id = }, {data = }, {result = }')
-            if result[0] == 'success':
-                return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
-                                    content_type='application/json; charset=utf-8')
-            elif result[0] == 'duplication':
-                return HttpResponse(json.dumps({'result': 'duplication'}),  # pyright: ignore
-                                    content_type='application/json; charset=utf-8')
-        else:
-            return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                                content_type='application/json; charset=utf-8')
-    else:
-        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+# def update_weight(request):
+#     if request.user.is_authenticated:
+#         user_id = request.user.profile.user_id
+#         if user_id:
+#             data = json.loads(request.body)
+#             result = db_update_weight(user_id, data['weight_id'], data['weight'])
+#             logger.debug(f'{user_id = }, {data = }, {result = }')
+#             if result[0] == 'success':
+#                 return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
+#                                     content_type='application/json; charset=utf-8')
+#         else:
+#             return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+#                                 content_type='application/json; charset=utf-8')
+#     else:
+#         return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+#                             content_type='application/json; charset=utf-8')
 
 
-def update_weight(request):
-    if request.user.is_authenticated:
-        user_id = request.user.profile.user_id
-        if user_id:
-            data = json.loads(request.body)
-            result = db_update_weight(user_id, data['weight_id'], data['weight'])
-            logger.debug(f'{user_id = }, {data = }, {result = }')
-            if result[0] == 'success':
-                return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
-                                    content_type='application/json; charset=utf-8')
-        else:
-            return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                                content_type='application/json; charset=utf-8')
-    else:
-        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
-
-
-def delete_weight(request):
-    if request.user.is_authenticated:
-        user_id = request.user.profile.user_id
-        if user_id:
-            data = json.loads(request.body)
-            result = db_delete_weight(user_id, data['weight_id'])
-            logger.debug(f'{user_id = }, {data = }, {result = }')
-            if result[0] == 'success':
-                return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
-                                    content_type='application/json; charset=utf-8')
-        else:
-            return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                                content_type='application/json; charset=utf-8')
-    else:
-        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+# def delete_weight(request):
+#     if request.user.is_authenticated:
+#         user_id = request.user.profile.user_id
+#         if user_id:
+#             data = json.loads(request.body)
+#             result = db_delete_weight(user_id, data['weight_id'])
+#             logger.debug(f'{user_id = }, {data = }, {result = }')
+#             if result[0] == 'success':
+#                 return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
+#                                     content_type='application/json; charset=utf-8')
+#         else:
+#             return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+#                                 content_type='application/json; charset=utf-8')
+#     else:
+#         return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+#                             content_type='application/json; charset=utf-8')
 
 
 ### DIARY FNs #################################################################
@@ -145,7 +126,7 @@ def diary(request, date_iso=None):
     else:
         this_days_weight = None
 
-    all_foods = db_get_food_names()
+    all_foods = db_get_all_food_names(user_id)
 
     logger.debug(f'{user_id = }, {this_days_food = }, {this_days_target_kcals = }')
     return render(request, 'main/diary.html', {'data': {
@@ -411,44 +392,150 @@ def list_averaged(init_list, avg_range, round_bool=False, round_places=0):
     return result_list
 
 
-### OPTIONS FNs ###############################################################
+### CATALOGUE FNs #############################################################
 
-def options(request):
+def foods(request):
     if not request.user.is_authenticated:
         return redirect('login')
-
     try:
         user_id = request.user.profile.user_id
     except:
         return redirect('noprofile')
 
-    results = db_get_options(user_id)
-    logger.debug(f'{user_id = }, {results = }')
-    return render(request, 'main/options.html', {'data': results[1]})
+    if request.user.is_staff:
+        foods = db_get_users_food_names(user_id, True)[1]
+    else:
+        foods = db_get_users_food_names(user_id)[1]
+    return render(request, 'main/foods.html', {'data': {'foods': foods}})
 
 
-def set_weights_to_pull(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
-
+def add_food_to_catalogue(request):
     if request.method != 'POST':
-        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+        return HttpResponse(json.dumps({'result': 'failure, not POST'}),  # pyright: ignore
                             content_type='application/json; charset=utf-8')
+    if not request.user.is_authenticated:
+        return redirect('login')
     try:
         user_id = request.user.profile.user_id
     except:
-        return redirect('noprofile')
+        return HttpResponse(json.dumps({'result': 'failure, no user_id'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
 
     data = json.loads(request.body)
-    results = db_set_weights_to_pull(user_id, data['weights_to_pull'])
-    # print(results)
-    logger.debug(f'{user_id = }, {data = }, {results = }')
-    if results[0] == 'success':
+
+    if request.user.is_staff:
+        result = db_add_new_food_to_catalogue(user_id, data['food_name'], data['food_kcals'], admin=True)
+    else:
+        result = db_add_new_food_to_catalogue(user_id, data['food_name'], data['food_kcals'])
+
+    if result[0] == 'success':
         return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+    elif result[0] == 'duplication':
+        return HttpResponse(json.dumps({'result': 'duplication'}),  # pyright: ignore
                             content_type='application/json; charset=utf-8')
     else:
         return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
                             content_type='application/json; charset=utf-8')
+
+
+def update_food_in_catalogue(request):
+    if request.method != 'POST':
+        return HttpResponse(json.dumps({'result': 'failure, not POST'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+    if not request.user.is_authenticated:
+        return redirect('login')
+    try:
+        user_id = request.user.profile.user_id
+    except:
+        return HttpResponse(json.dumps({'result': 'failure, no user_id'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+
+    data = json.loads(request.body)
+
+    if request.user.is_staff:
+        result = db_update_food_in_catalogue(
+            user_id, data['food_id'], data['food_name'], data['food_kcals'], admin=True)
+    else:
+        result = db_update_food_in_catalogue(user_id, data['food_id'], data['food_name'], data['food_kcals'])
+    print(result)
+
+    if result[0] == 'success':
+        return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+    elif result[0] == 'duplication':
+        return HttpResponse(json.dumps({'result': 'duplication'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+    else:
+        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+
+
+def delete_food_from_catalogue(request):
+    if request.method != 'POST':
+        return HttpResponse(json.dumps({'result': 'failure, not POST'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+    if not request.user.is_authenticated:
+        return redirect('login')
+    try:
+        user_id = request.user.profile.user_id
+    except:
+        return HttpResponse(json.dumps({'result': 'failure, no user_id'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+
+    data = json.loads(request.body)
+
+    result = db_delete_food_from_catalogue(data['food_id'])
+
+    if result[0] == 'success':
+        return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+    if result[0] == 'in use':
+        return HttpResponse(json.dumps({'result': 'in use'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+    else:
+        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+
+
+### OPTIONS FNs ###############################################################
+
+# def options(request):
+#     if not request.user.is_authenticated:
+#         return redirect('login')
+#
+#     try:
+#         user_id = request.user.profile.user_id
+#     except:
+#         return redirect('noprofile')
+#
+#     results = db_get_options(user_id)
+#     logger.debug(f'{user_id = }, {results = }')
+#     return render(request, 'main/options.html', {'data': results[1]})
+
+
+# def set_weights_to_pull(request):
+#     if not request.user.is_authenticated:
+#         return redirect('login')
+#
+#     if request.method != 'POST':
+#         return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+#                             content_type='application/json; charset=utf-8')
+#     try:
+#         user_id = request.user.profile.user_id
+#     except:
+#         return redirect('noprofile')
+#
+#     data = json.loads(request.body)
+#     results = db_set_weights_to_pull(user_id, data['weights_to_pull'])
+#     # print(results)
+#     logger.debug(f'{user_id = }, {data = }, {results = }')
+#     if results[0] == 'success':
+#         return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
+#                             content_type='application/json; charset=utf-8')
+#     else:
+#         return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+#                             content_type='application/json; charset=utf-8')
 
 
 ##### NO PROFILE FNs ##########################################################
@@ -494,49 +581,3 @@ def backup():
         with open(f'data_backup/{date_iso}.txt', 'w', encoding='utf-8') as f:
             json.dump(result_list, f, ensure_ascii=False, indent=4)
         logger.debug(f'created')
-
-
-# def test(request):
-#     user_id = request.user.profile.user_id
-#     data = json.loads(request.body)
-#     # dataTmp = data['text'].strip().split('\n')
-#     dataTmp = data['food'].strip().split('\n')
-#     dataList = []
-
-    # print(dataTmp)
-    # print(dataList)
-
-    # for i in dataTmp:
-    #     date, weight = i.split('\t')
-    #     date = datetime.strptime(date, '%d.%m.%Y').date().strftime("%Y-%m-%d")
-    #     weight = weight.replace(',', '.')
-    #     weight = float(weight)
-    #     dataList.append([date, weight])
-
-    # for j in dataList:
-    #     result = db_add_new_weight(user_id, j[0], j[1])
-    #     print(result)
-
-    # for i in dataTmp:
-    #     date, kcals = i.split('\t')
-    #     date = datetime.strptime(date, '%d.%m.%Y').date().strftime("%Y-%m-%d")
-    #     kcals = float(kcals)
-    #     dataList.append([date, kcals])
-
-    # for j in dataList:
-    #     result = db_add_new_diary_entry(user_id, j[0], 188, j[1])
-    #     print(result)
-
-    # for k in dataTmp:
-    #     date, weight, id = k.split('\t')
-    #     date = datetime.strptime(date, '%d.%m.%Y').date().strftime("%Y-%m-%d")
-    #     id = int(id)
-    #     weight = int(weight)
-    #     dataList.append([date, id, weight])
-    #
-    # for k in dataList:
-    #     result = db_add_new_diary_entry(user_id, k[0], k[1], k[2])
-    #     print(result)
-    #
-    # return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
-    #                     content_type='application/json; charset=utf-8')
