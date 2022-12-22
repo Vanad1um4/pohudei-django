@@ -124,41 +124,23 @@ def db_delete_weight(user_id, weight_id):
 
 ##### DIARY FUNCTIONS #########################################################
 
-def db_get_everyday_sum_kcals_from_diary(user_id):
-    try:
-        with connection.cursor() as c:
-            c.execute(f'''
-                select d.date, sum(round(d.food_weight / 100.0 * c.kcals)) as eaten, w.weight
-                from diary d join catalogue c on d.catalogue_id=c.id join weights w on d.users_id=w.users_id
-                where d.users_id={user_id} and d.date=w.date
-                group by d.date, w.weight
-                order by d.date;
-            ''')
-            # res = dict_fetchall(c)
-            res = c.fetchall()
-        return res
-    except Exception as exc:
-        logger.exception(exc)
-        return []
-
-
-# LEGACY
-def db_get_today_food_from_diary(user_id):
-    try:
-        with connection.cursor() as c:
-            # select c.name, d.food_weight, c.kcals, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten
-            # where d.date='2022-12-06' and d.users_id={user_id}
-            c.execute(f'''
-                select d.id, c.name, d.food_weight, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten_kcals
-                from diary d join catalogue c on d.catalogue_id=c.id
-                where d.date=current_date and d.users_id={user_id}
-                order by d.id;''')
-            res = c.fetchall()
-        return res
-    except Exception as exc:
-        logger.exception(exc)
-        return []
-
+# # LEGACY
+# def db_get_today_food_from_diary(user_id):
+#     try:
+#         with connection.cursor() as c:
+#             # select c.name, d.food_weight, c.kcals, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten
+#             # where d.date='2022-12-06' and d.users_id={user_id}
+#             c.execute(f'''
+#                 select d.id, c.name, d.food_weight, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten_kcals
+#                 from diary d join catalogue c on d.catalogue_id=c.id
+#                 where d.date=current_date and d.users_id={user_id}
+#                 order by d.id;''')
+#             res = c.fetchall()
+#         return res
+#     except Exception as exc:
+#         logger.exception(exc)
+#         return []
+#
 
 # NEW
 def db_get_food_from_diary(user_id, date_iso):
@@ -335,7 +317,7 @@ def db_delete_food_from_catalogue(food_id):
 ##### STATS FUNCTIONS #########################################################
 
 
-def db_get_basic_stats(user_id):
+def db_get_users_weights_all(user_id):
     try:
         with connection.cursor() as c:
             c.execute(f'''
@@ -350,6 +332,30 @@ def db_get_basic_stats(user_id):
     except Exception as exc:
         logger.exception(exc)
         return ('failure', [])
+
+
+def db_get_everyday_sum_kcals_from_diary(user_id):
+    try:
+        with connection.cursor() as c:
+            # select d.date, sum(round(d.food_weight / 100.0 * c.kcals)) as eaten, w.weight
+            # from diary d join catalogue c on d.catalogue_id=c.id join weights w on d.users_id=w.users_id
+            # where d.users_id={user_id} and d.date=w.date
+            # group by d.date, w.weight
+            # order by d.date;
+
+            c.execute(f'''
+                select d.date, sum(round(d.food_weight / 100.0 * c.kcals)) as eaten
+                from diary d join catalogue c on d.catalogue_id=c.id
+                where d.users_id={user_id}
+                group by d.date
+                order by d.date
+            ''')
+            # res = dict_fetchall(c)
+            res = c.fetchall()
+        return res
+    except Exception as exc:
+        logger.exception(exc)
+        return []
 
 
 ##### OPTIONS FUNCTIONS #######################################################

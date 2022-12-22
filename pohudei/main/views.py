@@ -236,57 +236,13 @@ def stats(request):
     except:
         return redirect('noprofile')
 
-    # dates = []
-    # human_dates = []
-    # weights = []
-    # avg_weights = []
-    # eaten = []
-    # target_kcals = []
-    #
-    # results = db_get_basic_stats(user_id)
-    #
-    # for i in results[1]:
-    #     dates.append(i[0])
-    #     weights.append(i[1])
-    #
-    # sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)
-    # for row in sum_kcals_and_weight:
-    #     human_dates.append(row[0].strftime("%d %b %Y"))
-    #     eaten.append(int(row[1]))
-    #     weights.append(float(row[2]))
-    #
-    # target_kcals.append(0)
-    # for i, row in enumerate(sum_kcals_and_weight):
-    #     j = 0
-    #     if i - 6 > 0:
-    #         j = i - 6
-    #     tmp_weights_list = weights[j:i+1]
-    #     tmp_weights_sum = sum(tmp_weights_list)
-    #     tmp_avg_weight = round(tmp_weights_sum / len(tmp_weights_list), 2)
-    #     avg_weights.append(tmp_avg_weight)
-    #
-    #     k = 0
-    #     if i - 30 > 0:
-    #         k = i - 30
-    #     tmp_eaten_list = eaten[k:i+1]
-    #     tmp_eaten_sum = sum(tmp_eaten_list)
-    #
-    #     num_of_days = i - k
-    #     if num_of_days == 0:
-    #         num_of_days = 1
-    #     # if i < len(sum_kcals_and_weight)-1:
-    #     # if len(sum_kcals_and_weight) <= 40 and i > 10 or len(sum_kcals_and_weight) > 40 and i > 30:
-    #     tmp_target_kcals = round((tmp_eaten_sum - ((avg_weights[i] - avg_weights[k]) * 7700)) / num_of_days)
-    #     target_kcals.append(tmp_target_kcals)
-    #     # else:
-    #     #     target_kcals.append(None)
-
     human_dates, eaten, weights, avg_weights, target_kcals = stats_calc(user_id)
 
+    # print('===///===')
     # print(len(human_dates))
+    # print(len(eaten))
     # print(len(weights))
     # print(len(avg_weights))
-    # print(len(eaten))
     # print(len(target_kcals))
 
     # print(human_dates)
@@ -336,20 +292,31 @@ def stats_calc(user_id):
     eaten = []
     target_kcals = []
 
-    results = db_get_basic_stats(user_id)
+    results = db_get_users_weights_all(user_id)
 
-    for i in results[1]:
-        dates.append(i[0])
-        weights.append(i[1])
+    for row in results[1]:
+        dates.append(row[0])
+        human_dates.append(row[0].strftime("%d %b %Y"))
+        weights.append(float(row[1]))
+
+    # print(len(dates))
+    # print(len(weights))
+
+    for i in human_dates:
+        eaten.append(0)
 
     sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)
-    for row in sum_kcals_and_weight:
-        human_dates.append(row[0].strftime("%d %b %Y"))
-        eaten.append(int(row[1]))
-        weights.append(float(row[2]))
+    for i, row in enumerate(sum_kcals_and_weight):
+        # eaten.append(int(row[1]))
+        eaten[i] = int(row[1])
+
+    # print('===///===')
+    # print(len(human_dates))
+    # print(len(eaten))
+    # print(len(weights))
 
     target_kcals.append(0)
-    for i, row in enumerate(sum_kcals_and_weight):
+    for i, _ in enumerate(human_dates):
         j = 0
         if i - 6 > 0:
             j = i - 6
