@@ -1,6 +1,5 @@
 __pycache__/
 *.pyc
-pohudei/pohudei-project/settings.py
 env
 pohudei/logs/debug.log
 pohudei/logs/exceptions.log
