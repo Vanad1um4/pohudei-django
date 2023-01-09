@@ -105,6 +105,7 @@ function onLoad() {
 
     document.addEventListener('keyup', function onFirstPress(event) {
         const lettersAndNumbers = '0123456789йцукенгшщзхъфывапролджэячсмитьбю'
+        console.log(floatSearch.style.display !== 'block' && floatyAddNew.style.display !== 'block' && floatyEditMainDiv.style.display !== 'block' && floatyInfoDiv.style.display !== 'block')
         if (floatSearch.style.display !== 'block' && floatyAddNew.style.display !== 'block' && floatyEditMainDiv.style.display !== 'block' && floatyInfoDiv.style.display !== 'block') {
             if (event.key.length === 1 && lettersAndNumbers.includes(event.key.toLowerCase())) {
                 // console.log(event.key)
@@ -112,7 +113,7 @@ function onLoad() {
                 inputSearchField.value = event.key
                 inputSearchField.focus()
                 foodSearchInputUpdate(inputSearchField)
-                document.removeEventListener('keyup', onFirstPress, false)
+                // document.removeEventListener('keyup', onFirstPress, false)
             }
         }
     })
@@ -195,7 +196,7 @@ function foodSearchInputUpdate(target) {
     }
 
     for (let i in tempFoodArray) {
-        console.log(tempFoodArray[i])
+        // console.log(tempFoodArray[i])
         const resDiv = document.createElement('DIV')
         resDiv.classList.add('float-results-line')
         resDiv.setAttribute('id', 'food' + tempFoodArray[i][0])
