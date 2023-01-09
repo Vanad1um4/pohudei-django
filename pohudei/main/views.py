@@ -22,58 +22,6 @@ def home(request):
     return redirect('login')
 
 
-### WEIGHT FNs ################################################################
-
-
-# def weight(request):
-#     backup()
-#     if request.user.is_authenticated:
-#         user_id = request.user.profile.user_id
-#         weights_to_pull = request.user.profile.weights_to_pull
-#         if user_id:
-#             results = db_get_last_weights(user_id, weights_to_pull)
-#             logger.debug(f'{user_id = }, {weights_to_pull = }, {results = }')
-#             return render(request, 'main/weight.html', {'data': results[1]})
-#         return redirect('home')
-#     return redirect('login')
-
-
-# def update_weight(request):
-#     if request.user.is_authenticated:
-#         user_id = request.user.profile.user_id
-#         if user_id:
-#             data = json.loads(request.body)
-#             result = db_update_weight(user_id, data['weight_id'], data['weight'])
-#             logger.debug(f'{user_id = }, {data = }, {result = }')
-#             if result[0] == 'success':
-#                 return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
-#                                     content_type='application/json; charset=utf-8')
-#         else:
-#             return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-#                                 content_type='application/json; charset=utf-8')
-#     else:
-#         return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-#                             content_type='application/json; charset=utf-8')
-
-
-# def delete_weight(request):
-#     if request.user.is_authenticated:
-#         user_id = request.user.profile.user_id
-#         if user_id:
-#             data = json.loads(request.body)
-#             result = db_delete_weight(user_id, data['weight_id'])
-#             logger.debug(f'{user_id = }, {data = }, {result = }')
-#             if result[0] == 'success':
-#                 return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
-#                                     content_type='application/json; charset=utf-8')
-#         else:
-#             return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-#                                 content_type='application/json; charset=utf-8')
-#     else:
-#         return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-#                             content_type='application/json; charset=utf-8')
-
-
 ### DIARY FNs #################################################################
 
 def diary(request, date_iso=None):
@@ -463,46 +411,6 @@ def delete_food_from_catalogue(request):
     else:
         return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
                             content_type='application/json; charset=utf-8')
-
-
-### OPTIONS FNs ###############################################################
-
-# def options(request):
-#     if not request.user.is_authenticated:
-#         return redirect('login')
-#
-#     try:
-#         user_id = request.user.profile.user_id
-#     except:
-#         return redirect('noprofile')
-#
-#     results = db_get_options(user_id)
-#     logger.debug(f'{user_id = }, {results = }')
-#     return render(request, 'main/options.html', {'data': results[1]})
-
-
-# def set_weights_to_pull(request):
-#     if not request.user.is_authenticated:
-#         return redirect('login')
-#
-#     if request.method != 'POST':
-#         return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-#                             content_type='application/json; charset=utf-8')
-#     try:
-#         user_id = request.user.profile.user_id
-#     except:
-#         return redirect('noprofile')
-#
-#     data = json.loads(request.body)
-#     results = db_set_weights_to_pull(user_id, data['weights_to_pull'])
-#     # print(results)
-#     logger.debug(f'{user_id = }, {data = }, {results = }')
-#     if results[0] == 'success':
-#         return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
-#                             content_type='application/json; charset=utf-8')
-#     else:
-#         return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-#                             content_type='application/json; charset=utf-8')
 
 
 ##### NO PROFILE FNs ##########################################################
