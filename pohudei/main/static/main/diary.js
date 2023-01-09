@@ -82,14 +82,21 @@ function onLoad() {
         inputSearchField.focus()
     })
 
-    closeBtn.addEventListener("click", function clicked(event) {
+    closeBtn.addEventListener('click', () => { closeSearch() })
+    document.addEventListener('keyup', (event) => {
+        if (event.key === 'Escape' && floatSearch.style.display === 'block') {
+            closeSearch()
+        }
+    })
+
+    function closeSearch() {
         floatSearch.style.display = 'none'
         inputSearchField.value = ''
 
         while (resCont.firstChild) {
             resCont.firstChild.remove()
         }
-    })
+    }
 
     floatyAddInput.addEventListener('keyup', function clicked(event) {
         if (event.key === 'Enter') { floatyAddYesPressed(event.target) }
@@ -107,12 +114,10 @@ function onLoad() {
         const lettersAndNumbers = '0123456789йцукенгшщзхъфывапролджэячсмитьбю'
         if (floatSearch.style.display !== 'block' && floatyAddNew.style.display !== 'block' && floatyEditMainDiv.style.display !== 'block' && floatyInfoDiv.style.display !== 'block') {
             if (event.key.length === 1 && lettersAndNumbers.includes(event.key.toLowerCase())) {
-                // console.log(event.key)
                 floatSearch.style.display = 'block'
                 inputSearchField.value = event.key
                 inputSearchField.focus()
                 foodSearchInputUpdate(inputSearchField)
-                // document.removeEventListener('keyup', onFirstPress, false)
             }
         }
     })
