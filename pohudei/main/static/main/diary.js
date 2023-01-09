@@ -69,18 +69,18 @@ function onLoad() {
         if (date) {
             window.location = `/diary/${date}/`
         }
-    });
+    })
 
     thisDateDiv.addEventListener("click", () => {
         chooseDateInput.showPicker()
     })
 
-    thisDaysWeightInput.addEventListener('input', () => { saveWeight() });
+    thisDaysWeightInput.addEventListener('input', () => { saveWeight() })
 
     addBtn.addEventListener("click", function clicked(event) {
         floatSearch.style.display = 'block'
         inputSearchField.focus()
-    });
+    })
 
     closeBtn.addEventListener("click", function clicked(event) {
         floatSearch.style.display = 'none'
@@ -89,9 +89,9 @@ function onLoad() {
         while (resCont.firstChild) {
             resCont.firstChild.remove()
         }
-    });
+    })
 
-    floatyAddInput.addEventListener("keyup", function clicked(event) {
+    floatyAddInput.addEventListener('keyup', function clicked(event) {
         if (event.key === 'Enter') { floatyAddYesPressed(event.target) }
     })
 
@@ -103,13 +103,37 @@ function onLoad() {
         inputSearchField.focus()
     })
 
-    inputSearchField.addEventListener("input", function clicked(event) { foodSearchInputUpdate(event.target) });
+    document.addEventListener('keyup', function onFirstPress(event) {
+        const lettersAndNumbers = '0123456789йцукенгшщзхъфывапролджэячсмитьбю'
+        if (floatSearch.style.display !== 'block' && floatyAddNew.style.display !== 'block' && floatyEditMainDiv.style.display !== 'block' && floatyInfoDiv.style.display !== 'block') {
+            if (event.key.length === 1 && lettersAndNumbers.includes(event.key.toLowerCase())) {
+                // console.log(event.key)
+                floatSearch.style.display = 'block'
+                inputSearchField.value = event.key
+                inputSearchField.focus()
+                foodSearchInputUpdate(inputSearchField)
+                document.removeEventListener('keyup', onFirstPress, false)
+            }
+        }
+    })
 
-    floatyEditWeightChange.addEventListener("keyup", function clicked(event) { if (event.key === 'Enter') { editDiaryUpdate() } })
-    floatyEditUpdateBtn.addEventListener("click", (event) => { editDiaryUpdate() });
-    floatyEditdeleteBtn.addEventListener("click", () => { editDiaryDelete() });
-    floatyEdityesDeleteBtn.addEventListener("click", (event) => { editDiaryYesDelete() });
-    floatyEditcancelBtn.addEventListener("click", () => { editDiaryCancel() });
+    inputSearchField.addEventListener('input', function typed(event) { foodSearchInputUpdate(event.target) });
+
+    inputSearchField.addEventListener('keyup', function pressed(event) {
+        if (event.key === 'Enter') { foodSearchEnterPressed(event.target) }
+    })
+
+    floatyEditWeightNew.addEventListener('keyup', function clicked(event) { if (event.key === 'Enter') { editDiaryUpdate() } })
+    floatyEditWeightChange.addEventListener('keyup', function clicked(event) { if (event.key === 'Enter') { editDiaryUpdate() } })
+    floatyEditUpdateBtn.addEventListener('click', (event) => { editDiaryUpdate() })
+    floatyEditdeleteBtn.addEventListener('click', () => { editDiaryDelete() })
+    floatyEdityesDeleteBtn.addEventListener('click', (event) => { editDiaryYesDelete() })
+    floatyEditcancelBtn.addEventListener('click', () => { editDiaryCancel() })
+}
+
+function foodSearchEnterPressed() {
+    // console.log(resCont.lastChild)
+    foodResultClicked(resCont.lastChild)
 }
 
 async function saveWeight() {
@@ -157,6 +181,7 @@ async function saveWeight() {
 
 function foodSearchInputUpdate(target) {
     const queryArray = target.value.toLowerCase().split(' ').filter(val => val.length > 0)
+    // console.log(queryArray)
 
     let tempFoodArray = []
     for (let i in foodArray) {
