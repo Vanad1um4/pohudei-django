@@ -105,7 +105,6 @@ function onLoad() {
 
     document.addEventListener('keyup', function onFirstPress(event) {
         const lettersAndNumbers = '0123456789йцукенгшщзхъфывапролджэячсмитьбю'
-        console.log(floatSearch.style.display !== 'block' && floatyAddNew.style.display !== 'block' && floatyEditMainDiv.style.display !== 'block' && floatyInfoDiv.style.display !== 'block')
         if (floatSearch.style.display !== 'block' && floatyAddNew.style.display !== 'block' && floatyEditMainDiv.style.display !== 'block' && floatyInfoDiv.style.display !== 'block') {
             if (event.key.length === 1 && lettersAndNumbers.includes(event.key.toLowerCase())) {
                 // console.log(event.key)
