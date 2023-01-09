@@ -16,7 +16,7 @@ urlpatterns = [
     # path('update_weight/', views.update_weight),
     # path('delete_weight/', views.delete_weight),
 
-    path('update_weight_new/', views.update_weight_new),
+    path('update_weight/', views.update_weight),
 
     path('add_food_to_diary/', views.add_food_to_diary),
     path('update_diary_entry/', views.update_diary_entry),

@@ -138,7 +138,7 @@ def diary(request, date_iso=None):
     # }})
 
 
-def update_weight_new(request):
+def update_weight(request):
     if request.method != 'POST':
         return HttpResponse(json.dumps({'result': 'failure, not POST'}),  # pyright: ignore
                             content_type='application/json; charset=utf-8')

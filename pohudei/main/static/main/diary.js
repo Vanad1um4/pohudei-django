@@ -112,7 +112,11 @@ function onLoad() {
 
     document.addEventListener('keyup', function onFirstPress(event) {
         const lettersAndNumbers = '0123456789йцукенгшщзхъфывапролджэячсмитьбю'
-        if (floatSearch.style.display !== 'block' && floatyAddNew.style.display !== 'block' && floatyEditMainDiv.style.display !== 'block' && floatyInfoDiv.style.display !== 'block') {
+        if (floatSearch.style.display !== 'block' &&
+            floatyAddNew.style.display !== 'block' &&
+            floatyEditMainDiv.style.display !== 'block' &&
+            floatyInfoDiv.style.display !== 'block' &&
+            thisDaysWeightInput !== document.activeElement) {
             if (event.key.length === 1 && lettersAndNumbers.includes(event.key.toLowerCase())) {
                 floatSearch.style.display = 'block'
                 inputSearchField.value = event.key
@@ -153,7 +157,7 @@ async function saveWeight() {
             thisDaysWeightInput.disabled = true
             thisDaysWeightInput.style.background = 'silver'
 
-            fetch(`/update_weight_new/`,
+            fetch(`/update_weight/`,
             {
                 method: 'POST',
                 headers: {
