@@ -246,17 +246,31 @@ def stats_calc(user_id):
         dates.append(row[0])
         human_dates.append(row[0].strftime("%d %b %Y"))
         weights.append(float(row[1]))
+        # print(row)
 
     # print(len(dates))
+    # print(dates)
     # print(len(weights))
 
     for i in human_dates:
         eaten.append(0)
 
+    # print(len(human_dates))
+    # print(len(eaten))
+
     sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)
+
+    # print(len(sum_kcals_and_weight))
+    # for i, row in enumerate(eaten):
+    #     print(i, row)
+    # for i, row in enumerate(sum_kcals_and_weight):
+    #     print(i, row)
+
     for i, row in enumerate(sum_kcals_and_weight):
-        # eaten.append(int(row[1]))
-        eaten[i] = int(row[1])
+        try:
+            eaten[i] = int(row[1])
+        except Exception as exc:
+            logger.exception(exc)
 
     # print('===///===')
     # print(len(human_dates))
