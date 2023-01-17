@@ -8,17 +8,17 @@
 {% block content %}
 
     <div class="main-div">
-        <div class="weight-chart-container chart-container">
-            <canvas id="weightChart"></canvas>
-        </div>
         <div class="weight-chart-container-90 chart-container">
             <canvas id="weightChart90"></canvas>
         </div>
-        <div class="kcals-chart-container chart-container">
-            <canvas id="kcalsChart"></canvas>
-        </div>
         <div class="kcals-chart-container-90 chart-container">
             <canvas id="kcalsChart90"></canvas>
+        </div>
+        <div class="weight-chart-container chart-container">
+            <canvas id="weightChart"></canvas>
+        </div>
+        <div class="kcals-chart-container chart-container">
+            <canvas id="kcalsChart"></canvas>
         </div>
     </div>
 
@@ -33,51 +33,6 @@
     <script>
         const data = JSON.parse(document.getElementById('data').textContent)
         console.log(data)
-
-        const ctxWeight = document.querySelector('#weightChart');
-        new Chart(ctxWeight, {
-            type: 'line',
-            data: {
-                datasets: [{
-                    label: 'Килограммчики',
-                    data: data['weights_chart']['normal'],
-                    borderWidth: 2,
-                    pointRadius: 2,
-                    tension: 0.3,
-                    order: 2,
-                    borderColor: '#2352ff91',
-                },{
-                    label: 'Средненькое',
-                    data: data['weights_chart']['average'],
-                    borderWidth: 2,
-                    pointRadius: 2,
-                    tension: 0.3,
-                    order: 1,
-                    borderColor: '#ff0000a8',
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        {# beginAtZero: true #}
-                    }
-                },
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'График веса за всё время',
-                        padding: 0,
-                        font: {
-                            size: 18,
-                            weight: 700,
-                        }
-                    },
-                },
-
-            }
-        });
 
         if (data['weights_chart']['normal'].length > 90) {
             document.querySelector('.weight-chart-container-90').style.display = 'block'
@@ -114,7 +69,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: '... и за последние 3 месяца',
+                            text: 'Вес за последние 3 месяца',
                             padding: 0,
                             font: {
                                 size: 18,
@@ -125,51 +80,6 @@
                 },
             });
         }
-
-        const ctxKcals = document.querySelector('#kcalsChart');
-        new Chart(ctxKcals, {
-            data: {
-                datasets: [{
-                    type: 'bar',
-                    label: 'Покушано',
-                    data: data['kcals_chart']['eaten'],
-                    borderWidth: 2,
-                    {# pointRadius: 2, #}
-                    {# tension: 0.3, #}
-                    order: 2,
-                    borderColor: '#2352ff91',
-                },{
-                    type: 'line',
-                    label: 'Нормочка',
-                    data: data['kcals_chart']['target'],
-                    borderWidth: 3,
-                    pointRadius: 0,
-                    tension: 0.3,
-                    order: 1,
-                    borderColor: '#ff0000a8',
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                    }
-                },
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'График калорий за всё время',
-                        padding: 0,
-                        font: {
-                            size: 18,
-                            weight: 700,
-                        },
-                    },
-                },
-            },
-        });
 
         if (data['kcals_chart']['eaten'].length > 90) {
             document.querySelector('.kcals-chart-container-90').style.display = 'block'
@@ -208,7 +118,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: '... и за последние 3 месяца',
+                            text: 'Калории за последние 3 месяца',
                             padding: 0,
                             font: {
                                 size: 18,
@@ -219,6 +129,96 @@
                 }
             });
         }
+
+        const ctxWeight = document.querySelector('#weightChart');
+        new Chart(ctxWeight, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: 'Килограммчики',
+                    data: data['weights_chart']['normal'],
+                    borderWidth: 2,
+                    pointRadius: 2,
+                    tension: 0.3,
+                    order: 2,
+                    borderColor: '#2352ff91',
+                },{
+                    label: 'Средненькое',
+                    data: data['weights_chart']['average'],
+                    borderWidth: 2,
+                    pointRadius: 2,
+                    tension: 0.3,
+                    order: 1,
+                    borderColor: '#ff0000a8',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        {# beginAtZero: true #}
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Вес за всё время',
+                        padding: 0,
+                        font: {
+                            size: 18,
+                            weight: 700,
+                        }
+                    },
+                },
+
+            }
+        });
+
+        const ctxKcals = document.querySelector('#kcalsChart');
+        new Chart(ctxKcals, {
+            data: {
+                datasets: [{
+                    type: 'bar',
+                    label: 'Покушано',
+                    data: data['kcals_chart']['eaten'],
+                    borderWidth: 2,
+                    {# pointRadius: 2, #}
+                    {# tension: 0.3, #}
+                    order: 2,
+                    borderColor: '#2352ff91',
+                },{
+                    type: 'line',
+                    label: 'Нормочка',
+                    data: data['kcals_chart']['target'],
+                    borderWidth: 3,
+                    pointRadius: 0,
+                    tension: 0.3,
+                    order: 1,
+                    borderColor: '#ff0000a8',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Калории за всё время',
+                        padding: 0,
+                        font: {
+                            size: 18,
+                            weight: 700,
+                        },
+                    },
+                },
+            },
+        });
 
     </script>
 
