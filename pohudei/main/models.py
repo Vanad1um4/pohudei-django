@@ -253,6 +253,35 @@ def db_get_everyday_sum_kcals_from_diary(user_id):
         return []
 
 
+##### OPTIONS FUNCTIONS #######################################################
+
+
+def db_get_all_options(user_id):
+    try:
+        with connection.cursor() as c:
+            sql = '''select height from profile_profile where user_id=%s'''
+            values = (user_id,)
+            c.execute(sql, values)
+            # res = c.fetchall()
+            res = dict_fetchall(c)
+        return ('success', res[0])
+    except Exception as exc:
+        logger.exception(exc)
+        return ('failure', [])
+
+
+def db_set_height(height, user_id):
+    try:
+        with connection.cursor() as c:
+            sql = 'update profile_profile set height=%s where user_id=%s;'
+            values = (height, user_id)
+            c.execute(sql, values)
+        return ('success',)
+    except Exception as exc:
+        logger.exception(exc)
+        return ('failure',)
+
+
 ##### BACKUP FUNCTIONS ########################################################
 
 

@@ -1,26 +1,17 @@
-.options-div > .weights-pull {
+#options > .height {
     display: grid;
-    grid-template-columns: 80% 20%;
+    grid-template-columns: 63% 25% 12%;
 }
 
-.options-div > .weights-pull > .headline {
-    font-size: 1.5em;
-    grid-column: span 2;
+#options > .height > * {
+    margin: 1px 1px;
+    font-size: 25px;
+}
+#options > .height > .headline {
 }
 
-.options-div > .weights-pull > .weights-pull-num {
-    font-size: 1.5em;
-    grid-column: span 2;
-    /* background: transparent; */
-    /* color: white; */
-    /* font-weight: 900; */
-    /* width: 80%; */
-    /* text-align: center; */
-    /* margin-top: 5px; */
+#options > .height > .height-num {
 }
 
-/* .options-div > .weights-pull > .status { */
-/*     width: 100%; */
-/*     height: 100%; */
-/*     background-color: red; */
-/* } */
+#options > .height > .height-num {
+}

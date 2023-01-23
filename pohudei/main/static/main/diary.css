@@ -1,3 +1,6 @@
+
+/***** PAGINATION ************************************************************/
+
 #pages {
     display: flex;
     align-items: center;
@@ -44,6 +47,50 @@
     /* font-size: 1.3em; */
     border: 0px;
 }
+
+
+/***** BMI *******************************************************************/
+
+#bmi {}
+
+#bmi > .bmi-chart {
+    display: flex;
+    border: 1px solid black;
+    gap: 1px;
+}
+
+#bmi > .bmi-chart > div {
+    height: 10px;
+    /* border: 1px solid white; */
+    margin: 1px 0px;
+}
+
+#bmi > .bmi-chart > .deficit {
+    flex-grow: 5;
+    background-color: yellow;
+}
+#bmi > .bmi-chart > .norm {
+    flex-grow: 13;
+    background-color: #44ed44;
+}
+#bmi > .bmi-chart > .excess {
+    flex-grow: 10;
+    background-color: yellow;
+}
+#bmi > .bmi-chart > .obesity1 {
+    flex-grow: 10;
+    background-color: #fd7878;
+}
+#bmi > .bmi-chart > .obesity2 {
+    flex-grow: 10;
+    background-color: red;
+}
+#bmi > .bmi-chart > .obesity3 {
+    flex-grow: 10;
+    background-color: #bd0000;
+}
+
+/***** MAIN TABLE ************************************************************/
 
 
 #main-table {

@@ -7,19 +7,15 @@
 
 {% block content %}
 
-    <div class="options-div">
-        <div class="weights-pull">
-            <div class="headline">Показывать взвешиваний:</div>
-            <input class="weights-pull-num" type='number'/>
-            {# <div class="status"></div> #}
+    <div id="options">
+        <div class="height">
+            <div class="headline">Рост (см.):</div>
+            <input class="height-num" type='number'/>
+            <button class="height-save" type="submit"> 💾 </button>
         </div>
     </div>
 
-    {# <textarea class="textarea"></textarea> #}
-    {# <button class="button">BUTTON</button> #}
-
     {% csrf_token %}
-
     {{ data|json_script:'data' }}
 
 {% endblock content %}

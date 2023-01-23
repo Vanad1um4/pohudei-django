@@ -427,6 +427,46 @@ def delete_food_from_catalogue(request):
                             content_type='application/json; charset=utf-8')
 
 
+##### OPTIONS FNs #############################################################
+
+
+def options(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    try:
+        user_id = request.user.profile.user_id
+    except:
+        return redirect('noprofile')
+
+    results = db_get_all_options(user_id)
+    # print(results)
+    return render(request, 'main/options.html', {'data': results[1]})
+
+
+def set_height_ajax(request):
+    if request.method != 'POST':
+        return HttpResponse(json.dumps({'result': 'failure, not POST'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+    if not request.user.is_authenticated:
+        return redirect('login')
+    try:
+        user_id = request.user.profile.user_id
+    except:
+        return HttpResponse(json.dumps({'result': 'failure, no user_id'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+
+    data = json.loads(request.body)
+    # print(data)
+    result = db_set_height(data['height'], user_id)
+    # print(result)
+    if result[0] == 'success':
+        return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+    else:
+        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
+                            content_type='application/json; charset=utf-8')
+
+
 ##### NO PROFILE FNs ##########################################################
 
 

@@ -155,7 +155,7 @@ async function saveWeight() {
             thisDaysWeightWarning.textContent = 'Вес должен быть в формате 99.9'
         } else {
             thisDaysWeightInput.disabled = true
-            thisDaysWeightInput.style.background = 'silver'
+            thisDaysWeightInput.style.background = 'rgb(192 192 192 / 66%)'
 
             fetch(`/update_weight/`,
             {
