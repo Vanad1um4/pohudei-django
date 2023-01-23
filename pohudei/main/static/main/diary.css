@@ -51,16 +51,21 @@
 
 /***** BMI *******************************************************************/
 
-#bmi {}
+#bmi {
+    margin-top: 10px;
+    margin-bottom: 7px;
+}
 
 #bmi > .bmi-chart {
     display: flex;
     border: 1px solid black;
     gap: 1px;
+    /* font-size: 12px; */
+
 }
 
 #bmi > .bmi-chart > div {
-    height: 10px;
+    height: 5px;
     /* border: 1px solid white; */
     margin: 1px 0px;
 }
@@ -88,6 +93,52 @@
 #bmi > .bmi-chart > .obesity3 {
     flex-grow: 10;
     background-color: #bd0000;
+}
+
+
+#bmi > .bmi-nums {
+    display: flex;
+    /* gap: 1px; */
+}
+#bmi > .bmi-nums > .num-segment {
+    /* border: 1px solid black; */
+    font-size: 12px;
+    width: 0;
+}
+#bmi > .bmi-nums > .deficit-num {
+    flex-grow: 5;
+}
+#bmi > .bmi-nums > .norm-num {
+    flex-grow: 13;
+}
+#bmi > .bmi-nums > .excess-num {
+    flex-grow: 10;
+}
+#bmi > .bmi-nums > .obesity1-num {
+    flex-grow: 10;
+}
+#bmi > .bmi-nums > .obesity2-num {
+    flex-grow: 10;
+}
+#bmi > .bmi-nums > .obesity3-num {
+    flex-grow: 10;
+}
+#bmi > .bmi-nums > .num-segment > .max-num {
+    text-align: right;
+    position: relative;
+    top: 3px;
+    left: 8px;
+}
+#bmi > .bmi-current {
+    height: 0;
+    width: 0;
+}
+#bmi > .bmi-current > .dash {
+    font-family: serif;
+    font-size: 28px;
+    position: relative;
+    bottom: 20px;
+    left: 8px;
 }
 
 /***** MAIN TABLE ************************************************************/

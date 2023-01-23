@@ -75,15 +75,12 @@ def diary(request, date_iso=None):
         this_days_weight = None
 
     all_foods = db_get_all_food_names(user_id)
+    height = db_get_height(user_id)
 
-    logger.debug(f'{user_id = }, {this_days_food = }, {this_days_target_kcals = }')
+    # logger.debug(f'{user_id = }, {this_days_food = }, {this_days_target_kcals = }')
     return render(request, 'main/diary.html', {'data': {
-        'dates': dates, 'this_days_food': this_days_food, 'this_days_target_kcals': this_days_target_kcals, 'this_days_weight': this_days_weight, 'all_foods': all_foods
+        'dates': dates, 'this_days_food': this_days_food, 'this_days_target_kcals': this_days_target_kcals, 'this_days_weight': this_days_weight, 'height': height[1][0], 'all_foods': all_foods
     }})
-    # return render(request, 'main/diary.html', {'data': {
-    #     'dates': dates, 'this_days_date': date_iso, 'this_days_food': this_days_food,
-    #     'this_days_target_kcals': this_days_target_kcals, 'this_days_weight': this_days_weight, 'all_foods': all_foods
-    # }})
 
 
 def update_weight(request):
@@ -113,7 +110,7 @@ def add_food_to_diary(request):
         data = json.loads(request.body)
         if user_id:
             result = db_add_new_diary_entry(user_id, data['date_iso'], data['food_id'], data['food_weight'])
-            logger.debug(f'{user_id = }, {data = }, {result = }')
+            # logger.debug(f'{user_id = }, {data = }, {result = }')
             if result == 'success':
                 return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
                                     content_type='application/json; charset=utf-8')
@@ -136,7 +133,7 @@ def update_diary_entry(request):
         new_food_weight = data['new_weight']
         if user_id:
             result = db_update_diary_entry(user_id, diary_id, new_food_weight)
-            logger.debug(f'{user_id = }, {data = }, {result = }')
+            # logger.debug(f'{user_id = }, {data = }, {result = }')
             if result == 'success':
                 return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
                                     content_type='application/json; charset=utf-8')
@@ -158,7 +155,7 @@ def delete_diary_entry(request):
         diary_id = data['diary_id']
         if user_id:
             result = db_del_diary_entry(user_id, diary_id)
-            logger.debug(f'{user_id = }, {data = }, {result = }')
+            # logger.debug(f'{user_id = }, {data = }, {result = }')
             if result == 'success':
                 return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
                                     content_type='application/json; charset=utf-8')
@@ -225,7 +222,7 @@ def stats(request):
         prepped_eaten_kcals.append({'x': human_dates[i], 'y': eaten[i]})
         prepped_target_kcals.append({'x': human_dates[i], 'y': target_kcals[i]})
 
-    logger.debug(f'{user_id = }')
+    # logger.debug(f'{user_id = }')
     return render(request, 'main/stats.html', {'data': {
         'weights_chart': {'normal': prepped_normal_weights, 'average': prepped_average_weights},
         'kcals_chart': {'eaten': prepped_eaten_kcals, 'target': prepped_target_kcals},
@@ -471,7 +468,7 @@ def set_height_ajax(request):
 
 
 def noprofile(request):
-    logger.debug(f'')
+    # logger.debug(f'')
     return render(request, 'main/noprofile.html')
 
 
@@ -481,7 +478,7 @@ def noprofile(request):
 def backup():
     yesterday = datetime.today().date() - timedelta(days=1)
     date_iso = yesterday.strftime("%Y-%m-%d")
-    logger.debug(f'executed')
+    # logger.debug(f'executed')
     # if True:
     if not os.path.isfile(f'data_backup/{date_iso}.txt'):
         food, weights = db_backup(date_iso)[1]
@@ -509,4 +506,4 @@ def backup():
         # with open(f'data_backup/{date_iso}-all.txt', 'w', encoding='utf-8') as f:
         with open(f'data_backup/{date_iso}.txt', 'w', encoding='utf-8') as f:
             json.dump(result_list, f, ensure_ascii=False, indent=4)
-        logger.debug(f'created')
+        # logger.debug(f'created')

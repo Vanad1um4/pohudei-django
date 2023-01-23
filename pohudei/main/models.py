@@ -270,6 +270,19 @@ def db_get_all_options(user_id):
         return ('failure', [])
 
 
+def db_get_height(user_id):
+    try:
+        with connection.cursor() as c:
+            sql = 'select height from profile_profile where user_id=%s'
+            values = (user_id,)
+            c.execute(sql, values)
+            res = c.fetchone()
+        return ('success', res)
+    except Exception as exc:
+        logger.exception(exc)
+        return ('failure', [])
+
+
 def db_set_height(height, user_id):
     try:
         with connection.cursor() as c:

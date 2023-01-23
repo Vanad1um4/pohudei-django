@@ -1,6 +1,14 @@
 const chooseDateInput = document.querySelector('#choose-date')
 const thisDateDiv = document.querySelector('.this-date-div')
 
+const bmiDiv = document.querySelector('#bmi')
+const deficitHighNumDiv = document.querySelector('.deficit-num > .max-num')
+const normHighNumDiv = document.querySelector('.norm-num > .max-num')
+const excessHighNumDiv = document.querySelector('.excess-num > .max-num')
+const obesity1HighNumDiv = document.querySelector('.obesity1-num > .max-num')
+const obesity2HighNumDiv = document.querySelector('.obesity2-num > .max-num')
+const bmiDashDiv = document.querySelector('.bmi-current > .dash')
+
 const divMainTable = document.querySelector('#main-table')
 const currValKcalsDiv = document.querySelector('.curr-kcals')
 const currValPercDiv = document.querySelector('.curr-perc')
@@ -44,7 +52,7 @@ const thisDaysDateISO = data['dates']['this_day_iso']
 const thisDaysFood = data['this_days_food']
 const thisDaysNormKcals = data['this_days_target_kcals']
 const thisDaysWeight = data['this_days_weight']
-// const foodDictRaw = data['all_foods']
+const height = data['height']
 const foodArray = data['all_foods']
 
 let currValKcals = 0
@@ -138,6 +146,8 @@ function onLoad() {
     floatyEditdeleteBtn.addEventListener('click', () => { editDiaryDelete() })
     floatyEdityesDeleteBtn.addEventListener('click', (event) => { editDiaryYesDelete() })
     floatyEditcancelBtn.addEventListener('click', () => { editDiaryCancel() })
+
+    bmiCalc()
 }
 
 function foodSearchEnterPressed() {
@@ -477,6 +487,33 @@ function copyTable() {
     const result = document.execCommand('copy');
     document.body.removeChild(input);
     // console.log(result)
+}
+
+
+///// BMI FUNCTIONS ///////////////////////////////////////////////////////////
+
+
+function bmiCalc() {
+    const heightMeters = height / 100
+    const deficitLowNum = Math.round(16 * (heightMeters * heightMeters))
+    const deficitHighNum = Math.round(18.5 * (heightMeters * heightMeters))
+    const normHighNum = Math.round(25 * (heightMeters * heightMeters))
+    const excessHighNum = Math.round(30 * (heightMeters * heightMeters))
+    const obesity1HighNum = Math.round(35 * (heightMeters * heightMeters))
+    const obesity2HighNum = Math.round(40 * (heightMeters * heightMeters))
+    const obesityMorbidNum = Math.round(45 * (heightMeters * heightMeters))
+
+    deficitHighNumDiv.textContent = deficitHighNum
+    normHighNumDiv.textContent = normHighNum
+    excessHighNumDiv.textContent = excessHighNum
+    obesity1HighNumDiv.textContent = obesity1HighNum
+    obesity2HighNumDiv.textContent = obesity2HighNum
+
+    const bmiWidthInKg = obesityMorbidNum - deficitLowNum
+    const bmiWidthInPx = bmiDiv.offsetWidth
+    const bmiDashShiftInPx = (thisDaysWeight-deficitLowNum)/((bmiWidthInKg)/bmiWidthInPx)-(bmiWidthInPx*0.01)
+
+    bmiDashDiv.style.left = `${bmiDashShiftInPx}px`
 }
 
 
