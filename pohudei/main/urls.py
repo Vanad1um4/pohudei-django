@@ -20,7 +20,7 @@ urlpatterns = [
     path('update_food_in_catalogue/', views.update_food_in_catalogue),
     path('delete_food_from_catalogue/', views.delete_food_from_catalogue),
 
-    path('set_height/', views.set_height_ajax),
+    path('set_options/', views.set_options_ajax),
 
     path('noprofile/', views.noprofile, name='noprofile'),
     path('', RedirectView.as_view(url='home/')),

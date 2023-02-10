@@ -37,10 +37,12 @@ def diary(request, date_iso=None):
     if date_iso == None:
         this_day = datetime.today().date()
         days_delta_int = 0
+        date_iso = this_day.strftime('%Y-%m-%d')
     else:
         this_day = datetime.fromisoformat(date_iso).date()
         date_delta = this_day - datetime.today().date()
         days_delta_int = date_delta.days
+
     dates['this_day_iso'] = this_day.strftime('%Y-%m-%d')
     dates['this_day_human'] = this_day.strftime('%d %b')
     prev_day = this_day - timedelta(days=1)
@@ -50,36 +52,46 @@ def diary(request, date_iso=None):
     dates['next_day_iso'] = next_day.strftime('%Y-%m-%d')
     dates['next_day_human'] = next_day.strftime('%d %b')
 
-    if date_iso == None:
-        today = datetime.today()
-        date_iso = today.strftime('%Y-%m-%d')
+    use_coeffs = False
+    personal_coeffs = {}
+    res_use_coeffs = db_get_use_coeffs_bool(user_id)
+    if res_use_coeffs[1][0]:
+        use_coeffs = True
+        personal_coeffs = get_and_validate_coefficients(user_id)
+    else:
+        personal_coeffs = make_ones_for_coefficients()
+    # print(personal_coeffs)
 
-    this_days_food = db_get_food_from_diary(user_id, date_iso)
+    this_days_food_raw = db_get_food_from_diary(user_id, date_iso)
+    # print(this_days_food_raw)
+    this_days_food_prepped = []
 
-    _, _, _, _, target_kcals = stats_calc(user_id)
-    if len(target_kcals) <= 60:
-        target_kcals = list(list_averaged(target_kcals, 3, True, 0))
-    if len(target_kcals) > 60:
-        target_kcals = list(list_averaged(target_kcals, 14, True, 0))
-    try:
-        offset = -2 + days_delta_int
-        this_days_target_kcals = target_kcals[offset]
-    except:
-        this_days_target_kcals = 0
+    for item in this_days_food_raw:
+        # print(item)
+        this_days_food_prepped.append([item[0], item[1], item[2], round(item[3] * personal_coeffs[item[4]])])
+    # print(this_days_food_prepped)
 
-    result = db_get_one_weight(user_id, date_iso)
-    # print(result)
-    if result[0] == 'success':
-        this_days_weight = result[1][0][2]
+    _, _, _, _, target_kcals_avg = stats_prep(user_id, use_coeffs)
+
+    date_offset = -1 + days_delta_int
+    this_days_target_kcals = 0
+    if date_offset > -1:
+        date_offset = 0
+    else:
+        this_days_target_kcals = target_kcals_avg[date_offset]
+
+    weight_res = db_get_one_weight(user_id, date_iso)
+    if weight_res[0] == 'success':
+        this_days_weight = weight_res[1][0]
     else:
         this_days_weight = None
 
     all_foods = db_get_all_food_names(user_id)
+    # print(all_foods)
     height = db_get_height(user_id)
 
-    # logger.debug(f'{user_id = }, {this_days_food = }, {this_days_target_kcals = }')
     return render(request, 'main/diary.html', {'data': {
-        'dates': dates, 'this_days_food': this_days_food, 'this_days_target_kcals': this_days_target_kcals, 'this_days_weight': this_days_weight, 'height': height[1][0], 'all_foods': all_foods
+        'dates': dates, 'this_days_food': this_days_food_prepped, 'this_days_target_kcals': this_days_target_kcals, 'this_days_weight': this_days_weight, 'height': height[1][0], 'all_foods': all_foods
     }})
 
 
@@ -181,34 +193,12 @@ def stats(request):
     except:
         return redirect('noprofile')
 
-    human_dates, eaten, weights, avg_weights, target_kcals = stats_calc(user_id)
+    use_coeffs = False
+    res_use_coeffs = db_get_use_coeffs_bool(user_id)
+    if res_use_coeffs[1][0]:
+        use_coeffs = True
 
-    # print('===///===')
-    # print(len(human_dates))
-    # print(len(eaten))
-    # print(len(weights))
-    # print(len(avg_weights))
-    # print(len(target_kcals))
-
-    # print(human_dates)
-    # print(weights)
-    # print(avg_weights)
-    # print(eaten)
-    # print(target_kcals)
-
-    if len(target_kcals) <= 60:
-        target_kcals = list(list_averaged(target_kcals, 3, True, 0))
-        for i, _ in enumerate(target_kcals):
-            if i + 1 < len(target_kcals) / 2:
-                target_kcals[i] = None
-
-    if len(target_kcals) > 60:
-        target_kcals = list(list_averaged(target_kcals, 14, True, 0))
-        for i, _ in enumerate(target_kcals):
-            if i < 30:
-                target_kcals[i] = None
-
-    # print(target_kcals)
+    human_dates, eaten, weights, avg_weights, target_kcals_avg = stats_prep(user_id, use_coeffs)
 
     prepped_normal_weights = []
     prepped_average_weights = []
@@ -220,7 +210,7 @@ def stats(request):
         prepped_average_weights.append({'x': human_dates[i], 'y': avg_weights[i]})
 
         prepped_eaten_kcals.append({'x': human_dates[i], 'y': eaten[i]})
-        prepped_target_kcals.append({'x': human_dates[i], 'y': target_kcals[i]})
+        prepped_target_kcals.append({'x': human_dates[i], 'y': target_kcals_avg[i]})
 
     # logger.debug(f'{user_id = }')
     return render(request, 'main/stats.html', {'data': {
@@ -230,7 +220,7 @@ def stats(request):
 
 
 def stats_calc(user_id):
-    dates = []
+    # dates = []
     human_dates = []
     weights = []
     avg_weights = []
@@ -240,7 +230,7 @@ def stats_calc(user_id):
     results = db_get_users_weights_all(user_id)
 
     for row in results[1]:
-        dates.append(row[0])
+        # dates.append(row[0])
         human_dates.append(row[0].strftime("%d %b %Y"))
         weights.append(float(row[1]))
         # print(row)
@@ -316,6 +306,133 @@ def list_averaged(init_list, avg_range, round_bool=False, round_places=0):
             tmp_result_value = tmp_avg_sum / len(tmp_avg_list)
         result_list.append(tmp_result_value)
     return result_list
+
+
+### NEW STATS FNs #############################################################
+
+def diary_entries_prep(diary_entries_raw):
+    diary_entries_prepped = []
+    days_list = []
+    this_days_date = str(diary_entries_raw[0][0])
+    days_list.append(this_days_date)
+    this_days_food = []
+    for i, item in enumerate(diary_entries_raw):
+        if this_days_date == str(item[0]):
+            this_days_food.append((item[1], item[2]))
+        else:
+            diary_entries_prepped.append(this_days_food)
+            this_days_food = [(item[1], item[2])]
+            this_days_date = str(item[0])
+            days_list.append(this_days_date)
+        if i == len(diary_entries_raw)-1:
+            diary_entries_prepped.append(this_days_food)
+    return diary_entries_prepped
+
+
+def weights_prep(weights_raw):
+    weights_prepped = []
+    for item in weights_raw:
+        weights_prepped.append(float(item[1]))
+    return weights_prepped
+
+
+def human_dates_prep(weights_raw):
+    weights_prepped = []
+    for item in weights_raw:
+        weights_prepped.append(item[0].strftime("%d %b %Y"))
+    return weights_prepped
+
+
+def catalogue_prep(catalogue):
+    catalogue_prepped = {}
+    for item in catalogue:
+        # print(item)
+        catalogue_prepped[item[0]] = item[1]
+    return catalogue_prepped
+
+
+def daily_sum_kcals_count(diary_entries_prepped, catalogue_prepped, personal_coeffs):
+    daily_sum_kcals = []
+    for i, day in enumerate(diary_entries_prepped):
+        daily_sum_kcals.append(0)
+        for food in day:
+            daily_sum_kcals[i] += catalogue_prepped[food[0]] * personal_coeffs[food[0]] * food[1] / 100
+    return daily_sum_kcals
+
+
+def average_list(input_list, avg_range, round_bool=False, round_places=0):
+    res = []
+
+    # Не уменьшает итоговый список, считает среднее из доступного кол-ва чисел, если оных меньше avg_range
+    for i in range(1, len(input_list)+1):
+        j = 0 if i - avg_range <= 0 else i - avg_range
+        if round_bool and round_places > 0:
+            res.append(round(sum(input_list[j:i]) / (i - j), round_places))
+        elif round_bool and round_places == 0:
+            res.append(int(sum(input_list[j:i]) / (i - j)))
+        else:
+            res.append(sum(input_list[j:i]) / (i - j))
+
+    # Уменьшает итоговый список на avg_range-1, зато считает среднее из подсписков длиной == avg_range
+    # for i in range(avg_range-1, len(input_list)):
+    #     if round_bool and round_places > 0:
+    #         res.append(round(sum(input_list[i-avg_range+1:i+1]) / avg_range, round_places))
+    #     elif round_bool and round_places == 0:
+    #         res.append(int(sum(input_list[i-avg_range+1:i+1]) / avg_range))
+    #     else:
+    #         res.append(sum(input_list[i-avg_range+1:i+1]) / avg_range)
+
+    return res
+
+
+def target_kcals_prep(kcals, weights, n):
+    res = []
+    for i in range(n-1, len(kcals)):
+        res.append((sum(kcals[i-n+1:i+1]) - ((weights[i] - weights[i-n+1]) * 7700)) / n)
+    return res
+
+
+def list_len_offset(input_list, target_len):
+    offset = target_len - len(input_list)
+    res = [None for _ in range(offset)] + input_list
+    return res
+
+
+def stats_prep(user_id, coeffs=True):
+    diary_entries_raw = db_get_all_diary_entries(user_id)[1]
+    diary_entries_prepped = diary_entries_prep(diary_entries_raw)
+    weights_raw = db_get_users_weights_all(user_id)[1]
+    weights_prepped = weights_prep(weights_raw)
+    human_dates = human_dates_prep(weights_raw)
+    catalogue_raw = db_get_all_catalogue_entries()[1]
+    catalogue_prepped = catalogue_prep(catalogue_raw)
+    personal_coeffs = {}
+    if coeffs:
+        personal_coeffs = get_and_validate_coefficients(user_id)
+    else:
+        personal_coeffs = make_ones_for_coefficients()
+    daily_sum_kcals = daily_sum_kcals_count(diary_entries_prepped, catalogue_prepped, personal_coeffs)
+    daily_sum_kcals = [round(x) for x in daily_sum_kcals]
+    if len(daily_sum_kcals) > len(weights_prepped):
+        diff = len(daily_sum_kcals) - len(weights_prepped)
+        daily_sum_kcals = daily_sum_kcals[:-diff]
+    if len(daily_sum_kcals) < len(weights_prepped):
+        diff = len(weights_prepped) - len(daily_sum_kcals)
+        print(diff)
+        for _ in range(diff):
+            daily_sum_kcals.append(0)
+    avg_days = 7
+    # print(daily_sum_kcals)
+    daily_sum_kcals_avg = average_list(daily_sum_kcals, avg_days, round_bool=True, round_places=0)
+    # print(daily_sum_kcals_avg)
+    weights_prepped_avg = average_list(weights_prepped, avg_days, True, 1)
+    norm_days = 30
+    target_kcals = target_kcals_prep(daily_sum_kcals_avg, weights_prepped_avg, norm_days)
+    target_kcals_avg = average_list(target_kcals, norm_days, True, 0)
+    weights_prepped_avg = list_len_offset(weights_prepped_avg, len(human_dates))
+    target_kcals_avg = list_len_offset(target_kcals_avg, len(human_dates))
+    # print(len(human_dates), len(weights_prepped), len(weights_prepped_avg), len(daily_sum_kcals), len(target_kcals_avg))
+    return human_dates, daily_sum_kcals, weights_prepped, weights_prepped_avg, target_kcals_avg
 
 
 ### CATALOGUE FNs #############################################################
@@ -437,10 +554,11 @@ def options(request):
 
     results = db_get_all_options(user_id)
     # print(results)
+    stats_prep(user_id)
     return render(request, 'main/options.html', {'data': results[1]})
 
 
-def set_height_ajax(request):
+def set_options_ajax(request):
     if request.method != 'POST':
         return HttpResponse(json.dumps({'result': 'failure, not POST'}),  # pyright: ignore
                             content_type='application/json; charset=utf-8')
@@ -454,7 +572,7 @@ def set_height_ajax(request):
 
     data = json.loads(request.body)
     # print(data)
-    result = db_set_height(data['height'], user_id)
+    result = db_set_all_options(user_id, data['height'], data['use_coeffs'])
     # print(result)
     if result[0] == 'success':
         return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
@@ -462,6 +580,55 @@ def set_height_ajax(request):
     else:
         return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
                             content_type='application/json; charset=utf-8')
+
+
+##### PERSONAL COEFFICIENTS ###################################################
+
+def get_and_validate_coefficients(user_id: int) -> dict:
+    res_catalogue_ids = db_get_catalogue_ids()
+    res_coeffs = db_get_users_coefficients(user_id)
+
+    catalogue_ids = set(sorted([x[0] for x in res_catalogue_ids[1]]))
+    # print(type(catalogue_ids))
+
+    users_coeffs = {}
+    try:
+        users_coeffs = json.loads(res_coeffs[1][0])
+        users_coeffs = {int(key): value for key, value in users_coeffs.items()}
+        users_coeffs_ids = set(sorted([x for x in users_coeffs.keys()]))
+        # print(len(catalogue_ids), len(users_coeffs_ids))
+        # print(catalogue_ids, users_coeffs_ids)
+
+        if len(catalogue_ids) > len(users_coeffs_ids):
+            diff = catalogue_ids - users_coeffs_ids
+            # print(diff)
+            for key in diff:
+                users_coeffs[key] = 1.0
+            # print(len(catalogue_ids), len(users_coeffs.keys()))
+            users_coeffs_str = json.dumps(users_coeffs)
+            db_set_users_coefficients(user_id, users_coeffs_str)
+
+        if len(users_coeffs_ids) > len(catalogue_ids):
+            diff = users_coeffs_ids - catalogue_ids
+            # print(diff)
+            for key in diff:
+                del users_coeffs[key]
+            # print(len(catalogue_ids), len(users_coeffs.keys()))
+            users_coeffs_str = json.dumps(users_coeffs)
+            db_set_users_coefficients(user_id, users_coeffs_str)
+
+    except:
+        users_coeffs = {key: 1.0 for key in catalogue_ids}
+        users_coeffs_str = json.dumps(users_coeffs)
+        db_set_users_coefficients(user_id, users_coeffs_str)
+
+    return users_coeffs
+
+
+def make_ones_for_coefficients():
+    res_catalogue_ids = db_get_catalogue_ids()
+    catalogue_ids = set(sorted([x[0] for x in res_catalogue_ids[1]]))
+    return {key: 1 for key in catalogue_ids}
 
 
 ##### NO PROFILE FNs ##########################################################

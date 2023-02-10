@@ -519,15 +519,6 @@ function bmiCalc() {
 
 ///// OTHER FUNCTIONS /////////////////////////////////////////////////////////
 
-
-// function foodDictPrep() {
-//     let resultDict = {}
-//     for (let i = 0; i < foodDictRaw.length; i++) {
-//         resultDict[foodDictRaw[i][0]] = foodDictRaw[i][1]
-//     }
-//     return resultDict
-// }
-
 function sleep(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
 
 function numTest(num) {

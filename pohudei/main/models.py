@@ -19,10 +19,10 @@ def db_get_one_weight(user_id, date_iso):
             today = datetime.today()
             date_iso = today.strftime('%Y-%m-%d')
         with connection.cursor() as c:
-            sql = 'select id, date, weight from weights where users_id=%s and date=%s;'
+            sql = 'select weight from weights where users_id=%s and date=%s;'
             values = (user_id, date_iso)
             c.execute(sql, values)
-            res = c.fetchall()
+            res = c.fetchone()
             if res:
                 return ('success', res)
             else:
@@ -64,7 +64,7 @@ def db_get_food_from_diary(user_id, date_iso):
             date_iso = today.strftime('%Y-%m-%d')
         with connection.cursor() as c:
             sql = '''
-                select d.id, c.name, d.food_weight, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten_kcals
+                select d.id, c.name, d.food_weight, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten_kcals, c.id
                 from diary d join catalogue c on d.catalogue_id=c.id
                 where d.date=%s and d.users_id=%s
                 order by d.id;'''
@@ -75,6 +75,20 @@ def db_get_food_from_diary(user_id, date_iso):
     except Exception as exc:
         logger.exception(exc)
         return []
+
+
+def db_get_all_diary_entries(user_id):
+    try:
+        with connection.cursor() as c:
+            sql = 'select date, catalogue_id, food_weight from diary where users_id=%s order by date;'
+            # sql = 'select date, catalogue_id, food_weight from diary where users_id=%s and date<current_date order by date;'
+            values = (user_id,)
+            c.execute(sql, values)
+            res = c.fetchall()
+            return ('success', res)
+    except Exception as exc:
+        print(exc)
+        return ('failure', [])
 
 
 def db_add_new_diary_entry(user_id, date, food_id, weight):
@@ -114,6 +128,18 @@ def db_del_diary_entry(user_id, diary_id):
 
 
 ##### CATALOGUE FUNCTIONS #####################################################
+
+def db_get_all_catalogue_entries():
+    try:
+        with connection.cursor() as c:
+            sql = 'select id, kcals, name from catalogue order by id;'
+            c.execute(sql, )
+            res = c.fetchall()
+        return ('success', res)
+    except Exception as exc:
+        logger.exception(exc)
+        return ('failure', [])
+
 
 def db_get_all_food_names(user_id):
     try:
@@ -226,6 +252,7 @@ def db_get_users_weights_all(user_id):
     try:
         with connection.cursor() as c:
             sql = 'select date, weight from weights where users_id=%s order by date;'
+            # sql = 'select date, weight from weights where users_id=%s and date<current_date order by date;'
             values = (user_id,)
             c.execute(sql, values)
             res = c.fetchall()
@@ -259,7 +286,7 @@ def db_get_everyday_sum_kcals_from_diary(user_id):
 def db_get_all_options(user_id):
     try:
         with connection.cursor() as c:
-            sql = '''select height from profile_profile where user_id=%s'''
+            sql = '''select height, use_coeffs from options where user_id=%s'''
             values = (user_id,)
             c.execute(sql, values)
             # res = c.fetchall()
@@ -270,10 +297,22 @@ def db_get_all_options(user_id):
         return ('failure', [])
 
 
+def db_set_all_options(user_id, height, use_coeffs):
+    try:
+        with connection.cursor() as c:
+            sql = 'update options set height=%s, use_coeffs=%s where user_id=%s;'
+            values = (height, use_coeffs, user_id)
+            c.execute(sql, values)
+        return ('success',)
+    except Exception as exc:
+        logger.exception(exc)
+        return ('failure',)
+
+
 def db_get_height(user_id):
     try:
         with connection.cursor() as c:
-            sql = 'select height from profile_profile where user_id=%s'
+            sql = 'select height from options where user_id=%s'
             values = (user_id,)
             c.execute(sql, values)
             res = c.fetchone()
@@ -283,16 +322,56 @@ def db_get_height(user_id):
         return ('failure', [])
 
 
-def db_set_height(height, user_id):
+def db_get_use_coeffs_bool(user_id):
     try:
         with connection.cursor() as c:
-            sql = 'update profile_profile set height=%s where user_id=%s;'
-            values = (height, user_id)
+            sql = 'select use_coeffs from options where user_id=%s'
+            values = (user_id,)
             c.execute(sql, values)
-        return ('success',)
+            res = c.fetchone()
+        return ('success', res)
     except Exception as exc:
         logger.exception(exc)
-        return ('failure',)
+        return ('failure', [])
+
+
+##### PERSONAL COEFFICIENTS ###################################################
+
+def db_get_users_coefficients(user_id: int) -> tuple[str, list]:
+    try:
+        with connection.cursor() as c:
+            sql = 'select coefficients from options where user_id=%s'
+            values = (user_id,)
+            c.execute(sql, values)
+            res = c.fetchone()
+        return ('success', res)
+    except Exception as exc:
+        logger.exception(exc)
+        return ('failure', [])
+
+
+def db_set_users_coefficients(user_id: int, user_coeffs: str) -> tuple[str, list]:
+    try:
+        with connection.cursor() as c:
+            sql = 'update options set coefficients=%s where user_id=%s'
+            values = (user_coeffs, user_id)
+            c.execute(sql, values)
+        return ('success', [])
+    except Exception as exc:
+        logger.exception(exc)
+        return ('failure', [])
+
+
+def db_get_catalogue_ids() -> tuple[str, list]:
+    try:
+        with connection.cursor() as c:
+            sql = 'select id from catalogue'
+            c.execute(sql,)
+            res = c.fetchall()
+        return ('success', res)
+    except Exception as exc:
+        logger.exception(exc)
+        return ('failure', [])
 
 
 ##### BACKUP FUNCTIONS ########################################################

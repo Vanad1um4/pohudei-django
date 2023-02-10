@@ -1,17 +1,56 @@
-#options > .height {
-    display: grid;
-    grid-template-columns: 63% 25% 12%;
+#options > * {
+    margin-bottom: 20px;
 }
-
-#options > .height > * {
+#options > * > * {
     margin: 1px 1px;
     font-size: 25px;
 }
-#options > .height > .headline {
+
+#options > .height {
+    display: grid;
+    grid-template-columns: auto 80px;
 }
 
-#options > .height > .height-num {
+#options > .height > * {
+    /* margin: 1px 1px; */
+    /* font-size: 25px; */
 }
 
-#options > .height > .height-num {
+
+
+#options > .use-coeffs {
+    display: grid;
+    grid-template-columns: auto 31px;
+}
+#options > .use-coeffs > * {
+    /* margin: 1px 1px; */
+    /* font-size: 25px; */
+}
+
+
+.save {
+    text-align: center;
+    font-weight: 700;
+    font-size: 150%;
+    padding: 6px 0px;
+    cursor: pointer;
+}
+.save.active {
+    background-color: white;
+    border: 3px solid;
+}
+.save.inactive {
+    background-color: lightgrey;
+    border: 3px solid grey;
+    color: grey;
+}
+.save.success {
+    background-color: lightgreen;
+    border: 3px solid green;
+    color: green;
+}
+.save.fail {
+    background-color: #ffcaca;
+    border: 3px solid red;
+    color: red;
 }

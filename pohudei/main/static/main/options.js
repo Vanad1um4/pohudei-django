@@ -1,5 +1,9 @@
 const heightInput = document.querySelector('.height-num')
-const heightSaveBtn = document.querySelector('.height-save')
+const useCoeffsInput = document.querySelector('.use-coeffs-tick')
+
+console.log(useCoeffsInput)
+
+const saveBtn = document.querySelector('.save')
 
 
 const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
@@ -12,19 +16,25 @@ onInit()
 
 function onInit() {
     heightInput.value = optionsData['height']
-    heightSaveBtn.addEventListener('click', () => { saveWeight() });
+    if (optionsData['use_coeffs']) {
+        useCoeffsInput.setAttribute('checked', 'checked')
+    }
+    saveBtn.addEventListener('click', () => { saveTest() });
 }
 
 
-async function saveWeight() {
-    const height_val = parseInt(heightInput.value)
-    console.log(height_val)
-    console.log(Number.isInteger(height_val))
-    if (Number.isInteger(height_val)) {
+async function saveTest() {
+    // console.log(useCoeffsInput.checked)
+    const heightVal = parseInt(heightInput.value)
+    const useCoeffsVal = useCoeffsInput.checked
+    if (Number.isInteger(heightVal)) {
         heightInput.disabled = true
-        heightInput.style.background = 'grey'
+        heightInput.style.background = 'lightgrey'
+        useCoeffsInput.disabled = true
+        saveBtn.classList.remove('active', 'inactive', 'success', 'fail')
+        saveBtn.classList.add('inactive')
 
-        fetch(`/set_height/`,
+        fetch(`/set_options/`,
         {
             method: 'POST',
             headers: {
@@ -32,22 +42,30 @@ async function saveWeight() {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({'height': height_val})
+            body: JSON.stringify({'height': heightVal, 'use_coeffs': useCoeffsVal})
         })
             .then(response => response.json())
             .then(result => {
                 if (result['result'] === 'success') {
                     console.log('success')
                     heightInput.disabled = false
-                    heightInput.style.background = 'green'
-                } else if (result['result'] === 'failure') {
+                    useCoeffsInput.disabled = false
+                    heightInput.style.background = 'transparent'
+                    saveBtn.classList.remove('active', 'inactive', 'success', 'fail')
+                    saveBtn.classList.add('success')
+                } else {
                     console.log('failure')
                     heightInput.disabled = false
-                    heightInput.style.background = 'red'
+                    saveBtn.classList.remove('active', 'inactive', 'success', 'fail')
+                    saveBtn.classList.add('fail')
                 }
             })
             .then(await sleep(waitMs))
-            .then(() => { heightInput.style.background = 'transparent' })
+            .then(() => {
+                heightInput.style.background = 'transparent'
+                saveBtn.classList.remove('active', 'inactive', 'success', 'fail')
+                saveBtn.classList.add('active')
+            })
     }
 }
 

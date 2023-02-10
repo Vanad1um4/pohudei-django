@@ -10,8 +10,12 @@
     <div id="options">
         <div class="height">
             <div class="headline">Рост (см.):</div>
-            <input class="height-num" type='number'/>
-            <button class="height-save" type="submit"> 💾 </button>
+            <input class="height-num" type="number"/>
+            {# <button class="height-save" type="submit"> 💾 </button> #}
+        </div>
+        <div class="use-coeffs">
+            <div class="headline">Коэффициенты</div>
+            <input type="checkbox" class="use-coeffs-tick">
         </div>
     </div>
 
@@ -19,6 +23,10 @@
     {{ data|json_script:'data' }}
 
 {% endblock content %}
+
+{% block useful-fn %}
+    <div class="save active" type="submit"> Сохранить </div>
+{% endblock useful-fn %}
 
 {% block js %}
     <script src="{% static 'main/options.js' %}" defer></script>
