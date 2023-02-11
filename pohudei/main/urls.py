@@ -2,6 +2,10 @@ from django.views.generic import RedirectView
 from django.urls import path
 from . import views
 
+from django.conf import settings
+from django.conf.urls.static import static
+
+
 urlpatterns = [
     path('home/', views.diary, name='home'),
     path('diary/', views.diary, name='diary'),
@@ -24,4 +28,4 @@ urlpatterns = [
 
     path('noprofile/', views.noprofile, name='noprofile'),
     path('', RedirectView.as_view(url='home/')),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
