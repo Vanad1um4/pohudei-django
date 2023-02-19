@@ -391,21 +391,22 @@ def helth_prep(input_list, coeffs):
         helth_ok.append(ok)
         helth_bad.append(bad)
 
-    avg_days = 7
+    # avg_days = 1
     # helth_good_avg = average_list(helth_good, avg_days, round_bool=True, round_places=0)
     # helth_ok_avg = average_list(helth_ok, avg_days, round_bool=True, round_places=0)
     # helth_bad_avg = average_list(helth_bad, avg_days, round_bool=True, round_places=0)
-    helth_good_avg_short = average_list(helth_good, avg_days)
-    helth_ok_avg_short = average_list(helth_ok, avg_days)
-    helth_bad_avg_short = average_list(helth_bad, avg_days)
+    # helth_good_avg_short = average_list(helth_good, avg_days)
+    # helth_ok_avg_short = average_list(helth_ok, avg_days)
+    # helth_bad_avg_short = average_list(helth_bad, avg_days)
 
-    avg_days = 28
+    avg_days = 7
     helth_good_avg_long = average_list(helth_good, avg_days)
     helth_ok_avg_long = average_list(helth_ok, avg_days)
     helth_bad_avg_long = average_list(helth_bad, avg_days)
 
     # return helth_good, helth_ok, helth_bad
-    return helth_good_avg_short, helth_ok_avg_short, helth_bad_avg_short, helth_good_avg_long, helth_ok_avg_long, helth_bad_avg_long
+    return helth_good, helth_ok, helth_bad, helth_good_avg_long, helth_ok_avg_long, helth_bad_avg_long
+    # return helth_good_avg_short, helth_ok_avg_short, helth_bad_avg_short, helth_good_avg_long, helth_ok_avg_long, helth_bad_avg_long
 
 
 def daily_sum_kcals_count(diary_entries_prepped, catalogue_prepped, personal_coeffs):
