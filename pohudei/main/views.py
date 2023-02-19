@@ -63,15 +63,15 @@ def diary(request, date_iso=None):
     # print(personal_coeffs)
 
     this_days_food_raw = db_get_food_from_diary(user_id, date_iso)
-    # print(this_days_food_raw)
+    print(this_days_food_raw)
     this_days_food_prepped = []
 
     for item in this_days_food_raw:
         # print(item)
-        this_days_food_prepped.append([item[0], item[1], item[2], round(item[3] * personal_coeffs[item[4]])])
+        this_days_food_prepped.append([item[0], item[1], item[2], round(item[3] * personal_coeffs[item[4]]), item[5]])
     # print(this_days_food_prepped)
 
-    _, _, _, _, target_kcals_avg = stats_prep(user_id, use_coeffs)
+    _, _, _, _, _, _, _, _, _, _, target_kcals_avg = stats_prep(user_id, use_coeffs)
 
     date_offset = -1 + days_delta_int
     this_days_target_kcals = 0
@@ -198,14 +198,29 @@ def stats(request):
     if res_use_coeffs[1][0]:
         use_coeffs = True
 
-    human_dates, eaten, weights, avg_weights, target_kcals_avg = stats_prep(user_id, use_coeffs)
+    human_dates, helth_good_short, helth_ok_short, helth_bad_short, helth_good_long, helth_ok_long, helth_bad_long, eaten, weights, avg_weights, target_kcals_avg = stats_prep(
+        user_id, use_coeffs)
 
+    prepped_helth_good_short = []
+    prepped_helth_ok_short = []
+    prepped_helth_bad_short = []
+    prepped_helth_good_long = []
+    prepped_helth_ok_long = []
+    prepped_helth_bad_long = []
     prepped_normal_weights = []
     prepped_average_weights = []
     prepped_eaten_kcals = []
     prepped_target_kcals = []
 
     for i in range(len(human_dates)):
+        prepped_helth_good_short.append({'x': human_dates[i], 'y': helth_good_short[i]})
+        prepped_helth_ok_short.append({'x': human_dates[i], 'y': helth_ok_short[i]})
+        prepped_helth_bad_short.append({'x': human_dates[i], 'y': helth_bad_short[i]})
+
+        prepped_helth_good_long.append({'x': human_dates[i], 'y': helth_good_long[i]})
+        prepped_helth_ok_long.append({'x': human_dates[i], 'y': helth_ok_long[i]})
+        prepped_helth_bad_long.append({'x': human_dates[i], 'y': helth_bad_long[i]})
+
         prepped_normal_weights.append({'x': human_dates[i], 'y': weights[i]})
         prepped_average_weights.append({'x': human_dates[i], 'y': avg_weights[i]})
 
@@ -214,6 +229,8 @@ def stats(request):
 
     # logger.debug(f'{user_id = }')
     return render(request, 'main/stats.html', {'data': {
+        'helth_chart_short': {'good': prepped_helth_good_short, 'ok': prepped_helth_ok_short, 'bad': prepped_helth_bad_short},
+        'helth_chart_long': {'good': prepped_helth_good_long, 'ok': prepped_helth_ok_long, 'bad': prepped_helth_bad_long},
         'weights_chart': {'normal': prepped_normal_weights, 'average': prepped_average_weights},
         'kcals_chart': {'eaten': prepped_eaten_kcals, 'target': prepped_target_kcals},
     }})
@@ -227,9 +244,9 @@ def stats_calc(user_id):
     eaten = []
     target_kcals = []
 
-    results = db_get_users_weights_all(user_id)
+    results_weights = db_get_users_weights_all(user_id)
 
-    for row in results[1]:
+    for row in results_weights[1]:
         # dates.append(row[0])
         human_dates.append(row[0].strftime("%d %b %Y"))
         weights.append(float(row[1]))
@@ -245,7 +262,7 @@ def stats_calc(user_id):
     # print(len(human_dates))
     # print(len(eaten))
 
-    sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)
+    sum_kcals_and_weight = db_get_everyday_sum_kcals_from_diary(user_id)[1]
 
     # print(len(sum_kcals_and_weight))
     # for i, row in enumerate(eaten):
@@ -351,6 +368,46 @@ def catalogue_prep(catalogue):
     return catalogue_prepped
 
 
+def helth_prep(input_list, coeffs):
+    helth_dict = {}
+    for row in input_list:
+        # print(row)
+        if row['date'].strftime('%Y-%m-%d') not in helth_dict.keys():
+            helth_dict[row['date'].strftime('%Y-%m-%d')] = {'good': 0, 'ok': 0, 'bad': 0, 'sum': 0}
+        kcals_to_add = row['food_weight'] / 100 * row['kcals'] * coeffs[row['catalogue_id']]
+        helth_key = row['helth']
+        if helth_key == 'unknown' or helth_key == 'unset':
+            helth_key = 'ok'
+        helth_dict[row['date'].strftime('%Y-%m-%d')][helth_key] += kcals_to_add
+        helth_dict[row['date'].strftime('%Y-%m-%d')]['sum'] += kcals_to_add
+
+    helth_good, helth_ok, helth_bad = [], [], []
+    for value in helth_dict.values():
+        factor = 100 / value['sum']
+        good = round(value['good'] * factor)
+        bad = round(value['bad'] * factor)
+        ok = 100 - good - bad
+        helth_good.append(good)
+        helth_ok.append(ok)
+        helth_bad.append(bad)
+
+    avg_days = 7
+    # helth_good_avg = average_list(helth_good, avg_days, round_bool=True, round_places=0)
+    # helth_ok_avg = average_list(helth_ok, avg_days, round_bool=True, round_places=0)
+    # helth_bad_avg = average_list(helth_bad, avg_days, round_bool=True, round_places=0)
+    helth_good_avg_short = average_list(helth_good, avg_days)
+    helth_ok_avg_short = average_list(helth_ok, avg_days)
+    helth_bad_avg_short = average_list(helth_bad, avg_days)
+
+    avg_days = 28
+    helth_good_avg_long = average_list(helth_good, avg_days)
+    helth_ok_avg_long = average_list(helth_ok, avg_days)
+    helth_bad_avg_long = average_list(helth_bad, avg_days)
+
+    # return helth_good, helth_ok, helth_bad
+    return helth_good_avg_short, helth_ok_avg_short, helth_bad_avg_short, helth_good_avg_long, helth_ok_avg_long, helth_bad_avg_long
+
+
 def daily_sum_kcals_count(diary_entries_prepped, catalogue_prepped, personal_coeffs):
     daily_sum_kcals = []
     for i, day in enumerate(diary_entries_prepped):
@@ -404,6 +461,7 @@ def stats_prep(user_id, coeffs=True):
     weights_raw = db_get_users_weights_all(user_id)[1]
     weights_prepped = weights_prep(weights_raw)
     human_dates = human_dates_prep(weights_raw)
+
     catalogue_raw = db_get_all_catalogue_entries()[1]
     catalogue_prepped = catalogue_prep(catalogue_raw)
     personal_coeffs = {}
@@ -411,6 +469,11 @@ def stats_prep(user_id, coeffs=True):
         personal_coeffs = get_and_validate_coefficients(user_id)
     else:
         personal_coeffs = make_ones_for_coefficients()
+
+    results_food_and_helth = db_get_users_diary_entries_and_helth_values(user_id)[1]
+    helth_good_avg_short, helth_ok_avg_short, helth_bad_avg_short, helth_good_avg_long, helth_ok_avg_long, helth_bad_avg_long = helth_prep(
+        results_food_and_helth, personal_coeffs)
+
     daily_sum_kcals = daily_sum_kcals_count(diary_entries_prepped, catalogue_prepped, personal_coeffs)
     daily_sum_kcals = [round(x) for x in daily_sum_kcals]
     if len(daily_sum_kcals) > len(weights_prepped):
@@ -432,7 +495,7 @@ def stats_prep(user_id, coeffs=True):
     weights_prepped_avg = list_len_offset(weights_prepped_avg, len(human_dates))
     target_kcals_avg = list_len_offset(target_kcals_avg, len(human_dates))
     # print(len(human_dates), len(weights_prepped), len(weights_prepped_avg), len(daily_sum_kcals), len(target_kcals_avg))
-    return human_dates, daily_sum_kcals, weights_prepped, weights_prepped_avg, target_kcals_avg
+    return human_dates, helth_good_avg_short, helth_ok_avg_short, helth_bad_avg_short, helth_good_avg_long, helth_ok_avg_long, helth_bad_avg_long, daily_sum_kcals, weights_prepped, weights_prepped_avg, target_kcals_avg
 
 
 ### CATALOGUE FNs #############################################################
@@ -553,8 +616,6 @@ def options(request):
         return redirect('noprofile')
 
     results = db_get_all_options(user_id)
-    # print(results)
-    stats_prep(user_id)
     return render(request, 'main/options.html', {'data': results[1]})
 
 

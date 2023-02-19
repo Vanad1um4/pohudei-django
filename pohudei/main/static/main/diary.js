@@ -317,18 +317,26 @@ function mainTableOfDiaryEntriesConstruct() {
     currValPercDiv.textContent = 0
 
     for (let i = 0; i < thisDaysFood.length; i++) {
-        addRow(thisDaysFood[i][0], thisDaysFood[i][1], thisDaysFood[i][2], thisDaysFood[i][3], thisDaysNormKcals)
+        addRow(thisDaysFood[i][0], thisDaysFood[i][1], thisDaysFood[i][2], thisDaysFood[i][3], thisDaysFood[i][4], thisDaysNormKcals)
     }
 }
 
 
-function addRow(id, name, weight, kcals, thisDaysNormKcals) {
+function addRow(id, name, weight, kcals, helth, thisDaysNormKcals) {
     const divTableRow = document.createElement('DIV')
     const divName = document.createElement('DIV')
     const divWeight = document.createElement('DIV')
     const divKcals = document.createElement('DIV')
     const divPerc = document.createElement('DIV')
     divTableRow.classList.add('row')
+    if (helth == 'ok') {
+        divTableRow.classList.add('ok')
+    } else if (helth == 'bad') {
+        divTableRow.classList.add('bad')
+    } else if (helth == 'good') {
+        divTableRow.classList.add('good')
+    }
+    // TODO: new class
     divTableRow.setAttribute('id', 'diary' + id)
     divName.classList.add('cell', 'cell-name')
     divWeight.classList.add('cell', 'cell-w')

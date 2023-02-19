@@ -157,6 +157,9 @@
     height: 35px;
     font-size: 1.15em;
 }
+.row.ok{   color: black; }
+.row.good{ color: #007600; }
+.row.bad{  color: #a60000; }
 .cell {
     display: table-cell;
     padding: 1px 3px;

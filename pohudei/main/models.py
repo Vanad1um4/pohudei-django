@@ -64,7 +64,7 @@ def db_get_food_from_diary(user_id, date_iso):
             date_iso = today.strftime('%Y-%m-%d')
         with connection.cursor() as c:
             sql = '''
-                select d.id, c.name, d.food_weight, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten_kcals, c.id
+                select d.id, c.name, d.food_weight, cast(round(d.food_weight / 100.0 * c.kcals) as integer) as eaten_kcals, c.id, c.helth
                 from diary d join catalogue c on d.catalogue_id=c.id
                 where d.date=%s and d.users_id=%s
                 order by d.id;'''
@@ -181,13 +181,13 @@ def db_add_new_food_to_catalogue(user_id, food_name, food_kcals, admin=False):
             if id:
                 return ('duplication', [])
             elif admin:
-                sql = 'insert into catalogue (name, kcals, users_id) values (%s, %s, 0);'
-                values = (food_name, food_kcals)
+                sql = 'insert into catalogue (name, kcals, users_id, helth) values (%s, %s, 0, %s);'
+                values = (food_name, food_kcals, 'unset')
                 c.execute(sql, values)
                 return ('success', [])
             elif not admin:
-                sql = 'insert into catalogue (name, kcals, users_id) values (%s, %s, %s);'
-                values = (food_name, food_kcals, user_id)
+                sql = 'insert into catalogue (name, kcals, users_id, helth) values (%s, %s, %s, %s);'
+                values = (food_name, food_kcals, user_id, 'unset')
                 c.execute(sql, values)
                 return ('success', [])
             else:
@@ -274,10 +274,28 @@ def db_get_everyday_sum_kcals_from_diary(user_id):
             values = (user_id,)
             c.execute(sql, values)
             res = c.fetchall()
-        return res
+        return ('success', res)
     except Exception as exc:
         logger.exception(exc)
-        return []
+        return ('failure', [])
+
+
+def db_get_users_diary_entries_and_helth_values(user_id):
+    try:
+        with connection.cursor() as c:
+            sql = '''
+                select d.date, d.catalogue_id, d.food_weight, c.kcals, c.helth
+                from diary d join catalogue c on d.catalogue_id=c.id
+                where d.users_id=%s
+                order by d.date;'''
+            values = (user_id,)
+            c.execute(sql, values)
+            # res = c.fetchall()
+            res = dict_fetchall(c)
+        return ('success', res)
+    except Exception as exc:
+        logger.exception(exc)
+        return ('failure', [])
 
 
 ##### OPTIONS FUNCTIONS #######################################################
