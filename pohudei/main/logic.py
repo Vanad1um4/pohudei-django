@@ -2,6 +2,44 @@ from datetime import datetime, timedelta
 from .models import *
 import os.path
 import json
+import redis
+
+
+### REDIS LOGIC ###############################################################
+
+redis_instance = redis.StrictRedis(host='localhost', port=6379, db=0, charset="utf-8", decode_responses=True)
+redis_instance.expire('a', 12 * 60 * 60)
+
+
+def redis_set(key, value):
+    try:
+        redis_instance.set(key, value)
+        return 'ok'
+    except:
+        return 'err'
+
+
+def redis_get(key):
+    try:
+        value = redis_instance.get(key)
+        return value
+    except:
+        return 'err'
+
+
+def check_cache_for_todays_target_kcals(user_id, dates, coeffs):
+    cached_target_kcals = redis_get(f'{user_id}-{dates["this_day_iso"]}')
+
+    if not cached_target_kcals:
+        _, _, _, _, target_kcals_avg, _ = stats_calc(user_id, coeffs)
+        this_days_target_kcals = target_kcals_avg.get(dates['this_day'], 0)
+
+        if this_days_target_kcals > 0:
+            redis_set(f'{user_id}-{dates["this_day_iso"]}', this_days_target_kcals)
+    else:
+        this_days_target_kcals = cached_target_kcals
+
+    return this_days_target_kcals
 
 
 ### DIARY LOGIC ###############################################################

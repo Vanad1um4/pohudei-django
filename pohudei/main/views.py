@@ -36,9 +36,7 @@ def diary(request, date_iso=None):
 
     this_days_food_prepped = prep_food_for_diary_view(user_id, dates['this_day_iso'], personal_coeffs)
 
-    _, _, _, _, target_kcals_avg, _ = stats_calc(user_id, personal_coeffs)
-
-    this_days_target_kcals = target_kcals_avg.get(dates['this_day'], 0)
+    this_days_target_kcals = check_cache_for_todays_target_kcals(user_id, dates, personal_coeffs)
 
     this_days_weight = prep_one_weight_for_fiary_view(user_id, dates['this_day_iso'])
 
