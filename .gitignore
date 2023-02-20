@@ -4,3 +4,5 @@ env
 pohudei/logs/debug.log
 pohudei/logs/exceptions.log
 nohup.out
+pohudei/static/
+.secrets
