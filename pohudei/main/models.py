@@ -81,7 +81,6 @@ def db_get_all_diary_entries(user_id):
     try:
         with connection.cursor() as c:
             sql = 'select date, catalogue_id, food_weight from diary where users_id=%s order by date;'
-            # sql = 'select date, catalogue_id, food_weight from diary where users_id=%s and date<current_date order by date;'
             values = (user_id,)
             c.execute(sql, values)
             res = c.fetchall()
@@ -246,6 +245,24 @@ def db_delete_food_from_catalogue(food_id):
 
 
 ##### STATS FUNCTIONS #########################################################
+
+
+def db_get_users_first_date(user_id):
+    try:
+        with connection.cursor() as c:
+            dates = []
+            values = (user_id,)
+            sql = 'select date from weights where users_id=%s order by date asc limit 1;'
+            c.execute(sql, values)
+            dates.append(c.fetchone()[0])
+            sql = 'select date from diary where users_id=%s order by date asc limit 1;'
+            c.execute(sql, values)
+            dates.append(c.fetchone()[0])
+            first_date = min(dates)
+        return ('success', first_date)
+    except Exception as exc:
+        logger.exception(exc)
+        return ('failure', [])
 
 
 def db_get_users_weights_all(user_id):

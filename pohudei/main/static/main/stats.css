@@ -14,16 +14,13 @@
 /* .weight-chart-container { */
 /* } */
 
-.weight-chart-container-90 {
-    display: none;
-}
+.weight-chart-container-90 { display: none; }
+.kcals-chart-container-90 { display: none; }
+.helth-chart-container-90 { display: none; }
 
-/* .kcals-chart-container { */
-/* } */
-
-.kcals-chart-container-90 {
-    display: none;
-}
+.weight-chart-container { display: none; }
+.kcals-chart-container { display: none; }
+.helth-chart-container { display: none; }
 
 .chart-header {
     /* width: 100%; */
@@ -38,7 +35,7 @@
 }
 
 .chart-container {
-    width: 100%;
+    width: 98%;
     /* height: 40vh; */
     height: 250px;
     margin-bottom: 39px;
