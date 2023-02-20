@@ -11,7 +11,7 @@ urlpatterns = [
     path('foods/', views.foods, name='foods'),
     path('options/', views.options, name='options'),
 
-    path('update_weight/', views.update_weight),
+    path('update_weight/', views.update_weight_ajax),
 
     path('add_food_to_diary/', views.add_food_to_diary),
     path('update_diary_entry/', views.update_diary_entry),

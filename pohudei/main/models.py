@@ -147,10 +147,10 @@ def db_get_all_food_names(user_id):
             values = (user_id,)
             c.execute(sql, values)
             res = c.fetchall()
-        return res
+        return ('success', res)
     except Exception as exc:
         logger.exception(exc)
-        return []
+        return ('failure', [])
 
 
 def db_get_users_food_names(user_id, admin=False):
