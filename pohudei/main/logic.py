@@ -192,6 +192,11 @@ def average_dict(input_dict, avg_range, round_bool=False, round_places=0):
     input_dict_keys = list(input_dict.keys())
     input_dict_values = list(input_dict.values())
 
+    # replace None with previous value so you do not get en error trying to sum None and float down the line =)
+    for i in range(1, len(input_dict_values)):
+        if input_dict_values[i] == None:
+            input_dict_values[i] = input_dict_values[i-1]
+
     list_averaged = []
     for i in range(1, len(input_dict_values)+1):
         j = 0 if i - avg_range <= 0 else i - avg_range
@@ -298,6 +303,7 @@ def stats_calc(user_id, personal_coeffs):
 
     avg_days = 7
     daily_sum_kcals_avg = average_dict(daily_sum_kcals, avg_days, round_bool=True, round_places=0)
+    print(weights_prepped)
     weights_prepped_avg = average_dict(weights_prepped, avg_days, round_bool=True, round_places=1)
 
     norm_days = 30
