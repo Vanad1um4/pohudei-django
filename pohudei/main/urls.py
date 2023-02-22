@@ -13,13 +13,13 @@ urlpatterns = [
 
     path('update_weight/', views.update_weight_ajax),
 
-    path('add_food_to_diary/', views.add_food_to_diary),
-    path('update_diary_entry/', views.update_diary_entry),
-    path('delete_diary_entry/', views.delete_diary_entry),
+    path('add_food_to_diary/', views.add_food_to_diary_ajax),
+    path('update_diary_entry/', views.update_diary_entry_ajax),
+    path('delete_diary_entry/', views.delete_diary_entry_ajax),
 
-    path('add_food_to_catalogue/', views.add_food_to_catalogue),
-    path('update_food_in_catalogue/', views.update_food_in_catalogue),
-    path('delete_food_from_catalogue/', views.delete_food_from_catalogue),
+    path('add_food_to_catalogue/', views.add_food_to_catalogue_ajax),
+    path('update_food_in_catalogue/', views.update_food_in_catalogue_ajax),
+    path('delete_food_from_catalogue/', views.delete_food_from_catalogue_ajax),
 
     path('set_options/', views.set_options_ajax),
 

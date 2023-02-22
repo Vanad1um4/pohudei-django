@@ -177,23 +177,20 @@ async function saveWeight() {
                 },
                 body: JSON.stringify({'date': thisDaysDateISO, 'weight': newVal})
             })
-                .then(response => response.json())
-                .then(result => {
-                    if (result['result'] === 'success') {
-                        console.log('success')
-                        thisDaysWeightInput.disabled = false
-                        thisDaysWeightInput.style.background = 'green'
-                        thisDaysWeightWarning.style.display = 'none'
-                    } else if (result['result'] === 'failure') {
-                        console.log('failure')
-                        thisDaysWeightInput.disabled = false
-                        thisDaysWeightInput.style.background = 'red'
-                        // thisDaysWeightWarning.style.display = 'none'
-                        thisDaysWeightWarning.textContent = 'Что-то пошло не так...'
-                    }
-                })
-                .then(await sleep(waitMsWeightChange))
-                .then(() => { thisDaysWeightInput.style.background = 'transparent' })
+            .then(response => {
+                if (response.status === 204) {
+                    thisDaysWeightInput.disabled = false
+                    thisDaysWeightInput.style.background = 'green'
+                    thisDaysWeightWarning.style.display = 'none'
+                } else {
+                    console.log('failure')
+                    thisDaysWeightInput.disabled = false
+                    thisDaysWeightInput.style.background = 'red'
+                    thisDaysWeightWarning.textContent = 'Что-то пошло не так...'
+                }
+            })
+            .then(await sleep(waitMsWeightChange))
+            .then(() => { thisDaysWeightInput.style.background = 'transparent' })
         }
     }
 }
@@ -269,18 +266,17 @@ async function fetchAdd(foodId, newWeight) {
         },
         body: JSON.stringify({'date_iso': thisDaysDateISO, 'food_id': foodId, 'food_weight': newWeight})
     })
-        .then(response => response.json())
-        .then(result => {
-            if (result['result'] == 'success') {
-                floatyInfoText.textContent = 'Успешно!'
-                floatyInfoText.style.color = 'LawnGreen'
-            } else if (result['result'] == 'failure') {
-                floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
-                floatyInfoText.style.color = 'red'
-            }
-        })
-        .then(await sleep(waitMsInfo))
-        .then(() => { window.location.reload() })
+    .then(response => {
+        if (response.status === 204) {
+            floatyInfoText.textContent = 'Успешно!'
+            floatyInfoText.style.color = 'LawnGreen'
+        } else {
+            floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
+            floatyInfoText.style.color = 'red'
+        }
+    })
+    .then(await sleep(waitMsInfo))
+    .then(() => { window.location.reload() })
 }
 
 
@@ -417,12 +413,11 @@ async function fetchEdit(id, weight) {
         },
         body: JSON.stringify({'diary_id': id, 'new_weight': weight})
     })
-    .then(response => response.json())
-    .then(result => {
-        if (result['result'] == 'success') {
+    .then(response => {
+        if (response.status === 204) {
             floatyInfoText.textContent = 'Успешно!'
             floatyInfoText.style.color = 'LawnGreen'
-        } else if (result['result'] == 'failure') {
+        } else {
             floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
             floatyInfoText.style.color = 'red'
         }
@@ -443,7 +438,7 @@ async function editDiaryYesDelete() {
 
     fetch(`/delete_diary_entry/`,
     {
-        method: 'POST',
+        method: 'DELETE',
         headers: {
             'X-CSRFToken': csrftoken,
             'Accept': 'application/json',
@@ -451,18 +446,17 @@ async function editDiaryYesDelete() {
         },
         body: JSON.stringify({'diary_id': diaryId})
     })
-        .then(response => response.json())
-        .then(result => {
-            if (result['result'] == 'success') {
+    .then(response => {
+        if (response.status === 204) {
                 floatyInfoText.textContent = 'Успешно!'
                 floatyInfoText.style.color = 'LawnGreen'
-            } else if (result['result'] == 'failure') {
-                floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
-                floatyInfoText.style.color = 'red'
-            }
-        })
-        .then(await sleep(waitMsInfo))
-        .then(() => { window.location.reload() })
+        } else {
+            floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
+            floatyInfoText.style.color = 'red'
+        }
+    })
+    .then(await sleep(waitMsInfo))
+    .then(() => { window.location.reload() })
 }
 
 

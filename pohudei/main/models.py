@@ -86,7 +86,7 @@ def db_get_all_diary_entries(user_id):
             res = c.fetchall()
             return ('success', res)
     except Exception as exc:
-        print(exc)
+        logger.exception(exc)
         return ('failure', [])
 
 
@@ -96,10 +96,10 @@ def db_add_new_diary_entry(user_id, date, food_id, weight):
             sql = 'insert into diary (users_id, date, catalogue_id, food_weight) values (%s, %s, %s, %s);'
             values = (user_id, date, food_id, weight)
             c.execute(sql, values)
-            return 'success'
+            return ('success', [])
     except Exception as exc:
         logger.exception(exc)
-        return 'failure'
+        return ('failure', [])
 
 
 def db_update_diary_entry(user_id, diary_id, new_food_weight):
@@ -108,10 +108,10 @@ def db_update_diary_entry(user_id, diary_id, new_food_weight):
             sql = 'update diary set food_weight=%s where id=%s and users_id=%s;'
             values = (new_food_weight, diary_id, user_id)
             c.execute(sql, values)
-            return 'success'
+            return ('success', [])
     except Exception as exc:
         logger.exception(exc)
-        return 'failure'
+        return ('failure', [])
 
 
 def db_del_diary_entry(user_id, diary_id):
@@ -120,10 +120,10 @@ def db_del_diary_entry(user_id, diary_id):
             sql = 'delete from diary where id=%s and users_id=%s;'
             values = (diary_id, user_id)
             c.execute(sql, values)
-            return 'success'
+            return ('success', [])
     except Exception as exc:
         logger.exception(exc)
-        return 'failure'
+        return ('failure', [])
 
 
 ##### CATALOGUE FUNCTIONS #####################################################

@@ -56,89 +56,82 @@ def diary(request, date_iso=None):
 
 def update_weight_ajax(request):
     if request.method != 'POST':
-        return HttpResponse(json.dumps({'result': 'failure, not POST'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=405)
+
     if not request.user.is_authenticated:
-        return redirect('login')
+        return HttpResponse(status=401)
     try:
         user_id = request.user.profile.user_id
     except:
-        return HttpResponse(json.dumps({'result': 'failure, no user_id'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=401)
 
     data = json.loads(request.body)
-
     result = db_update_weight_from_diary(user_id, data['date'], data['weight'])
 
     if result[0] == 'success':
-        return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=204)
     else:
-        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=400)
 
 
-def add_food_to_diary(request):
-    if request.method == 'POST':
+def add_food_to_diary_ajax(request):
+    if request.method != 'POST':
+        return HttpResponse(status=405)
+
+    if not request.user.is_authenticated:
+        return HttpResponse(status=401)
+    try:
         user_id = request.user.profile.user_id
-        data = json.loads(request.body)
-        if user_id:
-            result = db_add_new_diary_entry(user_id, data['date_iso'], data['food_id'], data['food_weight'])
-            if result == 'success':
-                return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
-                                    content_type='application/json; charset=utf-8')
-            else:
-                return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                                    content_type='application/json; charset=utf-8')
-        else:
-            return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                                content_type='application/json; charset=utf-8')
+    except:
+        return HttpResponse(status=401)
+
+    data = json.loads(request.body)
+    result = db_add_new_diary_entry(user_id, data['date_iso'], data['food_id'], data['food_weight'])
+
+    if result[0] == 'success':
+        return HttpResponse(status=204)
     else:
-        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=400)
 
 
-def update_diary_entry(request):
-    if request.method == 'POST':
+def update_diary_entry_ajax(request):
+    if request.method != 'POST':
+        return HttpResponse(status=405)
+
+    if not request.user.is_authenticated:
+        return HttpResponse(status=401)
+    try:
         user_id = request.user.profile.user_id
-        data = json.loads(request.body)
-        diary_id = data['diary_id']
-        new_food_weight = data['new_weight']
-        if user_id:
-            result = db_update_diary_entry(user_id, diary_id, new_food_weight)
-            if result == 'success':
-                return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
-                                    content_type='application/json; charset=utf-8')
-            else:
-                return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                                    content_type='application/json; charset=utf-8')
-        else:
-            return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                                content_type='application/json; charset=utf-8')
+    except:
+        return HttpResponse(status=401)
+
+    data = json.loads(request.body)
+    result = db_update_diary_entry(user_id, data['diary_id'], data['new_weight'])
+
+    if result[0] == 'success':
+        return HttpResponse(status=204)
     else:
-        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=400)
 
 
-def delete_diary_entry(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
+def delete_diary_entry_ajax(request):
+    if request.method != 'DELETE':
+        return HttpResponse(status=405)
+
+    if not request.user.is_authenticated:
+        return HttpResponse(status=401)
+    try:
         user_id = request.user.profile.user_id
-        diary_id = data['diary_id']
-        if user_id:
-            result = db_del_diary_entry(user_id, diary_id)
-            if result == 'success':
-                return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
-                                    content_type='application/json; charset=utf-8')
-            else:
-                return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                                    content_type='application/json; charset=utf-8')
-        else:
-            return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                                content_type='application/json; charset=utf-8')
+    except:
+        return HttpResponse(status=401)
+
+    data = json.loads(request.body)
+    result = db_del_diary_entry(user_id, data['diary_id'])
+
+    if result[0] == 'success':
+        return HttpResponse(status=204)
     else:
-        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=400)
 
 
 ### STATS FNs #################################################################
@@ -178,92 +171,81 @@ def foods(request):
     return render(request, 'main/foods.html', {'data': {'foods': foods}})
 
 
-def add_food_to_catalogue(request):
+def add_food_to_catalogue_ajax(request):
     if request.method != 'POST':
-        return HttpResponse(json.dumps({'result': 'failure, not POST'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=405)
+
     if not request.user.is_authenticated:
-        return redirect('login')
+        return HttpResponse(status=401)
     try:
         user_id = request.user.profile.user_id
     except:
-        return HttpResponse(json.dumps({'result': 'failure, no user_id'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=401)
 
     data = json.loads(request.body)
 
+    isAdmin = False
     if request.user.is_staff:
-        result = db_add_new_food_to_catalogue(user_id, data['food_name'], data['food_kcals'], admin=True)
-    else:
-        result = db_add_new_food_to_catalogue(user_id, data['food_name'], data['food_kcals'])
+        isAdmin = True
+
+    result = db_add_new_food_to_catalogue(user_id, data['food_name'], data['food_kcals'], admin=isAdmin)
 
     if result[0] == 'success':
-        return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=204)
     elif result[0] == 'duplication':
-        return HttpResponse(json.dumps({'result': 'duplication'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=409)
     else:
-        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=400)
 
 
-def update_food_in_catalogue(request):
-    if request.method != 'POST':
-        return HttpResponse(json.dumps({'result': 'failure, not POST'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+def update_food_in_catalogue_ajax(request):
+    if request.method != 'PUT':
+        return HttpResponse(status=405)
+
     if not request.user.is_authenticated:
-        return redirect('login')
+        return HttpResponse(status=401)
     try:
         user_id = request.user.profile.user_id
     except:
-        return HttpResponse(json.dumps({'result': 'failure, no user_id'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=401)
 
     data = json.loads(request.body)
 
+    isAdmin = False
     if request.user.is_staff:
-        result = db_update_food_in_catalogue(
-            user_id, data['food_id'], data['food_name'], data['food_kcals'], admin=True)
-    else:
-        result = db_update_food_in_catalogue(user_id, data['food_id'], data['food_name'], data['food_kcals'])
+        isAdmin = True
+
+    result = db_update_food_in_catalogue(user_id, data['food_id'], data['food_name'], data['food_kcals'], admin=isAdmin)
 
     if result[0] == 'success':
-        return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=204)
     elif result[0] == 'duplication':
-        return HttpResponse(json.dumps({'result': 'duplication'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=409)
     else:
-        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=400)
 
 
-def delete_food_from_catalogue(request):
-    if request.method != 'POST':
-        return HttpResponse(json.dumps({'result': 'failure, not POST'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+def delete_food_from_catalogue_ajax(request):
+    if request.method != 'DELETE':
+        return HttpResponse(status=405)
+
     if not request.user.is_authenticated:
-        return redirect('login')
+        return HttpResponse(status=401)
     try:
         user_id = request.user.profile.user_id
     except:
-        return HttpResponse(json.dumps({'result': 'failure, no user_id'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=401)
 
     data = json.loads(request.body)
 
     result = db_delete_food_from_catalogue(data['food_id'])
 
     if result[0] == 'success':
-        return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
-    if result[0] == 'in use':
-        return HttpResponse(json.dumps({'result': 'in use'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=204)
+    elif result[0] == 'in use':
+        return HttpResponse(status=409)
     else:
-        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=400)
 
 
 ##### OPTIONS FNs #############################################################
@@ -283,24 +265,23 @@ def options(request):
 
 def set_options_ajax(request):
     if request.method != 'POST':
-        return HttpResponse(json.dumps({'result': 'failure, not POST'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=405)
+
     if not request.user.is_authenticated:
-        return redirect('login')
+        return HttpResponse(status=401)
     try:
         user_id = request.user.profile.user_id
     except:
-        return HttpResponse(json.dumps({'result': 'failure, no user_id'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=401)
 
     data = json.loads(request.body)
+
     result = db_set_all_options(user_id, data['height'], data['use_coeffs'])
+
     if result[0] == 'success':
-        return HttpResponse(json.dumps({'result': 'success'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=204)
     else:
-        return HttpResponse(json.dumps({'result': 'failure'}),  # pyright: ignore
-                            content_type='application/json; charset=utf-8')
+        return HttpResponse(status=400)
 
 
 ##### NO PROFILE FNs ##########################################################

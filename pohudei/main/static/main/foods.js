@@ -101,7 +101,7 @@ async function clickedUpdateFoodBtn() {
         floatyInfoText.style.color = 'white'
         fetch(`/update_food_in_catalogue/`,
         {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'X-CSRFToken': csrftoken,
                 'Accept': 'application/json',
@@ -109,21 +109,20 @@ async function clickedUpdateFoodBtn() {
             },
             body: JSON.stringify({'food_id': selectedFood, 'food_name': foodName, 'food_kcals': foodKcals})
         })
-            .then(response => response.json())
-            .then(result => {
-                if (result['result'] == 'success') {
-                    floatyInfoText.textContent = 'Успешно!'
-                    floatyInfoText.style.color = 'LawnGreen'
-                } else if (result['result'] == 'duplication') {
-                    floatyInfoText.textContent = 'Блюдо с таким названием уже есть...'
-                    floatyInfoText.style.color = 'orange'
-                } else if (result['result'] == 'failure') {
-                    floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
-                    floatyInfoText.style.color = 'red'
-                }
-            })
-            .then(await sleep(waitMsFast))
-            .then(() => { window.location.reload() })
+        .then(response => {
+            if (response.status === 204) {
+                floatyInfoText.textContent = 'Успешно!'
+                floatyInfoText.style.color = 'LawnGreen'
+            } else if (response.status === 409) {
+                floatyInfoText.textContent = 'Блюдо с таким названием уже есть...'
+                floatyInfoText.style.color = 'orange'
+            } else {
+                floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
+                floatyInfoText.style.color = 'red'
+            }
+        })
+        .then(await sleep(waitMsFast))
+        .then(() => { window.location.reload() })
     }
 }
 
@@ -135,7 +134,7 @@ async function clickedDeleteFoodBtn() {
     floatyInfoText.style.color = 'white'
     fetch(`/delete_food_from_catalogue/`,
     {
-        method: 'POST',
+        method: 'DELETE',
         headers: {
             'X-CSRFToken': csrftoken,
             'Accept': 'application/json',
@@ -143,21 +142,20 @@ async function clickedDeleteFoodBtn() {
         },
         body: JSON.stringify({'food_id': selectedFood})
     })
-        .then(response => response.json())
-        .then(result => {
-            if (result['result'] == 'success') {
-                floatyInfoText.textContent = 'Успешно!'
-                floatyInfoText.style.color = 'LawnGreen'
-            } else if (result['result'] == 'in use') {
-                floatyInfoText.textContent = 'Уже используется, удалить невозможно.'
-                floatyInfoText.style.color = 'orange'
-            } else if (result['result'] == 'failure') {
-                floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
-                floatyInfoText.style.color = 'red'
-            }
-        })
-        .then(await sleep(waitMsFast))
-        .then(() => { window.location.reload() })
+    .then(response => {
+        if (response.status === 204) {
+            floatyInfoText.textContent = 'Успешно!'
+            floatyInfoText.style.color = 'LawnGreen'
+        } else if (response.status === 409) {
+            floatyInfoText.textContent = 'Уже используется, удалить невозможно.'
+            floatyInfoText.style.color = 'orange'
+        } else {
+            floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
+            floatyInfoText.style.color = 'red'
+        }
+    })
+    .then(await sleep(waitMsFast))
+    .then(() => { window.location.reload() })
 
 }
 
@@ -165,7 +163,6 @@ async function clickedDeleteFoodBtn() {
 async function clickedNewFoodBtn() {
     const newFoodName = floatyAddName.value
     const newFoodKcals = parseInt(floatyAddKcals.value)
-    // console.log(newFoodName, newFoodKcals)
     floatyAddNameWarn.style.display = 'none'
     floatyAddKcalsWarn.style.display = 'none'
 
@@ -188,21 +185,20 @@ async function clickedNewFoodBtn() {
             },
             body: JSON.stringify({'food_name': newFoodName, 'food_kcals': newFoodKcals})
         })
-            .then(response => response.json())
-            .then(result => {
-                if (result['result'] == 'success') {
-                    floatyInfoText.textContent = 'Успешно!'
-                    floatyInfoText.style.color = 'LawnGreen'
-                } else if (result['result'] == 'duplication') {
-                    floatyInfoText.textContent = 'Блюдо с таким названием уже есть...'
-                    floatyInfoText.style.color = 'orange'
-                } else if (result['result'] == 'failure') {
-                    floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
-                    floatyInfoText.style.color = 'red'
-                }
-            })
-            .then(await sleep(waitMsFast))
-            .then(() => { window.location.reload() })
+        .then(response => {
+            if (response.status === 204) {
+                floatyInfoText.textContent = 'Успешно!'
+                floatyInfoText.style.color = 'LawnGreen'
+            } else if (response.status === 409) {
+                floatyInfoText.textContent = 'Блюдо с таким названием уже есть...'
+                floatyInfoText.style.color = 'orange'
+            } else {
+                floatyInfoText.textContent = 'Произошло что-то непонятное, походу все сломалось...'
+                floatyInfoText.style.color = 'red'
+            }
+        })
+        .then(await sleep(waitMsFast))
+        .then(window.location.reload())
     }
 }
 

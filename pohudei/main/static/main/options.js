@@ -24,7 +24,6 @@ function onInit() {
 
 
 async function saveTest() {
-    // console.log(useCoeffsInput.checked)
     const heightVal = parseInt(heightInput.value)
     const useCoeffsVal = useCoeffsInput.checked
     if (Number.isInteger(heightVal)) {
@@ -44,28 +43,25 @@ async function saveTest() {
             },
             body: JSON.stringify({'height': heightVal, 'use_coeffs': useCoeffsVal})
         })
-            .then(response => response.json())
-            .then(result => {
-                if (result['result'] === 'success') {
-                    console.log('success')
-                    heightInput.disabled = false
-                    useCoeffsInput.disabled = false
-                    heightInput.style.background = 'transparent'
-                    saveBtn.classList.remove('active', 'inactive', 'success', 'fail')
-                    saveBtn.classList.add('success')
-                } else {
-                    console.log('failure')
-                    heightInput.disabled = false
-                    saveBtn.classList.remove('active', 'inactive', 'success', 'fail')
-                    saveBtn.classList.add('fail')
-                }
-            })
-            .then(await sleep(waitMs))
-            .then(() => {
+        .then(response => {
+            if (response.status === 204) {
+                heightInput.disabled = false
+                useCoeffsInput.disabled = false
                 heightInput.style.background = 'transparent'
                 saveBtn.classList.remove('active', 'inactive', 'success', 'fail')
-                saveBtn.classList.add('active')
-            })
+                saveBtn.classList.add('success')
+            } else {
+                heightInput.disabled = false
+                saveBtn.classList.remove('active', 'inactive', 'success', 'fail')
+                saveBtn.classList.add('fail')
+            }
+        })
+        .then(await sleep(waitMs))
+        .then(() => {
+            heightInput.style.background = 'transparent'
+            saveBtn.classList.remove('active', 'inactive', 'success', 'fail')
+            saveBtn.classList.add('active')
+        })
     }
 }
 

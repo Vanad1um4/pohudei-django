@@ -8,7 +8,7 @@ import redis
 ### REDIS LOGIC ###############################################################
 
 redis_instance = redis.StrictRedis(host='localhost', port=6379, db=0, charset="utf-8", decode_responses=True)
-redis_instance.expire('a', 12 * 60 * 60)
+redis_instance.expire('a', 24*60*60)
 
 
 def redis_set(key, value):
@@ -24,7 +24,7 @@ def redis_get(key):
         value = redis_instance.get(key)
         return value
     except:
-        return 'err'
+        return False
 
 
 def check_cache_for_todays_target_kcals(user_id, dates, coeffs):
