@@ -40,7 +40,6 @@ def db_update_weight_from_diary(user_id, date, weight):
             values = (user_id, date)
             c.execute(sql, values)
             id = c.fetchone()
-            print(id)
             if id:
                 sql = 'update weights set weight=%s where id=%s and users_id=%s;'
                 values = (weight, id[0], user_id)
@@ -229,7 +228,6 @@ def db_delete_food_from_catalogue(food_id):
             values = (food_id,)
             c.execute(sql, values)
             id = c.fetchone()
-            print(id)
             if id:
                 return ('in use', [])
             elif not id:

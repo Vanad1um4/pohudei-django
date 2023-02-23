@@ -28,14 +28,19 @@ def redis_get(key):
 
 
 def check_cache_for_todays_target_kcals(user_id, dates, coeffs):
-    cached_target_kcals = redis_get(f'{user_id}-{dates["this_day_iso"]}')
+    res_use_coeffs = db_get_use_coeffs_bool(user_id)
+    use_coeffs = 'no_coeffs'
+    if res_use_coeffs[1][0]:
+        use_coeffs = 'yes_coeffs'
+
+    cached_target_kcals = redis_get(f'{user_id}-{dates["this_day_iso"]}-{use_coeffs}')
 
     if not cached_target_kcals:
         _, _, _, _, target_kcals_avg, _ = stats_calc(user_id, coeffs)
         this_days_target_kcals = target_kcals_avg.get(dates['this_day'], 0)
 
         if this_days_target_kcals > 0:
-            redis_set(f'{user_id}-{dates["this_day_iso"]}', this_days_target_kcals)
+            redis_set(f'{user_id}-{dates["this_day_iso"]}-{use_coeffs}', this_days_target_kcals)
     else:
         this_days_target_kcals = cached_target_kcals
 
@@ -129,13 +134,13 @@ def prep_one_weight_for_fiary_view(user_id: int, date_iso: str) -> float | None:
 ### STATS LOGIC ###############################################################
 
 def dates_list_prep(first_date):
-    human_dates = {}
+    all_dates = {}
     today = datetime.today().date()
     day_to_add = first_date
     while day_to_add <= today:
-        human_dates[day_to_add] = None
+        all_dates[day_to_add] = None
         day_to_add = day_to_add + timedelta(days=1)
-    return human_dates
+    return all_dates
 
 
 def weights_prep(weights_raw, all_dates):
@@ -148,7 +153,6 @@ def weights_prep(weights_raw, all_dates):
 def diary_entries_prep(diary_entries_raw, all_dates):
     diary_entries_prepped = dict(all_dates)
     for row in diary_entries_raw:
-        # print(row)
         if diary_entries_prepped[row[0]] == None:
             diary_entries_prepped[row[0]] = []
         diary_entries_prepped[row[0]].append((row[1], row[2]))
@@ -301,14 +305,12 @@ def stats_calc(user_id, personal_coeffs):
 
     daily_sum_kcals = daily_sum_kcals_count(diary_entries_prepped, catalogue_prepped, personal_coeffs, all_dates)
 
-    avg_days = 7
-    daily_sum_kcals_avg = average_dict(daily_sum_kcals, avg_days, round_bool=True, round_places=0)
-    print(weights_prepped)
-    weights_prepped_avg = average_dict(weights_prepped, avg_days, round_bool=True, round_places=1)
-
-    norm_days = 30
-    target_kcals = target_kcals_prep(daily_sum_kcals_avg, weights_prepped_avg, norm_days)
-    target_kcals_avg = average_dict(target_kcals, norm_days, round_bool=True, round_places=0)
+    DAYS_7 = 7
+    daily_sum_kcals_avg = average_dict(daily_sum_kcals, DAYS_7, round_bool=True, round_places=0)
+    weights_prepped_avg = average_dict(weights_prepped, DAYS_7, round_bool=True, round_places=1)
+    DAYS_60 = 60
+    target_kcals = target_kcals_prep(daily_sum_kcals_avg, weights_prepped_avg, DAYS_7)
+    target_kcals_avg = average_dict(target_kcals, DAYS_60, round_bool=True, round_places=0)
 
     return all_dates, daily_sum_kcals, weights_prepped, weights_prepped_avg, target_kcals_avg, helth_dict
 
